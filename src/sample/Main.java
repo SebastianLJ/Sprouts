@@ -19,9 +19,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 
-/**
- * @web http://java-buddy.blogspot.com/
- */
 public class Main extends Application {
 
     HashMap<Point, Boolean> map = new HashMap<>();
