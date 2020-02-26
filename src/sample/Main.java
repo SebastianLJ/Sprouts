@@ -2,6 +2,7 @@ package sample;
 
 import javafx.application.Application;
 import javafx.event.EventHandler;
+import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -23,6 +24,7 @@ public class Main extends Application {
 
     HashMap<Point, Boolean> map = new HashMap<>();
     ArrayList<Point> currentLine = new ArrayList<>();
+    Point prevPoint;
     Point point;
     ArrayList<Point> pointCluster = new ArrayList<>();
     ArrayList<Point> prevPointCluster = new ArrayList<>();
@@ -49,11 +51,12 @@ public class Main extends Application {
                     public void handle(MouseEvent event) {
                         collision = false;
                         currentLine = new ArrayList<>();
+                        prevPoint = point;
                         point = new Point((int) event.getX(), (int) event.getY());
                         addPointsToCluster();
 
                         path = new Path();
-                        path.setStrokeWidth(3);
+                        path.setStrokeWidth(1);
                         path.setStroke(Color.BLACK);
                         root.getChildren().add(path);
 
@@ -66,6 +69,7 @@ public class Main extends Application {
                         } else {
                             currentLine.addAll(pointCluster);
                         }
+                        scene.setCursor(Cursor.NONE);
                     }
                 });
 
@@ -76,19 +80,26 @@ public class Main extends Application {
                     public void handle(MouseEvent event) {
                         if (!collision) {
                             prevPointCluster = new ArrayList<>(pointCluster);
+                            prevPoint = point;
                             point = new Point((int) event.getX(), (int) event.getY());
                             addPointsToCluster();
-
-                            System.out.println("before: " + path.intersects(point.getX(), point.getY(), 3, 3));
-
-                            path.getElements().add(new LineTo(point.getX(), point.getY()));
-
-                            if (intersects()) {
+                            Path tempPath = new Path();
+                            tempPath.getElements().add(new MoveTo(prevPoint.getX(), prevPoint.getY()));
+                            tempPath.getElements().add(new LineTo(point.getX(), point.getY()));
+                            if ((!point.equals(prevPoint)) && path.contains(point.getX(), point.getY())) {
                                 path.getElements().clear();
                                 collision = true;
-                                System.out.println("collision at " + point.getX() + ", " + point.getY());
+                                System.out.println("You collided with yourself!");
                             } else {
-                                currentLine.addAll(pointCluster);
+                                path.getElements().add(new LineTo(point.getX(), point.getY()));
+
+                                if (intersects()) {
+                                    path.getElements().clear();
+                                    collision = true;
+                                    System.out.println("collision at " + point.getX() + ", " + point.getY());
+                                } else {
+                                    currentLine.addAll(pointCluster);
+                                }
                             }
                         }
                     }
@@ -105,6 +116,7 @@ public class Main extends Application {
                             }
                             lines.add(path);
                         }
+                        scene.setCursor(Cursor.DEFAULT);
                     }
                 });
 
@@ -151,7 +163,6 @@ public class Main extends Application {
         Shape temp;
         for (Shape line : lines) {
             temp = Shape.intersect(path, line);
-
             boolean intersects = temp.getBoundsInLocal().getWidth() != -1;
             if (intersects) {
                 res = true;
