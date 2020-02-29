@@ -1,3 +1,4 @@
+/*
 package acceptance_tests;
 
 import org.junit.runner.RunWith;
@@ -16,4 +17,4 @@ import io.cucumber.junit.CucumberOptions.SnippetType;
         strict = true)
 public class Acceptance_test {
 
-}
+}*/

@@ -24,13 +24,10 @@ public class Main extends Application {
 
     HashMap<Point, Boolean> map = new HashMap<>();
     ArrayList<Point> currentLine = new ArrayList<>();
-    Point prevPoint;
     Point point;
-    ArrayList<Point> pointCluster = new ArrayList<>();
-    ArrayList<Point> prevPointCluster = new ArrayList<>();
     ArrayList<Shape> lines = new ArrayList<>();
-
     Path path;
+    Path pathtmp;
     boolean collision = false;
     Group root = new Group();
 
@@ -40,84 +37,55 @@ public class Main extends Application {
         Scene scene = new Scene(root, 500, 500);
         primaryStage.setScene(scene);
         primaryStage.setTitle("Sprouts");
-
-
+        path = new Path();
+        pathtmp = new Path();
+        pathtmp.setStrokeWidth(1);
+        path.setStroke(Color.BLACK);
+        path.setStrokeWidth(1);
+        path.setStroke(Color.BLACK);
+        root.getChildren().add(path);
 
 
         primaryStage.addEventHandler(MouseEvent.MOUSE_PRESSED,
-                new EventHandler<MouseEvent>(){
-
-                    @Override
-                    public void handle(MouseEvent event) {
+                event -> {
+                        scene.setCursor(Cursor.CROSSHAIR);
                         collision = false;
-                        currentLine = new ArrayList<>();
-                        prevPoint = point;
                         point = new Point((int) event.getX(), (int) event.getY());
-                        addPointsToCluster();
-
                         path = new Path();
                         path.setStrokeWidth(1);
                         path.setStroke(Color.BLACK);
                         root.getChildren().add(path);
-
                         path.getElements().add(new MoveTo(point.getX(), point.getY()));
-
-                        if (intersects()) {
-                            path.getElements().clear();
-                            collision = true;
-                            System.out.println("collision at " + point.getX() + ", " + point.getY());
-                        } else {
-                            currentLine.addAll(pointCluster);
-                        }
-                        scene.setCursor(Cursor.NONE);
-                    }
                 });
 
         primaryStage.addEventHandler(MouseEvent.MOUSE_DRAGGED,
-                new EventHandler<MouseEvent>(){
-
-                    @Override
-                    public void handle(MouseEvent event) {
-                        if (!collision) {
-                            prevPointCluster = new ArrayList<>(pointCluster);
-                            prevPoint = point;
-                            point = new Point((int) event.getX(), (int) event.getY());
-                            addPointsToCluster();
-                            Path tempPath = new Path();
-                            tempPath.getElements().add(new MoveTo(prevPoint.getX(), prevPoint.getY()));
-                            tempPath.getElements().add(new LineTo(point.getX(), point.getY()));
-                            if ((!point.equals(prevPoint)) && path.contains(point.getX(), point.getY())) {
-                                path.getElements().clear();
-                                collision = true;
-                                System.out.println("You collided with yourself!");
-                            } else {
-                                path.getElements().add(new LineTo(point.getX(), point.getY()));
-
-                                if (intersects()) {
-                                    path.getElements().clear();
-                                    collision = true;
-                                    System.out.println("collision at " + point.getX() + ", " + point.getY());
-                                } else {
-                                    currentLine.addAll(pointCluster);
-                                }
-                            }
+                event -> {
+                    if (collision) {
+                        scene.setCursor(Cursor.DEFAULT);
+                        System.out.println("collision has happend draw somewhere else");
+                    } else {
+                        pathtmp.getElements().add(new MoveTo(point.getX(), point.getY()));
+                        point = new Point((int) event.getX(), (int) event.getY());
+                        pathtmp.getElements().add(new LineTo(point.getX(), point.getY()));
+                        if (intersects()) {
+                            collision = true;
+                            path.getElements().clear();
+                            System.out.println("collision at " + point.getX() + ", " + point.getY());
+                        } else {
+                            path.getElements().add(new LineTo(point.getX(), point.getY()));
+                            pathtmp.getElements().clear();
                         }
                     }
                 });
-
         primaryStage.addEventHandler(MouseEvent.MOUSE_RELEASED,
-                new EventHandler<MouseEvent>(){
-
-                    @Override
-                    public void handle(MouseEvent event) {
-                        if (!collision) {
-                            for (Point p : currentLine) {
-                                map.put(p, true);
-                            }
-                            lines.add(path);
+                event -> {
+                    if (!collision) {
+                        for (Point p : currentLine) {
+                            map.put(p, true);
                         }
-                        scene.setCursor(Cursor.DEFAULT);
+                        lines.add(path);
                     }
+                    scene.setCursor(Cursor.DEFAULT);
                 });
 
 
@@ -128,7 +96,7 @@ public class Main extends Application {
         launch(args);
     }
 
-    private void initDraw(GraphicsContext gc){
+    private void initDraw(GraphicsContext gc) {
         double canvasWidth = gc.getCanvas().getWidth();
         double canvasHeight = gc.getCanvas().getHeight();
 
@@ -149,18 +117,12 @@ public class Main extends Application {
 
     }
 
-    private boolean validPoints() {
-        for (Point p : pointCluster) {
-            if (!prevPointCluster.contains(p) && (map.containsKey(p) || currentLine.contains(p))) {
-                return false;
-            }
-        }
-        return true;
-    }
-
     private boolean intersects() {
         boolean res = false;
         Shape temp;
+        if (Shape.intersect(pathtmp, path).getBoundsInLocal().getWidth() > 1.5) {
+            return true;
+        }
         for (Shape line : lines) {
             temp = Shape.intersect(path, line);
             boolean intersects = temp.getBoundsInLocal().getWidth() != -1;
@@ -171,17 +133,5 @@ public class Main extends Application {
         return res;
     }
 
-    private void addPointsToCluster() {
-        pointCluster = new ArrayList<>();
-        pointCluster.add(point);
-        pointCluster.add(new Point(point.getX() + 1, point.getY()));
-        pointCluster.add(new Point(point.getX() - 1, point.getY()));
-        pointCluster.add(new Point(point.getX(), point.getY() + 1));
-        pointCluster.add(new Point(point.getX(), point.getY() - 1));
-        pointCluster.add(new Point(point.getX() + 1, point.getY() + 1));
-        pointCluster.add(new Point(point.getX() + 1, point.getY() - 1));
-        pointCluster.add(new Point(point.getX() - 1, point.getY() + 1));
-        pointCluster.add(new Point(point.getX() - 1, point.getY() - 1));
-    }
 
 }
