@@ -2,21 +2,21 @@ package Model;
 
 public class Node {
 
-    private int x;
-    private int y;
+    private double x;
+    private double y;
     private int numberOfConnectingEdges;
 
-    public Node(int x, int y, int numberOfConnectingEdges) {
+    public Node(double x, double y, int numberOfConnectingEdges) {
         this.x = x;
         this.y = y;
         this.numberOfConnectingEdges = numberOfConnectingEdges;
     }
 
-    public int getX() {
+    public double getX() {
         return x;
     }
 
-    public int getY() {
+    public double getY() {
         return y;
     }
 

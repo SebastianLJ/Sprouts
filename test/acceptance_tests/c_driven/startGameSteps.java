@@ -2,9 +2,9 @@ package acceptance_tests.c_driven;
 
 import Exceptions.IllegalNodesChosenException;
 import Exceptions.NotEnoughInitialNodesException;
-import cucumber.api.java.en.Given;
-import cucumber.api.java.en.Then;
 import holders.ErrorMessageHolder;
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
 import sample.Main;
 import Model.Point;
 
@@ -24,7 +24,6 @@ public class startGameSteps {
 
     @Given("that no game is being played")
     public void thatNoGameIsBeingPlayed() {
-        main = new Main();
         main.resetSproutController();
         assertFalse(main.getController().isGameOnGoing());
     }
@@ -46,8 +45,8 @@ public class startGameSteps {
 
     @Then("the game has {int} nodes and {int} lines drawn")
     public void theGameHasNodesAndLinesDrawn(int int1, int int2) {
-        assertEquals(int1, main.getController().getSproutModel().getNumberOfNodes());
-        assertEquals(int2, main.getController().getSproutModel().getNumberOfEdges());
+        assertEquals(int1, main.getController().getSproutModel().getNodes().size());
+        assertEquals(int2, main.getController().getSproutModel().getEdges().size());
     }
 
     @Then("no game is being played")

@@ -1,12 +1,12 @@
 package Model;
 
-import javafx.scene.shape.Shape;
+import javafx.scene.shape.Line;
 
 import java.util.*;
 
 public class SproutModel {
 
-    private List<Shape> edges;
+    private List<Line> edges;
     private List<Node> nodes;
     private int height = 500;       // TODO: make user-settable
     private int width = 500;        // TODO: make user-settable
@@ -32,12 +32,12 @@ public class SproutModel {
         nodes.clear();
     }
 
-    public int getNumberOfNodes() {
-        return nodes.size();
+    public List<Node> getNodes() {
+        return nodes;
     }
 
-    public int getNumberOfEdges() {
-        return edges.size();
+    public List<Line> getEdges() {
+        return edges;
     }
 
     public boolean hasNodeWithName(int name) {
@@ -48,8 +48,23 @@ public class SproutModel {
         return nodes.get(name).hasMaxNumberOfEdges();
     }
 
-    public void addEdgeBetweenNodes(int startNode, int endNode) {
-        // TODO;
+    public void drawEdgeBetweenNodes(int startNode, int endNode) {
+        Line newLine = new Line();
+        newLine.setStartX(nodes.get(startNode).getX());
+        newLine.setStartY(nodes.get(startNode).getY());
+        newLine.setEndX(nodes.get(endNode).getX());
+        newLine.setEndY(nodes.get(endNode).getY());
+        edges.add(newLine);
+        addNodeOnEdge(newLine);
+    }
+
+    public void addNodeOnEdge(Line edge) {
+        double edgeIntervalX = Math.abs(edge.getEndX() - edge.getStartX());
+        double edgeIntervalY = Math.abs(edge.getEndY() - edge.getStartY());
+        double newNodeX = Math.min(edge.getStartX(), edge.getEndX()) + (edgeIntervalX/2);
+        double newNodeY = Math.min(edge.getStartY(), edge.getEndY()) + (edgeIntervalY/2);
+        Node newNode = new Node(newNodeX, newNodeY, 2);
+        nodes.add(newNode);
     }
 
 }

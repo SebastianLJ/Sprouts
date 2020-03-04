@@ -2,11 +2,14 @@ package acceptance_tests.c_driven;
 
 import Exceptions.IllegalNodesChosenException;
 import Exceptions.NotEnoughInitialNodesException;
-import Model.Point;
-import cucumber.api.java.en.*;
+import Model.Node;
 import holders.ErrorMessageHolder;
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
+import javafx.scene.shape.Line;
 import sample.Main;
 
+import java.util.List;
 import java.util.Scanner;
 
 import static org.junit.Assert.*;
@@ -15,55 +18,51 @@ public class playGameSteps {
 
     private Main main;
     private ErrorMessageHolder errorMessageHolder;
-    int noOfNodes;
-    int numberOfEdges;
-    int startNodeName;
-    int endNodeName;
+    private int startNode;
+    private int endNode;
+    private int initialNumberOfNodes;
+    private int initialNumberOfEdges;
 
     public playGameSteps(Main main, ErrorMessageHolder errorMessageHolder) {
         this.main = main;
         this.errorMessageHolder = errorMessageHolder;
     }
 
-//    @Given("the user chooses nodes {int} and {int}")
-//    public void theUserChoosesNodesAnd(Integer int1, Integer int2) throws NotEnoughInitialNodesException, IllegalNodesChosenException {
-//        startNodeName = int1;
-//        endNodeName = int2;
-//        noOfNodes = Math.max(Math.max(int1, int2), 3);
-//        numberOfEdges = 0;
-//        Scanner scanner = new Scanner(String.valueOf(noOfNodes) + "\n" + int1.toString() + "\n" + int2.toString());
-//        main.acceptUserInput(scanner);
-//    }
-//
-//    @Given("nodes {int} and {int} exist")
-//    public void nodesAndExist(Integer int1, Integer int2) {
-//        assertTrue(main.getController().getSproutModel().hasNodeWithName(int1) && main.getController().getSproutModel().hasNodeWithName(int2));
-//    }
-//
-//    @Given("nodes {int} and {int} are valid")
-//    public void nodesAndAreValid(Integer int1, Integer int2) {
-//        assertTrue(main.getController().getSproutModel().hasMaxNumberOfEdges(int1) && main.getController().getSproutModel().hasMaxNumberOfEdges(int2));
-//    }
-//
-//    @Then("a new node is created on the line between the two nodes")
-//    public void aNewNodeIsCreatedOnTheLineBetweenTheTwoNodes() {
-//        Point startNode = main.getController().getSproutModel().nodeCoordinates(startNodeName);
-//        Point endNode = main.getController().getSproutModel().nodeCoordinates(endNodeName);
-//        Point newNode = main.getController().getSproutModel().nodeCoordinates(noOfNodes);
-//        int xUpperBound = Math.max(startNode.getX(), endNode.getX());
-//        int xLowerBound = Math.min(startNode.getX(), endNode.getX());
-//        int yUpperBound = Math.max(startNode.getY(), endNode.getY());
-//        int yLowerBound = Math.min(startNode.getY(), endNode.getY());
-//        assertTrue(newNode.getX() < xUpperBound &&
-//                            newNode.getX() > xLowerBound &&
-//                            newNode.getY() < yUpperBound &&
-//                            newNode.getY() > yLowerBound);
-//    }
-//
-//    @Then("the game has been extended by one line and one node")
-//    public void theGameHasBeenExtendedByOneLineAndOneNode() {
-//        assertEquals(noOfNodes + 1, main.getController().getSproutModel().getNumberOfNodes());
-//        assertEquals(numberOfEdges + 1, main.getController().getSproutModel().getNumberOfEdges());
-//    }
+    @Given("the user chooses nodes {int} and {int}")
+    public void theUserChoosesNodesAnd(Integer int1, Integer int2) throws NotEnoughInitialNodesException, IllegalNodesChosenException {
+        this.startNode = int1;
+        this.endNode = int2;
+        initialNumberOfNodes = 2;
+        initialNumberOfEdges = 0;
+        int initialNumberOfNodes = Math.max(int1, int2);
+        Scanner scanner = new Scanner(String.valueOf(initialNumberOfNodes) + "\n" + int1.toString() + " " + int2.toString());
+        main.acceptUserInput(scanner);
+    }
+
+    @Given("nodes {int} and {int} exist")
+    public void nodesAndExist(Integer int1, Integer int2) {
+        assertTrue(main.getController().getSproutModel().hasNodeWithName(int1) && main.getController().getSproutModel().hasNodeWithName(int2));
+    }
+
+    @Given("nodes {int} and {int} are valid")
+    public void nodesAndAreValid(Integer int1, Integer int2) {
+        assertFalse(main.getController().getSproutModel().hasMaxNumberOfEdges(int1) && main.getController().getSproutModel().hasMaxNumberOfEdges(int2));
+    }
+
+    @Then("a new node is created on the line between the two nodes")
+    public void aNewNodeIsCreatedOnTheLineBetweenTheTwoNodes() {
+        List<Node> nodes = main.getController().getSproutModel().getNodes();
+        Node newNode = nodes.get(nodes.size()-1);
+        List<Line> edges = main.getController().getSproutModel().getEdges();
+        Line newEdge = edges.get(edges.size()-1);
+        assertTrue(newEdge.contains(newNode.getX(), newNode.getY()));
+    }
+
+    @Given("the game has been extended by {int} line and {int} node")
+    public void theGameHasBeenExtendedByLineAndNode(Integer int1, Integer int2) {
+        assertEquals(initialNumberOfEdges + int1, main.getController().getSproutModel().getEdges().size());
+        assertEquals(initialNumberOfNodes + int2, main.getController().getSproutModel().getNodes().size());
+
+    }
 
 }

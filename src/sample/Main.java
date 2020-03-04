@@ -144,10 +144,10 @@ public class Main extends Application {
 
         while (stdin.hasNextInt()) {
 
-            int startNode = stdin.nextInt();
-            int endNode = stdin.nextInt();
+            int startNode = stdin.nextInt() - 1;
+            int endNode = stdin.nextInt() - 1;
 
-            controller.drawEdgeBetweenNodes(startNode, endNode);
+            controller.attemptDrawEdgeBetweenNodes(startNode, endNode);
         }
     }
 
