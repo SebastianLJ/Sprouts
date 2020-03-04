@@ -3,9 +3,9 @@ package acceptance_tests.c_driven;
 import Controller.SproutController;
 import Exceptions.IllegalNodesChosenException;
 import Exceptions.NotEnoughInitialNodesException;
+import cucumber.api.java.en.Given;
+import cucumber.api.java.en.Then;
 import holders.ErrorMessageHolder;
-import io.cucumber.java.en.Given;
-import io.cucumber.java.en.Then;
 import sample.Main;
 import Model.Point;
 
