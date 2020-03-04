@@ -1,6 +1,5 @@
 package acceptance_tests.c_driven;
 
-import Controller.SproutController;
 import Exceptions.IllegalNodesChosenException;
 import Exceptions.NotEnoughInitialNodesException;
 import holders.ErrorMessageHolder;
@@ -9,7 +8,6 @@ import io.cucumber.java.en.Then;
 import sample.Main;
 import Model.Point;
 
-import java.util.Map;
 import java.util.Scanner;
 
 import static org.junit.Assert.*;
