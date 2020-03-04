@@ -1,14 +1,15 @@
 package sample;
 
+import Exceptions.IllegalNodesChosenException;
+import Exceptions.NotEnoughInitialNodesException;
+import Model.Point;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
@@ -18,10 +19,13 @@ import javafx.stage.Stage;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Scanner;
 
+import Controller.SproutController;
 
 public class Main extends Application {
 
+    static SproutController controller = new SproutController();
     HashMap<Point, Boolean> map = new HashMap<>();
     ArrayList<Point> currentLine = new ArrayList<>();
     Point prevPoint;
@@ -33,6 +37,7 @@ public class Main extends Application {
     Path path;
     boolean collision = false;
     Group root = new Group();
+
 
     @Override
     public void start(Stage primaryStage) {
@@ -124,8 +129,26 @@ public class Main extends Application {
         primaryStage.show();
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws NotEnoughInitialNodesException, IllegalNodesChosenException {
+
+//        acceptUserInput(new Scanner(System.in));
         launch(args);
+    }
+
+    public static void acceptUserInput(Scanner scanner) throws NotEnoughInitialNodesException, IllegalNodesChosenException {
+
+        Scanner stdin = scanner;
+
+        int noOfInitialNodes = stdin.nextInt();
+        controller.initializeGame(noOfInitialNodes);
+
+        while (stdin.hasNextInt()) {
+
+            int startNode = stdin.nextInt();
+            int endNode = stdin.nextInt();
+
+            controller.choseNodesForDrawing(startNode, endNode);
+        }
     }
 
     private void initDraw(GraphicsContext gc){
@@ -182,6 +205,17 @@ public class Main extends Application {
         pointCluster.add(new Point(point.getX() + 1, point.getY() - 1));
         pointCluster.add(new Point(point.getX() - 1, point.getY() + 1));
         pointCluster.add(new Point(point.getX() - 1, point.getY() - 1));
+    }
+
+    // -----------------------------------------//
+    // for testing:
+
+    public void resetSproutController() {
+        controller = new SproutController();
+    }
+
+    public SproutController getController() {
+        return controller;
     }
 
 }

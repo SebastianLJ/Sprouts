@@ -1,28 +1,65 @@
 package acceptance_tests.c_driven;
 
+import Controller.SproutController;
+import Exceptions.IllegalNodesChosenException;
+import Exceptions.NotEnoughInitialNodesException;
+import holders.ErrorMessageHolder;
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
+import sample.Main;
+import Model.Point;
+
+import java.util.Map;
+import java.util.Scanner;
+
+import static org.junit.Assert.*;
+
 public class startGameSteps {
 
+    private Main main;
+    private ErrorMessageHolder errorMessageHolder;
+
+    public startGameSteps(Main main, ErrorMessageHolder errorMessageHolder) {
+        this.main = main;
+        this.errorMessageHolder = errorMessageHolder;
+    }
 
     @Given("that no game is being played")
     public void thatNoGameIsBeingPlayed() {
-        // Write code here that turns the phrase above into concrete actions
-        throw new io.cucumber.java.PendingException();
+        main = new Main();
+        main.resetSproutController();
+        assertFalse(main.getController().isGameOnGoing());
     }
 
     @Given("the user inputs {int} initial nodes")
     public void theUserInputsInitialNodes(Integer int1) {
-        // Write code here that turns the phrase above into concrete actions
-        throw new io.cucumber.java.PendingException();
+        Scanner scanner = new Scanner(int1.toString());
+        try {
+            main.acceptUserInput(scanner);
+        } catch (NotEnoughInitialNodesException | IllegalNodesChosenException e) {
+            errorMessageHolder.setErrorMessage(e.getMessage());
+        }
     }
+
     @Then("a new game is created")
     public void aNewGameIsCreated() {
-        // Write code here that turns the phrase above into concrete actions
-        throw new io.cucumber.java.PendingException();
+        assertTrue(main.getController().isGameOnGoing());
     }
+
     @Then("the game has {int} nodes and {int} lines drawn")
-    public void theGameHasNodesAndLinesDrawn(Integer int1, Integer int2) {
-        // Write code here that turns the phrase above into concrete actions
-        throw new io.cucumber.java.PendingException();
+    public void theGameHasNodesAndLinesDrawn(int int1, int int2) {
+        assertEquals(int1, main.getController().getSproutModel().getNumberOfNodes());
+        assertEquals(int2, main.getController().getSproutModel().getNumberOfEdges());
+    }
+
+    @Then("no game is being played")
+    public void noGameIsBeingPlayed() {
+        assertFalse(main.getController().isGameOnGoing());
+    }
+
+    @Then("a message with the text {string} is given to the user")
+    public void aMessageWithTheTextIsGivenToTheUser(String string) {
+        assertEquals(string, errorMessageHolder.getErrorMessage());
     }
 
 }
