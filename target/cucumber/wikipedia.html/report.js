@@ -41,24 +41,23 @@ formatter.result({
 });
 formatter.step({
   "name": "a new node is created on the line between the two nodes",
-  "keyword": "And "
+  "keyword": "Then "
 });
 formatter.match({
   "location": "acceptance_tests.c_driven.playGameSteps.aNewNodeIsCreatedOnTheLineBetweenTheTwoNodes()"
 });
 formatter.result({
-  "error_message": "java.lang.IndexOutOfBoundsException: Index 3 out of bounds for length 3\n\tat java.base/jdk.internal.util.Preconditions.outOfBounds(Preconditions.java:64)\n\tat java.base/jdk.internal.util.Preconditions.outOfBoundsCheckIndex(Preconditions.java:70)\n\tat java.base/jdk.internal.util.Preconditions.checkIndex(Preconditions.java:248)\n\tat java.base/java.util.Objects.checkIndex(Objects.java:372)\n\tat java.base/java.util.ArrayList.get(ArrayList.java:458)\n\tat Model.SproutModel.nodeCoordinates(SproutModel.java:118)\n\tat acceptance_tests.c_driven.playGameSteps.aNewNodeIsCreatedOnTheLineBetweenTheTwoNodes(playGameSteps.java:53)\n\tat ✽.a new node is created on the line between the two nodes(file:///Users/birkberger/Documents/IntelliJProjects/Sprouts/use_cases/c_driven/draw_a_line.feature:9)\n",
-  "status": "failed"
+  "status": "passed"
 });
 formatter.step({
-  "name": "the game has been extended by one line and one node",
+  "name": "the game has been extended by 1 line and 1 node",
   "keyword": "And "
 });
 formatter.match({
-  "location": "acceptance_tests.c_driven.playGameSteps.theGameHasBeenExtendedByOneLineAndOneNode()"
+  "location": "acceptance_tests.c_driven.playGameSteps.theGameHasBeenExtendedByLineAndNode(java.lang.Integer,java.lang.Integer)"
 });
 formatter.result({
-  "status": "skipped"
+  "status": "passed"
 });
 formatter.uri("file:use_cases/c_driven/initialize_game.feature");
 formatter.feature({
