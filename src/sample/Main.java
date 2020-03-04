@@ -48,21 +48,20 @@ public class Main extends Application {
 
         primaryStage.addEventHandler(MouseEvent.MOUSE_PRESSED,
                 event -> {
-                        scene.setCursor(Cursor.CROSSHAIR);
-                        collision = false;
-                        point = new Point((int) event.getX(), (int) event.getY());
-                        path = new Path();
-                        path.setStrokeWidth(1);
-                        path.setStroke(Color.BLACK);
-                        root.getChildren().add(path);
-                        path.getElements().add(new MoveTo(point.getX(), point.getY()));
+                    scene.setCursor(Cursor.CROSSHAIR);
+                    collision = false;
+                    point = new Point((int) event.getX(), (int) event.getY());
+                    path = new Path();
+                    path.setStrokeWidth(1);
+                    path.setStroke(Color.BLACK);
+                    root.getChildren().add(path);
+                    path.getElements().add(new MoveTo(point.getX(), point.getY()));
                 });
 
         primaryStage.addEventHandler(MouseEvent.MOUSE_DRAGGED,
                 event -> {
                     if (collision) {
                         scene.setCursor(Cursor.DEFAULT);
-                        System.out.println("collision has happend draw somewhere else");
                     } else {
                         pathtmp.getElements().add(new MoveTo(point.getX(), point.getY()));
                         point = new Point((int) event.getX(), (int) event.getY());
