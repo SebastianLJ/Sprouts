@@ -3,9 +3,8 @@ package acceptance_tests.c_driven;
 import Exceptions.IllegalNodesChosenException;
 import Exceptions.NotEnoughInitialNodesException;
 import Model.Point;
+import cucumber.api.java.en.*;
 import holders.ErrorMessageHolder;
-import io.cucumber.java.en.Given;
-import io.cucumber.java.en.Then;
 import sample.Main;
 
 import java.util.Scanner;
