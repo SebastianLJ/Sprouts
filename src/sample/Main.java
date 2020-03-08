@@ -1,14 +1,15 @@
 package sample;
 
+import Exceptions.IllegalNodesChosenException;
+import Exceptions.NotEnoughInitialNodesException;
+import Model.Point;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
@@ -18,10 +19,13 @@ import javafx.stage.Stage;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Scanner;
 
+import Controller.SproutController;
 
 public class Main extends Application {
 
+    static SproutController controller = new SproutController();
     HashMap<Point, Boolean> map = new HashMap<>();
     ArrayList<Point> currentLine = new ArrayList<>();
     Point point;
@@ -30,6 +34,7 @@ public class Main extends Application {
     Path pathtmp;
     boolean collision = false;
     Group root = new Group();
+
 
     @Override
     public void start(Stage primaryStage) {
@@ -91,8 +96,26 @@ public class Main extends Application {
         primaryStage.show();
     }
 
-    public static void main(String[] args) {
-        launch(args);
+    public static void main(String[] args) throws NotEnoughInitialNodesException, IllegalNodesChosenException {
+
+        acceptUserInput(new Scanner(System.in));  // uncomment for console driven game
+//        launch(args);                             // uncomment for javaFX driven game
+    }
+
+    public static void acceptUserInput(Scanner scanner) throws NotEnoughInitialNodesException, IllegalNodesChosenException {
+
+        Scanner stdin = scanner;
+
+        int noOfInitialNodes = stdin.nextInt();
+        controller.attemptInitializeGame(noOfInitialNodes);
+
+        while (stdin.hasNextInt()) {
+
+            int startNode = stdin.nextInt() - 1;
+            int endNode = stdin.nextInt() - 1;
+
+            controller.attemptDrawEdgeBetweenNodes(startNode, endNode);
+        }
     }
 
     private void initDraw(GraphicsContext gc) {
@@ -132,5 +155,16 @@ public class Main extends Application {
         return res;
     }
 
+
+    // -----------------------------------------//
+    // for testing:
+
+    public void resetSproutController() {
+        controller = new SproutController();
+    }
+
+    public SproutController getController() {
+        return controller;
+    }
 
 }

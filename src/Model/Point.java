@@ -1,9 +1,11 @@
-package sample;
+package Model;
 
 import java.util.Objects;
 
 public class Point {
-    int x,y;
+
+    private int x;
+    private int y;
 
     public Point(int x, int y) {
         this.x = x;
@@ -22,7 +24,7 @@ public class Point {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Point point = (Point) o;
+        Model.Point point = (Model.Point) o;
         return x == point.x &&
                 y == point.y;
     }
@@ -36,7 +38,7 @@ public class Point {
         return "x=" + x + ", y=" + y;
     }
 
-    public Point copyOf() {
-        return new Point(x,y);
+    public Model.Point copyOf() {
+        return new Model.Point(x,y);
     }
 }
