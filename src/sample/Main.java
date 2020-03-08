@@ -140,7 +140,7 @@ public class Main extends Application {
         Scanner stdin = scanner;
 
         int noOfInitialNodes = stdin.nextInt();
-        controller.initializeGame(noOfInitialNodes);
+        controller.attemptInitializeGame(noOfInitialNodes);
 
         while (stdin.hasNextInt()) {
 

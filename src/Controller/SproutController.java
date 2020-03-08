@@ -15,7 +15,7 @@ public class SproutController {
         gameOnGoing = false;
     };
 
-    public void initializeGame(int noOfInitialNodes) throws NotEnoughInitialNodesException {
+    public void attemptInitializeGame(int noOfInitialNodes) throws NotEnoughInitialNodesException {
 
         if (gameOnGoing) {
             // TODO
@@ -38,7 +38,8 @@ public class SproutController {
 
         if (!sproutModel.hasNodeWithName(startNode) || !sproutModel.hasNodeWithName(endNode)) {
             throw new IllegalNodesChosenException("One or both nodes chosen does not exist");
-        } else if (sproutModel.hasMaxNumberOfEdges(startNode) || sproutModel.hasMaxNumberOfEdges(endNode)) {
+        } else if ((startNode != endNode && (sproutModel.getNumberOfEdges(startNode) == 3 || sproutModel.getNumberOfEdges(endNode) == 3)) ||
+                   (startNode == endNode && sproutModel.getNumberOfEdges(startNode) > 1)) {
             throw new IllegalNodesChosenException("Nodes cannot have more than 3 connecting edges");
         } else {
             sproutModel.drawEdgeBetweenNodes(startNode, endNode);

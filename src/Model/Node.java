@@ -24,7 +24,7 @@ public class Node {
         return numberOfConnectingEdges;
     }
 
-    public boolean hasMaxNumberOfEdges() {
-        return numberOfConnectingEdges == 3;
+    public void incNumberOfConnectingEdges(int amountOfNewEdges) {
+        numberOfConnectingEdges += amountOfNewEdges;
     }
 }

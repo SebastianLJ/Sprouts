@@ -10,8 +10,18 @@ formatter.scenario({
   "keyword": "Scenario"
 });
 formatter.step({
-  "name": "the user chooses nodes 1 and 2",
+  "name": "that a game has nodes 1 and 2",
   "keyword": "Given "
+});
+formatter.match({
+  "location": "acceptance_tests.c_driven.playGameSteps.thatAGameHasNodesAnd(java.lang.Integer,java.lang.Integer)"
+});
+formatter.result({
+  "status": "passed"
+});
+formatter.step({
+  "name": "the user chooses nodes 1 and 2",
+  "keyword": "And "
 });
 formatter.match({
   "location": "acceptance_tests.c_driven.playGameSteps.theUserChoosesNodesAnd(java.lang.Integer,java.lang.Integer)"
@@ -50,11 +60,56 @@ formatter.result({
   "status": "passed"
 });
 formatter.step({
-  "name": "the game has been extended by 1 line and 1 node",
+  "name": "the game has been extended by 1 line(s) and 1 node(s)",
   "keyword": "And "
 });
 formatter.match({
-  "location": "acceptance_tests.c_driven.playGameSteps.theGameHasBeenExtendedByLineAndNode(java.lang.Integer,java.lang.Integer)"
+  "location": "acceptance_tests.c_driven.playGameSteps.theGameHasBeenExtendedByLineSAndNodeS(java.lang.Integer,java.lang.Integer)"
+});
+formatter.result({
+  "status": "passed"
+});
+formatter.scenario({
+  "name": "Choose one existing and one non-existing node",
+  "description": "",
+  "keyword": "Scenario"
+});
+formatter.step({
+  "name": "that a game has nodes 1 and 2",
+  "keyword": "Given "
+});
+formatter.match({
+  "location": "acceptance_tests.c_driven.playGameSteps.thatAGameHasNodesAnd(java.lang.Integer,java.lang.Integer)"
+});
+formatter.result({
+  "status": "passed"
+});
+formatter.step({
+  "name": "the user chooses nodes 1 and 3",
+  "keyword": "And "
+});
+formatter.match({
+  "location": "acceptance_tests.c_driven.playGameSteps.theUserChoosesNodesAnd(java.lang.Integer,java.lang.Integer)"
+});
+formatter.result({
+  "status": "passed"
+});
+formatter.step({
+  "name": "the game has been extended by 0 line(s) and 0 node(s)",
+  "keyword": "Then "
+});
+formatter.match({
+  "location": "acceptance_tests.c_driven.playGameSteps.theGameHasBeenExtendedByLineSAndNodeS(java.lang.Integer,java.lang.Integer)"
+});
+formatter.result({
+  "status": "passed"
+});
+formatter.step({
+  "name": "a message with the text \"One or both nodes chosen does not exist\" is given to the user",
+  "keyword": "And "
+});
+formatter.match({
+  "location": "acceptance_tests.c_driven.startGameSteps.aMessageWithTheTextIsGivenToTheUser(java.lang.String)"
 });
 formatter.result({
   "status": "passed"
