@@ -13,5 +13,6 @@
     <orderEntry type="library" name="apiguardian-api-1.1.0" level="project" />
     <orderEntry type="library" name="javaFX12" level="project" />
     <orderEntry type="library" name="cucumber" level="project" />
+    <orderEntry type="library" name="lib" level="project" />
   </component>
 </module>
