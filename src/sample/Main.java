@@ -88,7 +88,6 @@ public class Main extends Application {
                     scene.setCursor(Cursor.DEFAULT);
                 });
 
-
         primaryStage.show();
     }
 
