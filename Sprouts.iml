@@ -14,5 +14,6 @@
     <orderEntry type="library" name="javaFX12" level="project" />
     <orderEntry type="library" name="cucumber" level="project" />
     <orderEntry type="library" name="lib" level="project" />
+    <orderEntry type="library" name="lib1" level="project" />
   </component>
 </module>
