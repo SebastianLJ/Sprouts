@@ -10,10 +10,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
 import java.util.Objects;
 import java.util.ResourceBundle;
@@ -61,8 +58,8 @@ public class FileSimulationController implements Initializable {
         goToScene(event, "EnterFileName.fxml");
     }
 
-    public boolean validateFile(String fileName) throws Exception {
-        File file = new File(fileName);
+    public boolean validateFile() throws Exception {
+        File file = new File(filename);
         BufferedReader reader = new BufferedReader(new FileReader(file));
         String line = reader.readLine();
         int lineNumber = 1;
@@ -78,8 +75,8 @@ public class FileSimulationController implements Initializable {
         return true;
     }
 
-    public void runFile(String fileName) throws Exception {
-        File file = new File(fileName);
+    public void runFile(ActionEvent event) throws IOException, InterruptedException {
+        File file = new File(filename);
         BufferedReader reader = new BufferedReader((new FileReader(file)));
         String line = reader.readLine();
         int linenumber = 1;
@@ -105,6 +102,4 @@ public class FileSimulationController implements Initializable {
             }
         }
     }
-
-
 }
