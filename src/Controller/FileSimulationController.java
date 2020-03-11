@@ -38,34 +38,27 @@ public class FileSimulationController implements Initializable {
 
     }
 
-    public void goToMainMenu(ActionEvent event) throws IOException {
-        Parent mainMenuParent = FXMLLoader.load(
+    private void goToScene(ActionEvent event, String fxmlToLoad) throws IOException {
+        Parent parent = FXMLLoader.load(
                 Objects.requireNonNull(SproutLauncher.class.getClassLoader().getResource(
-                        "MainMenu.fxml")
+                        fxmlToLoad)
                 ));
 
-        Scene mainMenuScene = new Scene(mainMenuParent);
+        Scene scene = new Scene(parent);
 
         //This line gets the Stage information
-        Stage window = (Stage)((Node) event.getSource()).getScene().getWindow();
+        Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
 
-        window.setScene(mainMenuScene);
+        window.setScene(scene);
         window.show();
     }
 
+    public void goToMainMenu(ActionEvent event) throws IOException {
+        goToScene(event, "MainMenu.fxml");
+    }
+
     public void goToEnterFileToSimulate(ActionEvent event) throws IOException {
-        Parent enterFileNameParent = FXMLLoader.load(
-                Objects.requireNonNull(SproutLauncher.class.getClassLoader().getResource(
-                        "EnterFileName.fxml")
-                ));
-
-        Scene enterFileNameScene = new Scene(enterFileNameParent);
-
-        //This line gets the Stage information
-        Stage window = (Stage)((Node) event.getSource()).getScene().getWindow();
-
-        window.setScene(enterFileNameScene);
-        window.show();
+        goToScene(event, "EnterFileName.fxml");
     }
 
     public boolean validateFile(String fileName) throws Exception {
