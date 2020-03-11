@@ -21,11 +21,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
+import Controller.FileSimulationController;
 import Controller.SproutController;
 
 public class Main extends Application {
 
     static SproutController controller = new SproutController();
+    FileSimulationController fileSimulationController = new FileSimulationController(controller);
+
     HashMap<Point, Boolean> map = new HashMap<>();
     ArrayList<Point> currentLine = new ArrayList<>();
     Point point;
