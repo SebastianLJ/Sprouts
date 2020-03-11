@@ -94,7 +94,7 @@ public class FileSimulationController implements Initializable {
             move = line.split("\\s");
             Thread.sleep(simSpeed);
             try {
-                sproutController.attemptDrawEdgeBetweenNodes(Integer.parseInt(move[0]), Integer.parseInt(move[1]));
+                sproutController.attemptDrawEdgeBetweenNodes(Integer.parseInt(move[0]) - 1, Integer.parseInt(move[1]) - 1);
             } catch (Exception e) {
                 System.out.println(e.getMessage());
             }
