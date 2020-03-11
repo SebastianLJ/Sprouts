@@ -16,13 +16,12 @@ import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class FileSimulationController implements Initializable {
-    private SproutController sproutController;
+    private SproutController sproutController = new SproutController();
     public Label filenameLabel;
     private String filename;
     private long simSpeed = 500; //speed in ms
 
-    public FileSimulationController(SproutController controller) {
-        this.sproutController = controller;
+    public FileSimulationController() {
     }
 
     void setFileName(String filename) {
@@ -82,7 +81,6 @@ public class FileSimulationController implements Initializable {
         int linenumber = 1;
 
         //init starting points
-        line = reader.readLine();
         int n = Integer.parseInt(line);
         try {
             sproutController.attemptInitializeGame(n);
