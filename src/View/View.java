@@ -14,11 +14,7 @@ public class View {
 
     public void updateCanvas(Pane gamePane) {
         for (Node node: model.getNodes()) {
-            Circle circle = new Circle(node.getX(), node.getY(), 5);
-            gamePane.getChildren().add(circle);
+            gamePane.getChildren().add(node.getShape());
         }
     }
-
-
-
 }
