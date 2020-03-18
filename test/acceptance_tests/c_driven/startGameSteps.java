@@ -32,11 +32,7 @@ public class startGameSteps {
     @Given("the user inputs {int} initial nodes")
     public void theUserInputsInitialNodes(Integer int1) {
         Scanner scanner = new Scanner(int1.toString());
-        try {
-            main.acceptUserInput(scanner);
-        } catch (NotEnoughInitialNodesException | IllegalNodesChosenException e) {
-            errorMessageHolder.setErrorMessage(e.getMessage());
-        }
+        main.acceptUserInput(scanner);
     }
 
     @Then("a new game is created")
