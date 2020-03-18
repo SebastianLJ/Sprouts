@@ -194,6 +194,26 @@ formatter.match({
 formatter.result({
   "status": "passed"
 });
+formatter.step({
+  "name": "the game has been extended by 0 line(s) and 0 node(s)",
+  "keyword": "Then "
+});
+formatter.match({
+  "location": "acceptance_tests.c_driven.playGameSteps.theGameHasBeenExtendedByLineSAndNodeS(java.lang.Integer,java.lang.Integer)"
+});
+formatter.result({
+  "status": "passed"
+});
+formatter.step({
+  "name": "a message with the text \"Nodes cannot have more than 3 connecting edges\" is given to the user",
+  "keyword": "And "
+});
+formatter.match({
+  "location": "acceptance_tests.c_driven.startGameSteps.aMessageWithTheTextIsGivenToTheUser(java.lang.String)"
+});
+formatter.result({
+  "status": "passed"
+});
 formatter.scenario({
   "name": "Choose two existing nodes",
   "description": "",

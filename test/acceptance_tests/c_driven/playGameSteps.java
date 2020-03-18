@@ -38,12 +38,12 @@ public class playGameSteps {
         this.endNode = int2;
         numberOfNodes = Math.max(int1, int2);
         numberOfEdges = 0;
-        scannerInput = String.valueOf(numberOfNodes) + "\n";
+        scannerInput = numberOfNodes + "\n";
     }
 
     @Given("node {int} is connected to node {int} and to node {int}")
     public void nodeIsConnectedToNodeAndToNode(Integer int1, Integer int2, Integer int3) {
-        scannerInput += int1 + " " + int2 + "\n" + int1 + " " + int3;
+        scannerInput += int1 + " " + int2 + "\n" + int1 + " " + int3 + "\n";
         numberOfEdges += 2;
         numberOfNodes += 2;
     }
@@ -51,7 +51,7 @@ public class playGameSteps {
     @Given("the user chooses nodes {int} and {int}")
     public void theUserChoosesNodesAnd(Integer int1, Integer int2) {
 
-        Scanner scanner = new Scanner(scannerInput + int1.toString() + " " + int2.toString());
+        Scanner scanner = new Scanner(scannerInput + int1 + " " + int2 + "\n");
         try {
             main.acceptUserInput(scanner);
         } catch (NotEnoughInitialNodesException | IllegalNodesChosenException e) {

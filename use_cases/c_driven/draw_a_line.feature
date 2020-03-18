@@ -26,8 +26,8 @@ Feature: Draw a line between two nodes
     Given that a game has nodes 1 and 2
     And node 1 is connected to node 1 and to node 2
     And the user chooses nodes 1 and 2
-#    Then the game has been extended by 0 line(s) and 0 node(s)
-#    And a message with the text "Nodes cannot have more than 3 connecting edges" is given to the user
+    Then the game has been extended by 0 line(s) and 0 node(s)
+    And a message with the text "Nodes cannot have more than 3 connecting edges" is given to the user
 
 #  Scenario: Draw a line that collides with an existing line
 #    Given that a user draws a line
