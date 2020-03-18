@@ -205,7 +205,9 @@ public class SproutModel {
         }
 
     public boolean doPathsCollide() {
+/*
         System.out.println("Bredde: " + Shape.intersect(pathTmp, path).getBoundsInLocal().getWidth());
+*/
         if (Shape.intersect(pathTmp, path).getBoundsInLocal().getWidth() > COLLISIONWIDTH) {
             return true;
         }
