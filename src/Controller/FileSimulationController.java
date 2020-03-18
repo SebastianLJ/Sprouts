@@ -1,5 +1,6 @@
 package Controller;
 
+import Exceptions.InvalidFileSyntax;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -9,14 +10,19 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class FileSimulationController implements Initializable {
+    private SproutController sproutController = new SproutController();
     public Label filenameLabel;
     private String filename;
+    private long simSpeed = 500; //speed in ms
+
+    public FileSimulationController() {
+    }
 
     void setFileName(String filename) {
         this.filename = filename;
@@ -28,33 +34,71 @@ public class FileSimulationController implements Initializable {
 
     }
 
-    public void goToMainMenu(ActionEvent event) throws IOException {
-        Parent mainMenuParent = FXMLLoader.load(
+    private void goToScene(ActionEvent event, String fxmlToLoad) throws IOException {
+        Parent parent = FXMLLoader.load(
                 Objects.requireNonNull(SproutLauncher.class.getClassLoader().getResource(
-                        "MainMenu.fxml")
+                        fxmlToLoad)
                 ));
 
-        Scene mainMenuScene = new Scene(mainMenuParent);
+        Scene scene = new Scene(parent);
 
         //This line gets the Stage information
-        Stage window = (Stage)((Node) event.getSource()).getScene().getWindow();
+        Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
 
-        window.setScene(mainMenuScene);
+        window.setScene(scene);
         window.show();
     }
 
+    public void goToMainMenu(ActionEvent event) throws IOException {
+        goToScene(event, "MainMenu.fxml");
+    }
+
     public void goToEnterFileToSimulate(ActionEvent event) throws IOException {
-        Parent enterFileNameParent = FXMLLoader.load(
-                Objects.requireNonNull(SproutLauncher.class.getClassLoader().getResource(
-                        "EnterFileName.fxml")
-                ));
+        goToScene(event, "EnterFileName.fxml");
+    }
 
-        Scene enterFileNameScene = new Scene(enterFileNameParent);
+    //returns linenumber of syntax error or 0 if no error
+    public int validateFile() throws Exception {
+        File file = new File(filename);
+        BufferedReader reader = new BufferedReader(new FileReader(file));
+        String line = reader.readLine();
+        int lineNumber = 1;
+        if (!line.matches("\\d+")) {
+            return lineNumber;
+        }
+        while ((line = reader.readLine()) != null) {
+            lineNumber++;
+            if (!line.matches("\\d+\\s\\d+")) {
+                return lineNumber;
+            }
+        }
+        return 0;
+    }
 
-        //This line gets the Stage information
-        Stage window = (Stage)((Node) event.getSource()).getScene().getWindow();
+    public void runFile(ActionEvent event) throws IOException, InterruptedException {
+        File file = new File(filename);
+        BufferedReader reader = new BufferedReader((new FileReader(file)));
+        String line = reader.readLine();
+        int linenumber = 1;
 
-        window.setScene(enterFileNameScene);
-        window.show();
+        //init starting points
+        int n = Integer.parseInt(line);
+        try {
+            sproutController.attemptInitializeGame(n);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
+        //execute moves
+        String[] move = new String[2];
+        while((line = reader.readLine()) != null) {
+            move = line.split("\\s");
+            Thread.sleep(simSpeed);
+            try {
+                sproutController.attemptDrawEdgeBetweenNodes(Integer.parseInt(move[0]) - 1, Integer.parseInt(move[1]) - 1);
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+        }
     }
 }

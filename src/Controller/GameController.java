@@ -1,13 +1,15 @@
 package Controller;
 
+import Exceptions.NotEnoughInitialNodesException;
+import View.View;
 import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -16,14 +18,13 @@ import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class GameController implements Initializable {
-    @FXML private Label typeOfGameLabel;
+    public Pane gamePane;
     private int gameType; // 0 is clickToDraw and 1 is dragToDraw
-
-
+    private final int CLICK_TO_DRAW_MODE = 0;
+    private final int DRAG_TO_DRAW_MODE = 1;
 
     void setGameType(int whichGameType) {
         gameType = whichGameType;
-        typeOfGameLabel.setText(typeOfGameLabel.getText() + gameType);
     }
 
     public void goToMainMenu(ActionEvent event) throws IOException {
@@ -41,7 +42,35 @@ public class GameController implements Initializable {
         window.show();
     }
 
+
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        SproutController sproutController = new SproutController();
+        View view = new View(sproutController.getSproutModel());
+        try {
+            sproutController.attemptInitializeGame(5);
+        } catch (NotEnoughInitialNodesException e) {
+            e.printStackTrace();
+        }
+        view.updateCanvas(gamePane);
+    }
+
+    public void mouseDraggedHandler(MouseEvent mouseDragged) {
+        if (gameType == DRAG_TO_DRAW_MODE) {
+
+        }
+    }
+
+    public void mousePressedHandler(MouseEvent mousePressed) {
+        if (gameType == DRAG_TO_DRAW_MODE) {
+
+        }
+    }
+
+    public void mouseReleasedHandler(MouseEvent mouseReleased) {
+        if (gameType == DRAG_TO_DRAW_MODE) {
+
+        }
     }
 }

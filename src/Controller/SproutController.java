@@ -3,6 +3,7 @@ package Controller;
 import Exceptions.IllegalNodesChosenException;
 import Exceptions.NotEnoughInitialNodesException;
 import Model.SproutModel;
+import javafx.scene.shape.Shape;
 
 public class SproutController {
 
@@ -12,8 +13,9 @@ public class SproutController {
 
 
     public SproutController() {
+        sproutModel = new SproutModel();
         gameOnGoing = false;
-    };
+    }
 
     public void attemptInitializeGame(int noOfInitialNodes) throws NotEnoughInitialNodesException {
 
@@ -21,7 +23,6 @@ public class SproutController {
             // TODO
         } else {
             if (noOfInitialNodes > 0) {
-                sproutModel = new SproutModel();
                 sproutModel.addRandomNodes(noOfInitialNodes);
                 gameOnGoing = true;
             } else {
@@ -35,7 +36,6 @@ public class SproutController {
     }
 
     public void attemptDrawEdgeBetweenNodes(int startNode, int endNode) throws IllegalNodesChosenException {
-
         if (!sproutModel.hasNodeWithName(startNode) || !sproutModel.hasNodeWithName(endNode)) {
             throw new IllegalNodesChosenException("One or both nodes chosen does not exist");
         } else if ((startNode != endNode && (sproutModel.getNumberOfEdges(startNode) == 3 || sproutModel.getNumberOfEdges(endNode) == 3)) ||

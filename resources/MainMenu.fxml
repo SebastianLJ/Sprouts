@@ -17,17 +17,17 @@
             <Font name="System Bold" size="16.0" />
          </font>
       </Label>
-      <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#startClickToDrawGame" text="Click To Draw">
+      <Button maxWidth="300" mnemonicParsing="false" onAction="#startClickToDrawGame" text="Click To Draw">
          <font>
             <Font size="16.0" />
          </font>
       </Button>
-      <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#startDragToDrawGame" text="Drag To Draw">
+      <Button maxWidth="300" mnemonicParsing="false" onAction="#startDragToDrawGame" text="Drag To Draw">
          <font>
             <Font size="16.0" />
          </font>
       </Button>
-      <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#startEnterFileName" text="Simulate From File">
+      <Button maxWidth="300" mnemonicParsing="false" onAction="#startEnterFileName" text="Simulate From File">
          <font>
             <Font size="16.0" />
          </font>

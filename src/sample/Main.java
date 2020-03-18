@@ -4,28 +4,26 @@ import Exceptions.IllegalNodesChosenException;
 import Exceptions.NotEnoughInitialNodesException;
 import Model.Point;
 import javafx.application.Application;
-import javafx.event.EventHandler;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.LineTo;
-import javafx.scene.shape.MoveTo;
-import javafx.scene.shape.Path;
-import javafx.scene.shape.Shape;
+import javafx.scene.shape.*;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
+import Controller.FileSimulationController;
 import Controller.SproutController;
 
 public class Main extends Application {
-
+    final static public double COLLISIONWIDTH = 1.5;
     static SproutController controller = new SproutController();
+
     HashMap<Point, Boolean> map = new HashMap<>();
     ArrayList<Point> currentLine = new ArrayList<>();
     Point point;
@@ -51,6 +49,8 @@ public class Main extends Application {
         root.getChildren().add(path);
 
 
+
+
         primaryStage.addEventHandler(MouseEvent.MOUSE_PRESSED,
                 event -> {
                         scene.setCursor(Cursor.CROSSHAIR);
@@ -69,6 +69,7 @@ public class Main extends Application {
                         scene.setCursor(Cursor.DEFAULT);
                         System.out.println("collision has happend draw somewhere else");
                     } else {
+
                         pathtmp.getElements().add(new MoveTo(point.getX(), point.getY()));
                         point = new Point((int) event.getX(), (int) event.getY());
                         pathtmp.getElements().add(new LineTo(point.getX(), point.getY()));
@@ -144,7 +145,7 @@ public class Main extends Application {
     private boolean intersects() {
         boolean res = false;
         Shape temp;
-        if (Shape.intersect(pathtmp, path).getBoundsInLocal().getWidth() > 1.5) {
+        if (Shape.intersect(pathtmp, path).getBoundsInLocal().getWidth() > COLLISIONWIDTH) {
             return true;
         }
         for (Shape line : lines) {
