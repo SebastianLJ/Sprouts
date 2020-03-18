@@ -17,6 +17,7 @@ import javafx.scene.shape.Path;
 import javafx.scene.shape.Shape;
 import javafx.stage.Stage;
 
+import java.awt.geom.Path2D;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
@@ -29,11 +30,13 @@ public class Main extends Application {
     HashMap<Point, Boolean> map = new HashMap<>();
     ArrayList<Point> currentLine = new ArrayList<>();
     Point point;
+    Point point2;
     ArrayList<Shape> lines = new ArrayList<>();
     Path path;
     Path pathtmp;
     boolean collision = false;
     Group root = new Group();
+    boolean first=true;
 
 
     @Override
@@ -53,37 +56,46 @@ public class Main extends Application {
 
         primaryStage.addEventHandler(MouseEvent.MOUSE_PRESSED,
                 event -> {
-                        scene.setCursor(Cursor.CROSSHAIR);
-                        collision = false;
-                        point = new Point((int) event.getX(), (int) event.getY());
-                        path = new Path();
-                        path.setStrokeWidth(1);
-                        path.setStroke(Color.BLACK);
-                        root.getChildren().add(path);
-                        path.getElements().add(new MoveTo(point.getX(), point.getY()));
+                    scene.setCursor(Cursor.CROSSHAIR);
+                    collision = false;
+                    point = new Point((int) event.getX(), (int) event.getY());
+                    path = new Path();
+                    path.setStrokeWidth(1);
+                    pathtmp.setStrokeWidth(1);
+                    path.setStroke(Color.BLACK);
+                    root.getChildren().add(path);
+                    path.getElements().add(new MoveTo(point.getX(), point.getY()));
                 });
 
         primaryStage.addEventHandler(MouseEvent.MOUSE_DRAGGED,
                 event -> {
                     if (collision) {
                         scene.setCursor(Cursor.DEFAULT);
-                        System.out.println("collision has happend draw somewhere else");
+                        /* System.out.println("collision has happend draw somewhere else");*/
                     } else {
+                        point2 = new Point(point.getX(), point.getY());
                         pathtmp.getElements().add(new MoveTo(point.getX(), point.getY()));
                         point = new Point((int) event.getX(), (int) event.getY());
                         pathtmp.getElements().add(new LineTo(point.getX(), point.getY()));
-                        if (intersects()) {
-                            collision = true;
+                        Shape test = Shape.intersect(path, pathtmp);
+                        System.out.println("width: " + test.getBoundsInLocal().getWidth());
+                        if (test.getBoundsInLocal().getWidth() > 0.5) {
+                           collision = true;
                             path.getElements().clear();
                             System.out.println("collision at " + point.getX() + ", " + point.getY());
                         } else {
-                            path.getElements().add(new LineTo(point.getX(), point.getY()));
                             pathtmp.getElements().clear();
+                            if(!first){
+                            path.getElements().add(new LineTo(point2.getX(), point2.getY()));
+                            }
                         }
+                        first=false;
                     }
                 });
         primaryStage.addEventHandler(MouseEvent.MOUSE_RELEASED,
-                event -> {
+                event ->
+
+                {
                     if (!collision) {
                         for (Point p : currentLine) {
                             map.put(p, true);
@@ -104,7 +116,8 @@ public class Main extends Application {
         launch(args);                             // uncomment for javaFX driven game
     }
 
-    public static void acceptUserInput(Scanner scanner) throws NotEnoughInitialNodesException, IllegalNodesChosenException {
+    public static void acceptUserInput(Scanner scanner) throws
+            NotEnoughInitialNodesException, IllegalNodesChosenException {
 
         Scanner stdin = scanner;
 
