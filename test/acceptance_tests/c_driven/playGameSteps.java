@@ -80,7 +80,7 @@ public class playGameSteps {
         Scanner scanner = new Scanner(scannerInput + int1 + " " + int2 + "\n");
         main.acceptUserInput(scanner);
 
-        errorMessageHolder.setErrorMessage(outContent.toString());
+        errorMessageHolder.setErrorMessage(main.getController().getOutputExceptionMessage());
     }
 
     @Given("nodes {int} and {int} exist")

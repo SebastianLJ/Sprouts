@@ -48,9 +48,6 @@ public class Main extends Application {
         path.setStroke(Color.BLACK);
         root.getChildren().add(path);
 
-
-
-
         primaryStage.addEventHandler(MouseEvent.MOUSE_PRESSED,
                 event -> {
                         scene.setCursor(Cursor.CROSSHAIR);
@@ -98,8 +95,6 @@ public class Main extends Application {
     }
 
     public static void main(String[] args) throws NotEnoughInitialNodesException, IllegalNodesChosenException {
-
-
         acceptUserInput(new Scanner(System.in));  // uncomment for console driven game
 //        launch(args);                             // uncomment for javaFX driven game
     }
@@ -177,5 +172,4 @@ public class Main extends Application {
     public SproutController getController() {
         return controller;
     }
-
 }
