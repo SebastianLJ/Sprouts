@@ -17,7 +17,7 @@
               </font>
            </Label>
            <HBox alignment="CENTER" spacing="4.0">
-               <TextField fx:id="filenameInputField" text="Enter filename"/>
+               <TextField fx:id="filenameInputField" text="filename"/>
                <Button mnemonicParsing="false" onAction="#startSimulationOfFile" text="Simulate"/>
            </HBox>
            <Label fx:id="fileResponseLabel"/>

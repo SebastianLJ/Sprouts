@@ -1,17 +1,26 @@
 package Model;
 
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Line;
-import javafx.scene.shape.Shape;
+import javafx.scene.Cursor;
+import javafx.scene.shape.*;
+
+import javafx.scene.input.MouseEvent;
 
 import java.util.*;
 
 public class SproutModel {
-
+    private ArrayList<Shape> lines = new ArrayList<>();
     private List<Shape> edges;
     private List<Node> nodes;
     private int height = 280;       // TODO: make user-settable
     private int width = 500;        // TODO: make user-settable
+    private Path path;
+    final static public double COLLISIONWIDTH = 1.5;
+    private boolean isCollided;
+    private Point point;
+
+
+    private Path pathTmp;
+
 
     public SproutModel() {
         edges = new ArrayList<>();
@@ -105,7 +114,7 @@ public class SproutModel {
         Node node = nodes.get(nodeName);
         Shape newCircle = new Circle();
 
-        double radius = width/100;                                  // TODO: adjust to various window sizes
+        double radius = width / 100;                                  // TODO: adjust to various window sizes
         double nodeX = node.getX();
         double nodeY = node.getY();
 
@@ -127,8 +136,8 @@ public class SproutModel {
 
         double edgeIntervalX = Math.abs(edge.getEndX() - edge.getStartX());
         double edgeIntervalY = Math.abs(edge.getEndY() - edge.getStartY());
-        double newNodeX = Math.min(edge.getStartX(), edge.getEndX()) + (edgeIntervalX/2);
-        double newNodeY = Math.min(edge.getStartY(), edge.getEndY()) + (edgeIntervalY/2);
+        double newNodeX = Math.min(edge.getStartX(), edge.getEndX()) + (edgeIntervalX / 2);
+        double newNodeY = Math.min(edge.getStartY(), edge.getEndY()) + (edgeIntervalY / 2);
 
         Node newNode = new Node(newNodeX, newNodeY, 2);
         nodes.add(newNode);
@@ -136,8 +145,8 @@ public class SproutModel {
 
     public void addNodeOnCircle(Circle edge, double originNodeX, double originNodeY) {
 
-        double newNodeX = originNodeX + (edge.getCenterX()-originNodeX) * 2;
-        double newNodeY = originNodeY + (edge.getCenterY()-originNodeY) * 2;
+        double newNodeX = originNodeX + (edge.getCenterX() - originNodeX) * 2;
+        double newNodeY = originNodeY + (edge.getCenterY() - originNodeY) * 2;
 
         Node newNode = new Node(newNodeX, newNodeY, 2);
         nodes.add(newNode);
@@ -157,6 +166,69 @@ public class SproutModel {
             center[1] = originNodeY + radius;
         }
 
-        return  center;
+        return center;
+    }
+
+    public void initializePath(MouseEvent event) {
+        isCollided = false;
+        point = new Point((int) event.getX(), (int) event.getY());
+        path = new Path();
+        pathTmp = new Path();
+        path.getElements().add(new MoveTo(point.getX(), point.getY()));
+    }
+
+
+    public void drawPath(MouseEvent event) {
+        if(isCollided){
+/*
+            System.out.println("you collided draw somewhere else");
+*/
+        }
+        else {
+            pathTmp.getElements().add(new MoveTo(point.getX(), point.getY()));
+            point = new Point((int) event.getX(), (int) event.getY());
+            pathTmp.getElements().add(new LineTo(point.getX(), point.getY()));
+            if (doPathsCollide()) {
+                System.out.println("test");
+                isCollided = true;
+                path.getElements().clear();
+                System.out.println("collision at " + point.getX() + ", " + point.getY());
+            } else {
+                path.getElements().add(new LineTo(point.getX(), point.getY()));
+                pathTmp.getElements().clear();
+            }
+        }
+    }
+
+    public void finishPath() {
+            lines.add(path);
+        }
+
+    public boolean doPathsCollide() {
+/*
+        System.out.println("Bredde: " + Shape.intersect(pathTmp, path).getBoundsInLocal().getWidth());
+*/
+        if (Shape.intersect(pathTmp, path).getBoundsInLocal().getWidth() > COLLISIONWIDTH) {
+            return true;
+        }
+        for (Shape line : lines) {
+            if (Shape.intersect(path, line).getBoundsInLocal().getWidth() != -1) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Path getPath() {
+        return path;
+    }
+
+    public Path getPathTmp() {
+        return pathTmp;
+    }
+
+    public boolean getIsCollided() {
+        return isCollided;
     }
 }
+
