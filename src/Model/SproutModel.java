@@ -10,7 +10,7 @@ public class SproutModel {
 
     private List<Shape> edges;
     private List<Node> nodes;
-    private int height = 500;       // TODO: make user-settable
+    private int height = 280;       // TODO: make user-settable
     private int width = 500;        // TODO: make user-settable
 
     public SproutModel() {
