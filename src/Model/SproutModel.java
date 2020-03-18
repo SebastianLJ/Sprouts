@@ -19,15 +19,35 @@ public class SproutModel {
     }
 
     public void addRandomNodes(int amount) {
-
         Random random = new Random();
 
+        int x;
+        int y;
+        Circle circle = new Circle();
+        circle.setRadius(5); // TODO make scalable
+
         for (int i = 0; i < amount; i++) {
-            int x = random.nextInt(width);
-            int y = random.nextInt(height);
+            do {
+                x = random.nextInt(width);
+                y = random.nextInt(height);
+                circle.setCenterX(x);
+                circle.setCenterY(y);
+                System.out.println("Created circle at (" + x + "," + y + ")");
+            } while (invalidPointLocation(circle));
             nodes.add(new Node(x, y, 0));
         }
     }
+
+    private boolean invalidPointLocation(Shape circle) {
+        for (Node node : nodes) {
+            Shape intersect = Shape.intersect(circle, node.getShape());
+            if (intersect.getBoundsInLocal().getWidth() != -1) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     public void resetGame() {
         edges.clear();
