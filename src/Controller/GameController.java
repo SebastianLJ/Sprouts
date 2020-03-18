@@ -1,15 +1,21 @@
 package Controller;
 
 import Exceptions.NotEnoughInitialNodesException;
+import Model.Point;
 import View.View;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.LineTo;
+import javafx.scene.shape.MoveTo;
+import javafx.scene.shape.Path;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -23,6 +29,7 @@ public class GameController implements Initializable {
     private int gameType; // 0 is clickToDraw and 1 is dragToDraw
     private final int CLICK_TO_DRAW_MODE = 0;
     private final int DRAG_TO_DRAW_MODE = 1;
+    private View view;
 
     void setGameType(int whichGameType) {
         gameType = whichGameType;
@@ -43,12 +50,13 @@ public class GameController implements Initializable {
         window.show();
     }
 
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         sproutController = new SproutController();
-        View view = new View(sproutController.getSproutModel());
+        view = new View(sproutController.getSproutModel());
         try {
-            sproutController.attemptInitializeGame(5); // TODO Take numberOfInitialNodes input from somewhere
+            sproutController.attemptInitializeGame(5);
         } catch (NotEnoughInitialNodesException e) {
             e.printStackTrace();
         }
@@ -57,19 +65,27 @@ public class GameController implements Initializable {
 
     public void mouseDraggedHandler(MouseEvent mouseDragged) {
         if (gameType == DRAG_TO_DRAW_MODE) {
-
-        }
-    }
+            sproutController.beginDrawing(mouseDragged);
+            if(sproutController.isCollided()) {view.setUpCollisionSettings(mouseDragged);}
+    }}
 
     public void mousePressedHandler(MouseEvent mousePressed) {
         if (gameType == DRAG_TO_DRAW_MODE) {
-
+            sproutController.setupDrawing(mousePressed);
+            view.setUpDrawingSettings(mousePressed, gamePane);
         }
     }
 
     public void mouseReleasedHandler(MouseEvent mouseReleased) {
         if (gameType == DRAG_TO_DRAW_MODE) {
+           sproutController.completeDrawing();
+            view.setUpSuccessfulPathSettings(mouseReleased);
+        }
+
 
         }
+
+    public View getView() {
+        return view;
     }
 }

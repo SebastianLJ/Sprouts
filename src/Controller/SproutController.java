@@ -3,6 +3,7 @@ package Controller;
 import Exceptions.IllegalNodesChosenException;
 import Exceptions.NotEnoughInitialNodesException;
 import Model.SproutModel;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Shape;
 
 public class SproutController {
@@ -44,6 +45,22 @@ public class SproutController {
         } else {
             sproutModel.drawEdgeBetweenNodes(startNode, endNode);
         }
+    }
+
+    public void setupDrawing(MouseEvent mousePressed){
+        sproutModel.initializePath(mousePressed);
+    }
+
+    public void beginDrawing(MouseEvent mouseDragged){
+        sproutModel.drawPath(mouseDragged);
+    }
+
+    public void completeDrawing(){
+        sproutModel.finishPath();
+    }
+
+    public boolean isCollided(){
+        return sproutModel.getIsCollided();
     }
 
     public SproutModel getSproutModel() {
