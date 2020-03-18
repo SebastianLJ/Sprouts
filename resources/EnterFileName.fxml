@@ -20,7 +20,7 @@
                <TextField fx:id="filenameInputField" text="Enter filename"/>
                <Button mnemonicParsing="false" onAction="#startSimulationOfFile" text="Simulate"/>
            </HBox>
-           <Label text="label for feedback on bad filename"/>
+           <Label fx:id="fileResponseLabel"/>
        </VBox>
    </center>
 </BorderPane>

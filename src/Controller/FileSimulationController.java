@@ -57,21 +57,22 @@ public class FileSimulationController implements Initializable {
         goToScene(event, "EnterFileName.fxml");
     }
 
-    public boolean validateFile() throws Exception {
+    //returns linenumber of syntax error or 0 if no error
+    public int validateFile() throws Exception {
         File file = new File(filename);
         BufferedReader reader = new BufferedReader(new FileReader(file));
         String line = reader.readLine();
         int lineNumber = 1;
         if (!line.matches("\\d+")) {
-            throw new InvalidFileSyntax(lineNumber);
+            return lineNumber;
         }
         while ((line = reader.readLine()) != null) {
             lineNumber++;
             if (!line.matches("\\d+\\s\\d+")) {
-                throw new InvalidFileSyntax(lineNumber);
+                return lineNumber;
             }
         }
-        return true;
+        return 0;
     }
 
     public void runFile(ActionEvent event) throws IOException, InterruptedException {
