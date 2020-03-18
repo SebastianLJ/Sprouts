@@ -41,7 +41,6 @@ public class SproutModel {
                 y = random.nextInt(height);
                 circle.setCenterX(x);
                 circle.setCenterY(y);
-                System.out.println("Created circle at (" + x + "," + y + ")");
             } while (invalidPointLocation(circle));
             nodes.add(new Node(x, y, 0));
         }

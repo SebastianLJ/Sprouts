@@ -48,20 +48,17 @@ public class Main extends Application {
         path.setStroke(Color.BLACK);
         root.getChildren().add(path);
 
-
-
-
-            primaryStage.addEventHandler(MouseEvent.MOUSE_PRESSED,
-                    event -> {
-                            scene.setCursor(Cursor.CROSSHAIR);
-                            collision = false;
-                            point = new Point((int) event.getX(), (int) event.getY());
-                            path = new Path();
-                            path.setStrokeWidth(40); //view
-                            path.setStroke(Color.BLACK); //view
-                            root.getChildren().add(path);
-                            path.getElements().add(new MoveTo(point.getX(), point.getY()));
-                    });
+        primaryStage.addEventHandler(MouseEvent.MOUSE_PRESSED,
+                event -> {
+                        scene.setCursor(Cursor.CROSSHAIR);
+                        collision = false;
+                        point = new Point((int) event.getX(), (int) event.getY());
+                        path = new Path();
+                        path.setStrokeWidth(1);
+                        path.setStroke(Color.BLACK);
+                        root.getChildren().add(path);
+                        path.getElements().add(new MoveTo(point.getX(), point.getY()));
+                });
 
         primaryStage.addEventHandler(MouseEvent.MOUSE_DRAGGED,
                 event -> {
@@ -98,10 +95,7 @@ public class Main extends Application {
     }
 
     public static void main(String[] args) throws NotEnoughInitialNodesException, IllegalNodesChosenException {
-
-/*
-        acceptUserInput(new Scanner(System.in));  // uncomment for console driven game
-*/
+        //acceptUserInput(new Scanner(System.in));    // uncomment for console driven game
         launch(args);                             // uncomment for javaFX driven game
     }
 
@@ -145,7 +139,7 @@ public class Main extends Application {
     private boolean intersects() {
         boolean res = false;
         Shape temp;
-        if (Shape.intersect(pathtmp, path).getBoundsInLocal().getWidth() > COLLISIONWIDTH*40) {
+        if (Shape.intersect(pathtmp, path).getBoundsInLocal().getWidth() > COLLISIONWIDTH) {
             return true;
         }
         for (Shape line : lines) {
@@ -169,5 +163,4 @@ public class Main extends Application {
     public SproutController getController() {
         return controller;
     }
-
 }
