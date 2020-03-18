@@ -19,6 +19,7 @@ import java.util.ResourceBundle;
 
 public class GameController implements Initializable {
     public Pane gamePane;
+    private SproutController sproutController;
     private int gameType; // 0 is clickToDraw and 1 is dragToDraw
     private final int CLICK_TO_DRAW_MODE = 0;
     private final int DRAG_TO_DRAW_MODE = 1;
@@ -42,14 +43,12 @@ public class GameController implements Initializable {
         window.show();
     }
 
-
-
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        SproutController sproutController = new SproutController();
+        sproutController = new SproutController();
         View view = new View(sproutController.getSproutModel());
         try {
-            sproutController.attemptInitializeGame(5);
+            sproutController.attemptInitializeGame(5); // TODO Take numberOfInitialNodes input from somewhere
         } catch (NotEnoughInitialNodesException e) {
             e.printStackTrace();
         }
