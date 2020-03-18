@@ -1,6 +1,8 @@
 package Controller;
 
 import Exceptions.InvalidFileSyntax;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -8,16 +10,19 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.stage.Stage;
 
 import java.io.*;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class FileSimulationController implements Initializable {
     private SproutController sproutController = new SproutController();
     public Label filenameLabel;
+    public ListView moveList;
     private String filename;
     private long simSpeed = 500; //speed in ms
 
@@ -58,7 +63,7 @@ public class FileSimulationController implements Initializable {
     }
 
     //returns linenumber of syntax error or 0 if no error
-    public int validateFile() throws Exception {
+    public int validateFile() throws IOException {
         File file = new File(filename);
         BufferedReader reader = new BufferedReader(new FileReader(file));
         String line = reader.readLine();
@@ -71,6 +76,7 @@ public class FileSimulationController implements Initializable {
             if (!line.matches("\\d+\\s\\d+")) {
                 return lineNumber;
             }
+            moveList.getItems().add(line);
         }
         return 0;
     }
@@ -79,26 +85,30 @@ public class FileSimulationController implements Initializable {
         File file = new File(filename);
         BufferedReader reader = new BufferedReader((new FileReader(file)));
         String line = reader.readLine();
-        int linenumber = 1;
 
         //init starting points
         int n = Integer.parseInt(line);
         try {
             sproutController.attemptInitializeGame(n);
+            System.out.println("successfully initialized game");
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
 
         //execute moves
-        String[] move = new String[2];
+        String[] move;
+        int moveIndex = 0;
         while((line = reader.readLine()) != null) {
             move = line.split("\\s");
             Thread.sleep(simSpeed);
             try {
                 sproutController.attemptDrawEdgeBetweenNodes(Integer.parseInt(move[0]) - 1, Integer.parseInt(move[1]) - 1);
+                System.out.println("successfully executed move  : from " + move[0] + " to " + move[1]);
             } catch (Exception e) {
                 System.out.println(e.getMessage());
             }
+            moveIndex++;
         }
+        System.out.println("Legal game - File successfully simulated");
     }
 }

@@ -93,9 +93,9 @@ public class SproutModel {
         ((Circle) newCircle).setCenterX(center[0]);
         ((Circle) newCircle).setCenterY(center[1]);
         ((Circle) newCircle).setRadius(radius);
-        System.out.print(newCircle.contains(center[0] + radius, center[1]));
+        //System.out.print(newCircle.contains(center[0] + radius, center[1]));
         newCircle.setStrokeWidth(1.0);
-        System.out.print(newCircle.contains(center[0] + radius, center[1]));
+        //System.out.print(newCircle.contains(center[0] + radius, center[1]));
 
 
         edges.add(newCircle);

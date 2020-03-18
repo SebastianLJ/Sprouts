@@ -36,7 +36,7 @@ public class EnterFileNameController implements Initializable {
 
         Scene fileSimulationScene = new Scene(fileSimulationParent);
 
-        String filename = filenameInputField.getText();
+        String filename = filenameInputField.getText() + ".txt";
 
         FileSimulationController fileSimulationController =
                 loader.getController();
@@ -57,8 +57,7 @@ public class EnterFileNameController implements Initializable {
                 System.out.println("Syntax error at line " + n);
             }
         } catch (Exception e) {
-            //todo handle file not found
-            e.printStackTrace();
+            fileResponseLabel.setText("File not found");
         }
     }
 }
