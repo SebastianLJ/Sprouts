@@ -3,9 +3,9 @@ package acceptance_tests.c_driven;
 import Exceptions.IllegalNodesChosenException;
 import Exceptions.NotEnoughInitialNodesException;
 import Model.Node;
-import cucumber.api.java.en.Given;
-import cucumber.api.java.en.Then;
 import holders.ErrorMessageHolder;
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Shape;
 import sample.Main;
@@ -21,8 +21,8 @@ public class playGameSteps {
     private ErrorMessageHolder errorMessageHolder;
     private int startNode;
     private int endNode;
-    private int initialNumberOfNodes;
-    private int initialNumberOfEdges;
+    private int numberOfNodes;
+    private int numberOfEdges;
     private String scannerInput;
 
     public playGameSteps(Main main, ErrorMessageHolder errorMessageHolder) {
@@ -36,15 +36,16 @@ public class playGameSteps {
         main.resetSproutController();
         this.startNode = int1;
         this.endNode = int2;
-        initialNumberOfNodes = Math.max(int1, int2);
-        initialNumberOfEdges = 0;
-        scannerInput = String.valueOf(initialNumberOfNodes) + "\n";
+        numberOfNodes = Math.max(int1, int2);
+        numberOfEdges = 0;
+        scannerInput = String.valueOf(numberOfNodes) + "\n";
     }
 
     @Given("node {int} is connected to node {int} and to node {int}")
     public void nodeIsConnectedToNodeAndToNode(Integer int1, Integer int2, Integer int3) {
         scannerInput += int1 + " " + int2 + "\n" + int1 + " " + int3;
-        initialNumberOfEdges += 2;
+        numberOfEdges += 2;
+        numberOfNodes += 2;
     }
 
     @Given("the user chooses nodes {int} and {int}")
@@ -85,10 +86,25 @@ public class playGameSteps {
         assertTrue(newEdge.contains(newNode.getX(), newNode.getY()));
     }
 
+    @Then("a new node is created on the circle between the two nodes")
+    public void aNewNodeIsCreatedOnTheCircleBetweenTheTwoNodes() {
+        // Get most recently drawn node
+        List<Node> nodes = main.getController().getSproutModel().getNodes();
+        Node newNode = nodes.get(nodes.size()-1);
+        // Get most recently drawn edge
+        List<Shape> edges = main.getController().getSproutModel().getEdges();
+        Shape newEdge = edges.get(edges.size()-1);
+        double circleRadius = ((Circle) newEdge).getRadius();
+
+        assertTrue(Math.abs(newNode.getX() - ((Circle) newEdge).getCenterX()) == circleRadius ||
+                            Math.abs(newNode.getY() - ((Circle) newEdge).getCenterY()) == circleRadius);
+
+    }
+
     @Then("the game has been extended by {int} line\\(s) and {int} node\\(s)")
     public void theGameHasBeenExtendedByLineSAndNodeS(Integer int1, Integer int2) {
-        assertEquals(initialNumberOfEdges + int1, main.getController().getSproutModel().getEdges().size());
-        assertEquals(initialNumberOfNodes + int2, main.getController().getSproutModel().getNodes().size());
+        assertEquals(numberOfEdges + int1, main.getController().getSproutModel().getEdges().size());
+        assertEquals(numberOfNodes + int2, main.getController().getSproutModel().getNodes().size());
     }
 
 }
