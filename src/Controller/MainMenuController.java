@@ -1,5 +1,6 @@
 package Controller;
 
+import Exceptions.NotEnoughInitialNodesException;
 import io.cucumber.java.sl.In;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -66,7 +67,6 @@ public class MainMenuController implements Initializable {
         whichGameType = 0;
         promptedForClickGame = true;
         askForNumberOfStartingNodes();
-        //startGame(event, 0);
     }
 
     private void removeAskForNumberOfStartingNodes() {
@@ -81,7 +81,6 @@ public class MainMenuController implements Initializable {
         whichGameType = 1;
         promptedForDragGame = true;
         askForNumberOfStartingNodes();
-        //startGame(event, 1);
     }
 
     public void startEnterFileName(ActionEvent event) throws IOException {
@@ -124,7 +123,9 @@ public class MainMenuController implements Initializable {
 
             startGameButton.setOnMouseClicked(event -> {
                 try {
-                    startGame(event, Integer.parseInt(input.getText()));
+                    if (!input.getText().isEmpty()) {
+                        startGame(event, Integer.parseInt(input.getText()));
+                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

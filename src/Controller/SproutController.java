@@ -23,7 +23,7 @@ public class SproutController {
         if (gameOnGoing) {
             // TODO
         } else {
-            if (noOfInitialNodes > 0) {
+            if (noOfInitialNodes >= 2) {
                 sproutModel.addRandomNodes(noOfInitialNodes);
                 gameOnGoing = true;
             } else {
@@ -65,5 +65,10 @@ public class SproutController {
 
     public SproutModel getSproutModel() {
         return sproutModel;
+    }
+
+    public void updateSize(double width, double height) {
+        sproutModel.setWidth((int) width);
+        sproutModel.setHeight((int) height);
     }
 }
