@@ -1,6 +1,5 @@
 package Model;
 
-import javafx.scene.Cursor;
 import javafx.scene.shape.*;
 
 import javafx.scene.input.MouseEvent;
@@ -8,9 +7,12 @@ import javafx.scene.input.MouseEvent;
 import java.util.*;
 
 public class SproutModel {
+    private static final int DISTANCE_BETWEEN_POINTS = 20;
+    private static final int DISTANCE_FROM_BORDER = 20;
     private ArrayList<Shape> lines = new ArrayList<>();
     private List<Shape> edges;
     private List<Node> nodes;
+
     private int height = 280;       // TODO: make user-settable
     private int width = 500;        // TODO: make user-settable
     private Path path;
@@ -37,8 +39,8 @@ public class SproutModel {
 
         for (int i = 0; i < amount; i++) {
             do {
-                x = random.nextInt(width);
-                y = random.nextInt(height);
+                x = random.nextInt(width - 2*DISTANCE_FROM_BORDER) + DISTANCE_FROM_BORDER;
+                y = random.nextInt(height - 2*DISTANCE_FROM_BORDER) + DISTANCE_FROM_BORDER;
                 circle.setCenterX(x);
                 circle.setCenterY(y);
             } while (invalidPointLocation(circle));
@@ -46,14 +48,26 @@ public class SproutModel {
         }
     }
 
-    private boolean invalidPointLocation(Shape circle) {
+    private boolean invalidPointLocation(Circle circle) {
         for (Node node : nodes) {
             Shape intersect = Shape.intersect(circle, node.getShape());
             if (intersect.getBoundsInLocal().getWidth() != -1) {
                 return true;
             }
+            if (DISTANCE_BETWEEN_POINTS > distanceBetweenCircleCenter(node.getShape(), circle)) {
+                System.out.println(distanceBetweenCircleCenter(node.getShape(), circle));
+                return true;
+            }
         }
+
         return false;
+    }
+
+    private int distanceBetweenCircleCenter(Circle circle1, Circle circle2) {
+        double dx = circle2.getCenterX()-circle1.getCenterX();
+        double dy = circle2.getCenterY()-circle1.getCenterY();
+
+        return (int) Math.ceil(Math.sqrt(dx*dx+dy*dy));
     }
 
 
@@ -228,6 +242,14 @@ public class SproutModel {
 
     public boolean getIsCollided() {
         return isCollided;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
+    }
+
+    public void setWidth(int width) {
+        this.width = width;
     }
 }
 
