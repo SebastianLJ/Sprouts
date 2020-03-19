@@ -95,23 +95,32 @@ public class Main extends Application {
     }
 
     public static void main(String[] args) throws NotEnoughInitialNodesException, IllegalNodesChosenException {
-        //acceptUserInput(new Scanner(System.in));    // uncomment for console driven game
-        launch(args);                             // uncomment for javaFX driven game
+        acceptUserInput(new Scanner(System.in));  // uncomment for console driven game
+//        launch(args);                             // uncomment for javaFX driven game
     }
 
-    public static void acceptUserInput(Scanner scanner) throws NotEnoughInitialNodesException, IllegalNodesChosenException {
+    public static void acceptUserInput(Scanner scanner) {
 
         Scanner stdin = scanner;
 
         int noOfInitialNodes = stdin.nextInt();
-        controller.attemptInitializeGame(noOfInitialNodes);
+
+        try {
+            controller.attemptInitializeGame(noOfInitialNodes);
+        } catch (NotEnoughInitialNodesException e) {
+            System.out.println(e.getMessage());
+        }
 
         while (stdin.hasNextInt()) {
 
             int startNode = stdin.nextInt() - 1;
             int endNode = stdin.nextInt() - 1;
 
-            controller.attemptDrawEdgeBetweenNodes(startNode, endNode);
+            try {
+                controller.attemptDrawEdgeBetweenNodes(startNode, endNode);
+            } catch (IllegalNodesChosenException e) {
+                System.out.println(e.getMessage());
+            }
         }
     }
 

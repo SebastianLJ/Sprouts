@@ -1,15 +1,19 @@
 package acceptance_tests.c_driven;
 
-import Exceptions.IllegalNodesChosenException;
-import Exceptions.NotEnoughInitialNodesException;
+
 import Model.Node;
 import holders.ErrorMessageHolder;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Shape;
+import org.junit.After;
+import org.junit.Before;
 import sample.Main;
 
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.util.List;
 import java.util.Scanner;
 
@@ -25,10 +29,20 @@ public class playGameSteps {
     private int numberOfEdges;
     private String scannerInput;
 
+    // For testing console output
+    private final ByteArrayOutputStream outContent;
+    private final ByteArrayOutputStream errContent;
+    private final PrintStream originalOut;
+    private final PrintStream originalErr;
+
     public playGameSteps(Main main, ErrorMessageHolder errorMessageHolder) {
         this.main = main;
         this.errorMessageHolder = errorMessageHolder;
         this.scannerInput = "";
+        this.outContent = new ByteArrayOutputStream();
+        this.errContent = new ByteArrayOutputStream();
+        this.originalOut = System.out;
+        this.originalErr = System.err;
     }
 
     @Given("that a game has nodes {int} and {int}")
@@ -48,15 +62,25 @@ public class playGameSteps {
         numberOfNodes += 2;
     }
 
+    @Before
+    public void setUpStreams() {
+        System.setOut(new PrintStream(outContent));
+        System.setErr(new PrintStream(errContent));
+    }
+
+    @After
+    public void restoreStreams() {
+        System.setOut(originalOut);
+        System.setErr(originalErr);
+    }
+
     @Given("the user chooses nodes {int} and {int}")
     public void theUserChoosesNodesAnd(Integer int1, Integer int2) {
 
         Scanner scanner = new Scanner(scannerInput + int1 + " " + int2 + "\n");
-        try {
-            main.acceptUserInput(scanner);
-        } catch (NotEnoughInitialNodesException | IllegalNodesChosenException e) {
-            errorMessageHolder.setErrorMessage(e.getMessage());
-        }
+        main.acceptUserInput(scanner);
+
+        errorMessageHolder.setErrorMessage(main.getController().getOutputExceptionMessage());
     }
 
     @Given("nodes {int} and {int} exist")
