@@ -1,21 +1,16 @@
 package Controller;
 
 import Exceptions.NotEnoughInitialNodesException;
-import Model.Point;
 import View.View;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.LineTo;
-import javafx.scene.shape.MoveTo;
-import javafx.scene.shape.Path;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -24,8 +19,9 @@ import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class GameController implements Initializable {
-    // Must be public
+    @SuppressWarnings("WeakerAccess")
     public Pane gamePane;
+
     private SproutController sproutController;
     private int gameType; // 0 is clickToDraw and 1 is dragToDraw
     private int numberOfInitialNodes;
@@ -37,7 +33,7 @@ public class GameController implements Initializable {
         gameType = whichGameType;
     }
 
-    // Is used
+    @SuppressWarnings("unused")
     public void goToMainMenu(ActionEvent event) throws IOException {
         Parent mainMenuParent = FXMLLoader.load(
                 Objects.requireNonNull(SproutLauncher.class.getClassLoader().getResource(
@@ -55,24 +51,38 @@ public class GameController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        // Create connection to the sproutController that controls the model
         sproutController = new SproutController();
+
+        // Create connection to view that updates view with information from the model
         view = new View(sproutController.getSproutModel());
-        try {
-            sproutController.attemptInitializeGame(numberOfInitialNodes);
-        } catch (NotEnoughInitialNodesException e) {
-            e.printStackTrace();
-        }
-        view.updateCanvas(gamePane);
+
+        Platform.runLater(() -> {
+            // Tell the model how big the game is
+            sproutController.updateSize(gamePane.getWidth(), gamePane.getHeight());
+
+            try {
+                sproutController.attemptInitializeGame(numberOfInitialNodes);
+            } catch (NotEnoughInitialNodesException e) {
+                try {
+                    sproutController.attemptInitializeGame(2);
+                } catch (NotEnoughInitialNodesException ex) {
+                    ex.printStackTrace();
+                }
+            }
+
+            view.updateCanvas(gamePane);
+        });
     }
 
-    // Is used
+    @SuppressWarnings("unused")
     public void mouseDraggedHandler(MouseEvent mouseDragged) {
         if (gameType == DRAG_TO_DRAW_MODE) {
             sproutController.beginDrawing(mouseDragged);
             if(sproutController.isCollided()) {view.setUpCollisionSettings(mouseDragged);}
     }}
 
-    // Is used
+    @SuppressWarnings("unused")
     public void mousePressedHandler(MouseEvent mousePressed) {
         if (gameType == DRAG_TO_DRAW_MODE) {
             sproutController.setupDrawing(mousePressed);
@@ -80,7 +90,7 @@ public class GameController implements Initializable {
         }
     }
 
-    // Is used
+    @SuppressWarnings("unused")
     public void mouseReleasedHandler(MouseEvent mouseReleased) {
         if (gameType == DRAG_TO_DRAW_MODE) {
            sproutController.completeDrawing();
@@ -88,13 +98,9 @@ public class GameController implements Initializable {
         }
 
 
-        }
-
-    public View getView() {
-        return view;
     }
 
-    public void setNumberOfInitialNodes(int numberOfInitialNodes) {
+    void setNumberOfInitialNodes(int numberOfInitialNodes) {
         this.numberOfInitialNodes = numberOfInitialNodes;
     }
 }
