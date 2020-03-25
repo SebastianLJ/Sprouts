@@ -7,23 +7,18 @@ import java.util.Scanner;
 import Controller.SproutController;
 
 public class Main {
-    final static public double COLLISIONWIDTH = 1.5;
     static SproutController controller = new SproutController();
 
-
-    public static void main(String[] args) throws NumberOfInitialNodesException, IllegalNodesChosenException {
+    public static void main(String[] args) {
         acceptUserInput(new Scanner(System.in));  // uncomment for console driven game
-//        launch(args);                             // uncomment for javaFX driven game
     }
 
     public static void acceptUserInput(Scanner scanner) {
+        boolean successfulInput = false;
 
-        Scanner stdin = scanner;
-        Boolean successfulInput = false;
+        while (!successfulInput && scanner.hasNextInt()) {
 
-        while (!successfulInput && stdin.hasNextInt()) {
-
-            int noOfInitialNodes = stdin.nextInt();
+            int noOfInitialNodes = scanner.nextInt();
 
             try {
                 controller.attemptInitializeGame(noOfInitialNodes);
@@ -33,11 +28,10 @@ public class Main {
             }
         }
 
+        while (scanner.hasNextInt()) {
 
-        while (stdin.hasNextInt()) {
-
-            int startNode = stdin.nextInt() - 1;
-            int endNode = stdin.nextInt() - 1;
+            int startNode = scanner.nextInt() - 1;
+            int endNode = scanner.nextInt() - 1;
 
             try {
                 controller.attemptDrawEdgeBetweenNodes(startNode, endNode);
@@ -46,7 +40,6 @@ public class Main {
             }
         }
     }
-
 
     // -----------------------------------------//
     // for testing:
