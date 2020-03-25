@@ -8,6 +8,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.shape.Shape;
 
 
 public class View {
@@ -18,14 +19,23 @@ public class View {
         this.model = model;
     }
 
-    public void updateCanvas(Pane gamePane) {
-        for (Node node: model.getNodes()) {
-            Circle circle = new Circle(node.getX(), node.getY(), 5);
-            gamePane.getChildren().add(circle);
+    public void initializeNodes(Pane gamePane) {
+        for (Node node : model.getNodes()) {
+            gamePane.getChildren().add(node.getShape());
         }
     }
-    public void setUpDrawingSettings(MouseEvent mousePressed, Pane gamePane){
-        Scene scene =  ((javafx.scene.Node) mousePressed.getSource()).getScene();
+
+    public Circle updateCanvas(Pane gamePane) {
+        Shape newEdge = model.getNewestEdge();
+        Circle newNode = model.getNewestNode();
+        gamePane.getChildren().add(newEdge);
+        gamePane.getChildren().add(newNode);
+        return newNode;
+    }
+
+
+    public void setUpDrawingSettings(MouseEvent mousePressed, Pane gamePane) {
+        Scene scene = ((javafx.scene.Node) mousePressed.getSource()).getScene();
         scene.setCursor(Cursor.CROSSHAIR);
         model.getPath().setStrokeWidth(1);
         model.getPath().setStroke(Color.BLACK); //view
@@ -33,13 +43,13 @@ public class View {
         gamePane.getChildren().add(model.getPath());
     }
 
-    public void setUpCollisionSettings (MouseEvent mouseDragged){
-        Scene scene =  ((javafx.scene.Node) mouseDragged.getSource()).getScene(); //perhaps set scene somewhere in here.
+    public void setUpCollisionSettings(MouseEvent mouseDragged) {
+        Scene scene = ((javafx.scene.Node) mouseDragged.getSource()).getScene(); //perhaps set scene somewhere in here.
         scene.setCursor(Cursor.DEFAULT);
     }
 
-    public void setUpSuccessfulPathSettings(MouseEvent mouseReleased){
-        Scene scene =  ((javafx.scene.Node) mouseReleased.getSource()).getScene(); //perhaps set scene somewhere in here.
+    public void setUpSuccessfulPathSettings(MouseEvent mouseReleased) {
+        Scene scene = ((javafx.scene.Node) mouseReleased.getSource()).getScene(); //perhaps set scene somewhere in here.
         scene.setCursor(Cursor.DEFAULT);
     }
 }

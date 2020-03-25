@@ -4,6 +4,9 @@ import Exceptions.IllegalNodesChosenException;
 import Exceptions.NumberOfInitialNodesException;
 import Model.SproutModel;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.shape.Circle;
+
+import java.util.List;
 
 public class SproutController {
 
@@ -85,5 +88,22 @@ public class SproutController {
 
     public String getOutputExceptionMessage() {
         return outputExceptionMessage;
+    }
+
+    public List<Model.Node> getNodes() {
+        return sproutModel.getNodes();
+    }
+
+    public void attemptDrawEdgeBetweenNodes(Circle startNode, Circle endNode) throws IllegalNodesChosenException {
+        if (!(sproutModel.hasNodeWithName(startNode) && sproutModel.hasNodeWithName(endNode))) {
+            outputExceptionMessage = "One or both nodes chosen does not exist";
+            throw new IllegalNodesChosenException(outputExceptionMessage);
+        } else if ((startNode != endNode && (sproutModel.getNumberOfEdges(startNode) == 3 || sproutModel.getNumberOfEdges(endNode) == 3)) ||
+                (startNode == endNode && sproutModel.getNumberOfEdges(startNode) > 1)) {
+            outputExceptionMessage = "Nodes cannot have more than 3 connecting edges";
+            throw new IllegalNodesChosenException(outputExceptionMessage);
+        } else {
+            sproutModel.drawEdgeBetweenNodes(startNode, endNode);
+        }
     }
 }

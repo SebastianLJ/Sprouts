@@ -273,5 +273,46 @@ public class SproutModel {
     public void setWidth(int width) {
         this.width = width;
     }
+
+    public boolean hasNodeWithName(Circle nodeToFind) {
+        for (Node node : nodes) {
+            if (node.getShape() == nodeToFind) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public int getNumberOfEdges(Circle nodeToFind) {
+        for (Node node : nodes) {
+            if (node.getShape() == nodeToFind) {
+                return node.getNumberOfConnectingEdges();
+            }
+        }
+        return -1; // Should never be reached
+    }
+
+    public void drawEdgeBetweenNodes(Circle startNode, Circle endNode) {
+        int nameOfStartNode = 0, nameOfEndNode = 0;
+        int i = 0;
+        for (Node node : nodes) {
+            if (node.getShape() == startNode) {
+                nameOfStartNode = i;
+            }
+            if (node.getShape() == endNode) {
+                nameOfEndNode = i;
+            }
+            i++;
+        }
+        drawEdgeBetweenNodes(nameOfStartNode, nameOfEndNode);
+    }
+
+    public Circle getNewestNode() {
+        return nodes.get(nodes.size()-1).getShape();
+    }
+
+    public Shape getNewestEdge() {
+        return edges.get(edges.size()-1);
+    }
 }
 
