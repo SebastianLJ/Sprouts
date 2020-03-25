@@ -95,6 +95,8 @@ public class SproutModel {
         } else {
             drawLineBetweenNodes(startNode, endNode);
         }
+        // TODO: check for collision
+        // slet fra database in case (nodes list, edges list)
     }
 
     public void drawLineBetweenNodes(int startNodeName, int endNodeName) {
