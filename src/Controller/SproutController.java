@@ -7,7 +7,7 @@ import javafx.scene.input.MouseEvent;
 
 public class SproutController {
 
-    //    private SproutView sproutView;
+    // private SproutView sproutView;
     private SproutModel sproutModel;
     private boolean gameOnGoing;
     // For testing
