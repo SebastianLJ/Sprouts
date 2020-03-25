@@ -87,6 +87,9 @@ public class FileSimulationController implements Initializable {
     }
 
     public void runFile(ActionEvent event) throws IOException, InterruptedException {
+        //reset game
+        sproutController.getSproutModel().resetGame();
+
         //init starting points
         int n = Integer.parseInt(moves.get(0));
         try {
@@ -109,6 +112,7 @@ public class FileSimulationController implements Initializable {
                 System.out.println("Failed at executing move : from " + move[0] + " to " + move[1]);
                 System.out.println(e.getMessage());
                 legalGame = false;
+                break;
 
             }
         }
