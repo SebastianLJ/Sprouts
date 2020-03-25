@@ -24,7 +24,7 @@ public class FileSimulationController implements Initializable {
     public Label filenameLabel;
     public ListView moveList;
     private String filename;
-    private long simSpeed = 500; //speed in ms
+    private long simSpeed = 0; //speed in ms
     private ArrayList<String> moves = new ArrayList<>();
 
     public FileSimulationController() {
@@ -88,7 +88,7 @@ public class FileSimulationController implements Initializable {
 
     public void runFile(ActionEvent event) throws IOException, InterruptedException {
         //reset game
-        sproutController.getSproutModel().resetGame();
+        sproutController.resetGame();
 
         //init starting points
         int n = Integer.parseInt(moves.get(0));

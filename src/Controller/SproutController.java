@@ -77,6 +77,11 @@ public class SproutController {
         sproutModel.setHeight((int) height);
     }
 
+    public void resetGame() {
+        sproutModel.resetGame();
+        gameOnGoing = false;
+    }
+
     public String getOutputExceptionMessage() {
         return outputExceptionMessage;
     }
