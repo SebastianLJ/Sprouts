@@ -23,7 +23,7 @@ public abstract class Main extends Application {
     static SproutController controller = new SproutController();
 
 
-    public static void main(String[] args) throws NotEnoughInitialNodesException, IllegalNodesChosenException {
+    public static void main(String[] args) throws NumberOfInitialNodesException, IllegalNodesChosenException {
         acceptUserInput(new Scanner(System.in));  // uncomment for console driven game
 /*//        launch(args);                             // uncomment for javaFX driven game*/
     }
@@ -36,7 +36,7 @@ public abstract class Main extends Application {
 
         try {
             controller.attemptInitializeGame(noOfInitialNodes);
-        } catch (NotEnoughInitialNodesException e) {
+        } catch (NumberOfInitialNodesException e) {
             System.out.println(e.getMessage());
         }
 

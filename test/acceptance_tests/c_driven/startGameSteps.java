@@ -1,7 +1,7 @@
 package acceptance_tests.c_driven;
 
 import Exceptions.IllegalNodesChosenException;
-import Exceptions.NotEnoughInitialNodesException;
+import Exceptions.NumberOfInitialNodesException;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import holders.ErrorMessageHolder;
