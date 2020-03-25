@@ -366,7 +366,52 @@ formatter.result({
   "status": "passed"
 });
 formatter.step({
-  "name": "a message with the text \"You must start the game with at least 2 nodes\" is given to the user",
+  "name": "a message with the text \"You must start the game with at least 2 nodes and at most 99 nodes\" is given to the user",
+  "keyword": "Then "
+});
+formatter.match({
+  "location": "acceptance_tests.c_driven.startGameSteps.aMessageWithTheTextIsGivenToTheUser(java.lang.String)"
+});
+formatter.result({
+  "status": "passed"
+});
+formatter.scenario({
+  "name": "Start game with 100 nodes",
+  "description": "",
+  "keyword": "Scenario"
+});
+formatter.step({
+  "name": "that no game is being played",
+  "keyword": "Given "
+});
+formatter.match({
+  "location": "acceptance_tests.c_driven.startGameSteps.thatNoGameIsBeingPlayed()"
+});
+formatter.result({
+  "status": "passed"
+});
+formatter.step({
+  "name": "the user inputs 100 initial nodes",
+  "keyword": "And "
+});
+formatter.match({
+  "location": "acceptance_tests.c_driven.startGameSteps.theUserInputsInitialNodes(java.lang.Integer)"
+});
+formatter.result({
+  "status": "passed"
+});
+formatter.step({
+  "name": "no game is being played",
+  "keyword": "Then "
+});
+formatter.match({
+  "location": "acceptance_tests.c_driven.startGameSteps.noGameIsBeingPlayed()"
+});
+formatter.result({
+  "status": "passed"
+});
+formatter.step({
+  "name": "a message with the text \"You must start the game with at least 2 nodes and at most 99 nodes\" is given to the user",
   "keyword": "Then "
 });
 formatter.match({

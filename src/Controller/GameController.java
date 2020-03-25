@@ -1,6 +1,6 @@
 package Controller;
 
-import Exceptions.NotEnoughInitialNodesException;
+import Exceptions.NumberOfInitialNodesException;
 import View.View;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -63,10 +63,10 @@ public class GameController implements Initializable {
 
             try {
                 sproutController.attemptInitializeGame(numberOfInitialNodes);
-            } catch (NotEnoughInitialNodesException e) {
+            } catch (NumberOfInitialNodesException e) {
                 try {
                     sproutController.attemptInitializeGame(2);
-                } catch (NotEnoughInitialNodesException ex) {
+                } catch (NumberOfInitialNodesException ex) {
                     ex.printStackTrace();
                 }
             }

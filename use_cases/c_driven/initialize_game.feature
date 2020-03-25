@@ -12,4 +12,10 @@ Feature: Initialize game
     Given that no game is being played
     And the user inputs 0 initial nodes
     Then no game is being played
-    Then a message with the text "You must start the game with at least 2 nodes" is given to the user
+    Then a message with the text "You must start the game with at least 2 nodes and at most 99 nodes" is given to the user
+
+  Scenario: Start game with 100 nodes
+    Given that no game is being played
+    And the user inputs 100 initial nodes
+    Then no game is being played
+    Then a message with the text "You must start the game with at least 2 nodes and at most 99 nodes" is given to the user

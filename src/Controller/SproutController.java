@@ -1,10 +1,9 @@
 package Controller;
 
 import Exceptions.IllegalNodesChosenException;
-import Exceptions.NotEnoughInitialNodesException;
+import Exceptions.NumberOfInitialNodesException;
 import Model.SproutModel;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.shape.Shape;
 
 public class SproutController {
 
@@ -21,17 +20,17 @@ public class SproutController {
         outputExceptionMessage = "";
     }
 
-    public void attemptInitializeGame(int noOfInitialNodes) throws NotEnoughInitialNodesException {
+    public void attemptInitializeGame(int noOfInitialNodes) throws NumberOfInitialNodesException {
 
         if (gameOnGoing) {
             // TODO
         } else {
-            if (noOfInitialNodes > 1) {
+            if (noOfInitialNodes > 1 && noOfInitialNodes < 100) {
                 sproutModel.addRandomNodes(noOfInitialNodes);
                 gameOnGoing = true;
             } else {
-                outputExceptionMessage = "You must start the game with at least 2 nodes";
-                throw new NotEnoughInitialNodesException(outputExceptionMessage);
+                outputExceptionMessage = "You must start the game with at least 2 nodes and at most 99 nodes";
+                throw new NumberOfInitialNodesException(outputExceptionMessage);
             }
         }
     }

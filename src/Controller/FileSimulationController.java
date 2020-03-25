@@ -1,9 +1,6 @@
 package Controller;
 
-import Exceptions.InvalidFileSyntax;
-import Exceptions.NotEnoughInitialNodesException;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import Exceptions.NumberOfInitialNodesException;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -106,7 +103,7 @@ public class FileSimulationController implements Initializable {
                 sproutController.attemptDrawEdgeBetweenNodes(Integer.parseInt(move[0]) - 1, Integer.parseInt(move[1]) - 1);
                 System.out.println("successfully executed move : from " + move[0] + " to " + move[1]);
             }
-        } catch (NotEnoughInitialNodesException e) {
+        } catch (NumberOfInitialNodesException e) {
             System.out.println(e.getMessage());
             legalGame = false;
         } catch (Exception e) {

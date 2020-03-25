@@ -104,7 +104,6 @@ public class SproutModel {
         Node startNode = nodes.get(startNodeName);
         Node endNode = nodes.get(endNodeName);
         Line newLine = new Line();
-
         newLine.setStartX(startNode.getX());
         newLine.setStartY(startNode.getY());
         newLine.setEndX(endNode.getX());

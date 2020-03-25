@@ -1,7 +1,7 @@
 package sample;
 
 import Exceptions.IllegalNodesChosenException;
-import Exceptions.NotEnoughInitialNodesException;
+import Exceptions.NumberOfInitialNodesException;
 import Model.Point;
 import javafx.application.Application;
 import javafx.scene.Cursor;
@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
-import Controller.FileSimulationController;
 import Controller.SproutController;
 
 public class Main extends Application {
@@ -94,7 +93,7 @@ public class Main extends Application {
         primaryStage.show();
     }
 
-    public static void main(String[] args) throws NotEnoughInitialNodesException, IllegalNodesChosenException {
+    public static void main(String[] args) throws NumberOfInitialNodesException, IllegalNodesChosenException {
 //        acceptUserInput(new Scanner(System.in));  // uncomment for console driven game
         launch(args);                             // uncomment for javaFX driven game
     }
@@ -107,7 +106,7 @@ public class Main extends Application {
 
         try {
             controller.attemptInitializeGame(noOfInitialNodes);
-        } catch (NotEnoughInitialNodesException e) {
+        } catch (NumberOfInitialNodesException e) {
             System.out.println(e.getMessage());
         }
 
