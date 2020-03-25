@@ -16,7 +16,7 @@ public class SproutModel {
     private int height = 280;       // TODO: make user-settable
     private int width = 500;        // TODO: make user-settable
     private Path path;
-    final static public double COLLISIONWIDTH = 1.5;
+    private final static double COLLISION_WIDTH = 1.5;
     private boolean isCollided;
     private Point point;
 
@@ -105,15 +105,15 @@ public class SproutModel {
 
         Node startNode = nodes.get(startNodeName);
         Node endNode = nodes.get(endNodeName);
-        Shape newLine = new Line();
+        Line newLine = new Line();
 
-        ((Line) newLine).setStartX(startNode.getX());
-        ((Line) newLine).setStartY(startNode.getY());
-        ((Line) newLine).setEndX(endNode.getX());
-        ((Line) newLine).setEndY(endNode.getY());
+        newLine.setStartX(startNode.getX());
+        newLine.setStartY(startNode.getY());
+        newLine.setEndX(endNode.getX());
+        newLine.setEndY(endNode.getY());
 
         edges.add(newLine);
-        addNodeOnLine((Line) newLine);
+        addNodeOnLine(newLine);
 
         // Update number of connecting edges
         startNode.incNumberOfConnectingEdges(1);
@@ -125,20 +125,20 @@ public class SproutModel {
     public void drawCircleFromNodeToItself(int nodeName) {
 
         Node node = nodes.get(nodeName);
-        Shape newCircle = new Circle();
+        Circle newCircle = new Circle();
 
         double radius = width / 100;                                  // TODO: adjust to various window sizes
         double nodeX = node.getX();
         double nodeY = node.getY();
 
         Double[] center = getCircleCenterCoordinates(nodeX, nodeY, radius);
-        ((Circle) newCircle).setCenterX(center[0]);
-        ((Circle) newCircle).setCenterY(center[1]);
-        ((Circle) newCircle).setRadius(radius);
+        newCircle.setCenterX(center[0]);
+        newCircle.setCenterY(center[1]);
+        newCircle.setRadius(radius);
         newCircle.setStrokeWidth(1.0);
 
         edges.add(newCircle);
-        addNodeOnCircle((Circle) newCircle, nodeX, nodeY);
+        addNodeOnCircle(newCircle, nodeX, nodeY);
 
         // Update number of connecting edges
         node.incNumberOfConnectingEdges(2);
@@ -221,7 +221,7 @@ public class SproutModel {
 /*
         System.out.println("Bredde: " + Shape.intersect(pathTmp, path).getBoundsInLocal().getWidth());
 */
-        if (Shape.intersect(pathTmp, path).getBoundsInLocal().getWidth() > COLLISIONWIDTH) {
+        if (Shape.intersect(pathTmp, path).getBoundsInLocal().getWidth() > COLLISION_WIDTH) {
             return true;
         }
         for (Shape line : lines) {
