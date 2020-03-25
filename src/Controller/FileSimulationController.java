@@ -1,6 +1,7 @@
 package Controller;
 
 import Exceptions.InvalidFileSyntax;
+import Exceptions.NotEnoughInitialNodesException;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -92,29 +93,26 @@ public class FileSimulationController implements Initializable {
 
         //init starting points
         int n = Integer.parseInt(moves.get(0));
+        boolean legalGame = true;
+        String[] move = {"-1", "-1"};
         try {
             sproutController.attemptInitializeGame(n);
             System.out.println("successfully initialized game");
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
 
-        //execute moves
-        String[] move;
-        boolean legalGame = true;
-        for (int i = 1; i < moves.size(); i++) {
-            move = moves.get(i).split("\\s");
-            Thread.sleep(simSpeed);
-            try {
+            //execute moves
+            for (int i = 1; i < moves.size(); i++) {
+                move = moves.get(i).split("\\s");
+                Thread.sleep(simSpeed);
                 sproutController.attemptDrawEdgeBetweenNodes(Integer.parseInt(move[0]) - 1, Integer.parseInt(move[1]) - 1);
                 System.out.println("successfully executed move : from " + move[0] + " to " + move[1]);
-            } catch (Exception e) {
-                System.out.println("Failed at executing move : from " + move[0] + " to " + move[1]);
-                System.out.println(e.getMessage());
-                legalGame = false;
-                break;
-
             }
+        } catch (NotEnoughInitialNodesException e) {
+            System.out.println(e.getMessage());
+            legalGame = false;
+        } catch (Exception e) {
+            System.out.println("Failed at executing move : from " + move[0] + " to " + move[1]);
+            System.out.println(e.getMessage());
+            legalGame = false;
         }
         if (legalGame) {
             System.out.println("Legal game - File successfully simulated");
