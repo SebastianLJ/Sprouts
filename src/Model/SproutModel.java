@@ -55,7 +55,6 @@ public class SproutModel {
                 return true;
             }
             if (DISTANCE_BETWEEN_POINTS > distanceBetweenCircleCenter(node.getShape(), circle)) {
-                System.out.println(distanceBetweenCircleCenter(node.getShape(), circle));
                 return true;
             }
         }
