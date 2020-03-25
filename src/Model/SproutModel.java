@@ -19,7 +19,11 @@ public class SproutModel {
     private final static double COLLISION_WIDTH = 1.5;
     private boolean isCollided;
     private Point point;
+
+
     private Path pathTmp;
+    private Line pathTmp2;
+
 
     public SproutModel() {
         edges = new ArrayList<>();
@@ -52,6 +56,9 @@ public class SproutModel {
                 return true;
             }
             if (DISTANCE_BETWEEN_POINTS > distanceBetweenCircleCenter(node.getShape(), circle)) {
+/*
+                System.out.println(distanceBetweenCircleCenter(node.getShape(), circle));
+*/
                 return true;
             }
         }
@@ -104,6 +111,7 @@ public class SproutModel {
         Node startNode = nodes.get(startNodeName);
         Node endNode = nodes.get(endNodeName);
         Line newLine = new Line();
+
         newLine.setStartX(startNode.getX());
         newLine.setStartY(startNode.getY());
         newLine.setEndX(endNode.getX());
@@ -185,6 +193,9 @@ public class SproutModel {
         path = new Path();
         pathTmp = new Path();
         path.getElements().add(new MoveTo(point.getX(), point.getY()));
+        pathTmp2 = new Line();
+        pathTmp2.setStartX(point.getX());
+        pathTmp2.setStartY(point.getY());
     }
 
 
@@ -196,9 +207,13 @@ public class SproutModel {
         }
         else {
             pathTmp.getElements().add(new MoveTo(point.getX(), point.getY()));
+            pathTmp2.setStartX(point.getX());
+            pathTmp2.setStartY(point.getY());
             point = new Point((int) event.getX(), (int) event.getY());
             pathTmp.getElements().add(new LineTo(point.getX(), point.getY()));
-            if (doPathsCollide()) {
+            pathTmp2.setEndX(point.getX());
+            pathTmp2.setEndY(point.getY());
+            if (doPathsCollide()){
                 System.out.println("test");
                 isCollided = true;
                 path.getElements().clear();
@@ -218,7 +233,14 @@ public class SproutModel {
 /*
         System.out.println("Bredde: " + Shape.intersect(pathTmp, path).getBoundsInLocal().getWidth());
 */
-        if (Shape.intersect(pathTmp, path).getBoundsInLocal().getWidth() > COLLISION_WIDTH) {
+
+
+        Shape test = Shape.intersect(pathTmp2, path);
+        pathTmp.getElements().remove(pathTmp.getElements().size()-2);
+
+
+
+        if ((path.intersects(pathTmp2.getBoundsInLocal()))) {
             return true;
         }
         for (Shape line : lines) {
@@ -226,6 +248,9 @@ public class SproutModel {
                 return true;
             }
         }
+        /*System.out.println("tmp local: \n " + pathTmp2.getBoundsInLocal());
+        System.out.println("tmp parent: \n " + pathTmp2.getBoundsInParent());*/
+        /*System.out.println("path: \n " + path);*/
         return false;
     }
 
