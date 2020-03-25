@@ -17,7 +17,7 @@
       <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
    </padding>
    <center>
-      <AnchorPane style="-fx-background-color: antiquewhite, white; -fx-background-insets: 0,20; -fx-padding: 20;" BorderPane.alignment="CENTER">
+      <AnchorPane fx:id="anchorPane" style="-fx-background-color: antiquewhite, white; -fx-background-insets: 0,20; -fx-padding: 20;" BorderPane.alignment="CENTER">
          <BorderPane.margin>
             <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
          </BorderPane.margin>

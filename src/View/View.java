@@ -2,6 +2,7 @@ package View;
 
 import Model.Node;
 import Model.SproutModel;
+import javafx.animation.FadeTransition;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
@@ -9,6 +10,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Shape;
+import javafx.util.Duration;
 
 
 public class View {
@@ -28,7 +30,7 @@ public class View {
     public Circle updateCanvas(Pane gamePane) {
         Shape newEdge = model.getNewestEdge();
         Circle newNode = model.getNewestNode();
-        gamePane.getChildren().add(newEdge);
+        gamePane.getChildren().add(0, newEdge);
         gamePane.getChildren().add(newNode);
         return newNode;
     }

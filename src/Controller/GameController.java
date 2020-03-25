@@ -3,6 +3,7 @@ package Controller;
 import Exceptions.IllegalNodesChosenException;
 import Exceptions.NumberOfInitialNodesException;
 import View.View;
+import javafx.animation.FadeTransition;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
@@ -11,10 +12,12 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.io.IOException;
 import java.net.URL;
@@ -24,6 +27,7 @@ import java.util.ResourceBundle;
 public class GameController implements Initializable {
     @SuppressWarnings("WeakerAccess")
     public Pane gamePane;
+    public AnchorPane anchorPane;
 
     private SproutController sproutController;
     private int gameType; // 0 is clickToDraw and 1 is dragToDraw
@@ -32,7 +36,7 @@ public class GameController implements Initializable {
     private final int DRAG_TO_DRAW_MODE = 1;
     private View view;
     private boolean nodeIsPrimed;
-    private Circle startNode;
+    private Circle primedNode;
 
     void setGameType(int whichGameType) {
         gameType = whichGameType;
@@ -96,19 +100,35 @@ public class GameController implements Initializable {
             primeNodeToDrawEdgeFrom((Circle) mouseEvent.getSource());
         } else {
             try {
-                attemptDrawEdgeBetweenNodes(startNode, (Circle) mouseEvent.getSource());
+                attemptDrawEdgeBetweenNodes(primedNode, (Circle) mouseEvent.getSource());
                 updateCanvas();
             } catch (IllegalNodesChosenException e) {
-                startNode.setStroke(Color.BLACK);
+                invalidLocationError();
+                primedNode.setStroke(Color.BLACK);
                 nodeIsPrimed = false;
                 System.out.println(e.getMessage()); // Too many edges from node TODO maybe display this in some visual way. (flash the screen)
             }
         }
     }
 
+    private void invalidLocationError() {
+        anchorPane.setStyle("-fx-background-color: orangered, white; -fx-background-insets: 0,20; -fx-padding: 20;");
+        FadeTransition fadeTransition = new FadeTransition(Duration.seconds(0.2), anchorPane);
+        fadeTransition.setFromValue(1.0);
+        fadeTransition.setToValue(0.4);
+        fadeTransition.setCycleCount(2);
+        fadeTransition.setAutoReverse(true);
+        fadeTransition.play();
+        fadeTransition.setOnFinished(e ->
+                anchorPane.setStyle("-fx-background-color: antiquewhite, white; -fx-background-insets: 0,20; -fx-padding: 20;"));
+    }
+
     @SuppressWarnings("unused")
     public void onMouseClicked(MouseEvent mouseClicked) {
-        System.out.println(mouseClicked.getTarget());
+        if (!(mouseClicked.getTarget() instanceof Circle) && primedNode != null) {
+            primedNode.setStroke(Color.BLACK);
+            nodeIsPrimed = false;
+        }
     }
 
     private void updateCanvas() {
@@ -129,11 +149,9 @@ public class GameController implements Initializable {
      */
     private void primeNodeToDrawEdgeFrom(Circle clickedNode) {
         clickedNode.setStroke(Color.RED);
-        startNode = clickedNode;
+        primedNode = clickedNode;
         nodeIsPrimed = true;
     }
-
-
 
     @SuppressWarnings("unused")
     public void mouseDraggedHandler(MouseEvent mouseDragged) {
