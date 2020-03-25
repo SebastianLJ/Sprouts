@@ -1,7 +1,9 @@
 package acceptance_tests;
 
-import io.cucumber.junit.Cucumber;
-import io.cucumber.junit.CucumberOptions;
+import cucumber.api.CucumberOptions;
+
+import cucumber.api.SnippetType;
+import cucumber.api.junit.Cucumber;
 import org.junit.runner.RunWith;
 
 
@@ -9,7 +11,7 @@ import org.junit.runner.RunWith;
 @CucumberOptions(features = "use_cases",
         plugin = { "html:target/cucumber/wikipedia.html"},
         monochrome=true,
-        snippets = CucumberOptions.SnippetType.CAMELCASE,
+        snippets = SnippetType.CAMELCASE,
         glue = { "acceptance_tests"},
         strict = true)
 public class Acceptance_test {
