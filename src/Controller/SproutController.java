@@ -74,6 +74,16 @@ public class SproutController {
         return sproutModel;
     }
 
+    public void updateSize(double width, double height) {
+        sproutModel.setWidth((int) width);
+        sproutModel.setHeight((int) height);
+    }
+
+    public void resetGame() {
+        sproutModel.resetGame();
+        gameOnGoing = false;
+    }
+
     public String getOutputExceptionMessage() {
         return outputExceptionMessage;
     }

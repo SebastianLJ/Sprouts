@@ -1,6 +1,5 @@
 package Model;
 
-import javafx.scene.Cursor;
 import javafx.scene.shape.*;
 
 import javafx.scene.input.MouseEvent;
@@ -8,13 +7,16 @@ import javafx.scene.input.MouseEvent;
 import java.util.*;
 
 public class SproutModel {
+    private static final int DISTANCE_BETWEEN_POINTS = 20;
+    private static final int DISTANCE_FROM_BORDER = 20;
     private ArrayList<Shape> lines = new ArrayList<>();
     private List<Shape> edges;
     private List<Node> nodes;
+
     private int height = 280;       // TODO: make user-settable
     private int width = 500;        // TODO: make user-settable
     private Path path;
-    final static public double COLLISIONWIDTH = 1.5;
+    private final static double COLLISION_WIDTH = 1.5;
     private boolean isCollided;
     private Point point;
     private Path pathTmp;
@@ -34,8 +36,8 @@ public class SproutModel {
 
         for (int i = 0; i < amount; i++) {
             do {
-                x = random.nextInt(width);
-                y = random.nextInt(height);
+                x = random.nextInt(width - 2*DISTANCE_FROM_BORDER) + DISTANCE_FROM_BORDER;
+                y = random.nextInt(height - 2*DISTANCE_FROM_BORDER) + DISTANCE_FROM_BORDER;
                 circle.setCenterX(x);
                 circle.setCenterY(y);
             } while (invalidPointLocation(circle));
@@ -43,14 +45,25 @@ public class SproutModel {
         }
     }
 
-    private boolean invalidPointLocation(Shape circle) {
+    private boolean invalidPointLocation(Circle circle) {
         for (Node node : nodes) {
             Shape intersect = Shape.intersect(circle, node.getShape());
             if (intersect.getBoundsInLocal().getWidth() != -1) {
                 return true;
             }
+            if (DISTANCE_BETWEEN_POINTS > distanceBetweenCircleCenter(node.getShape(), circle)) {
+                return true;
+            }
         }
+
         return false;
+    }
+
+    private int distanceBetweenCircleCenter(Circle circle1, Circle circle2) {
+        double dx = circle2.getCenterX()-circle1.getCenterX();
+        double dy = circle2.getCenterY()-circle1.getCenterY();
+
+        return (int) Math.ceil(Math.sqrt(dx*dx+dy*dy));
     }
 
 
@@ -88,15 +101,15 @@ public class SproutModel {
 
         Node startNode = nodes.get(startNodeName);
         Node endNode = nodes.get(endNodeName);
-        Shape newLine = new Line();
+        Line newLine = new Line();
 
-        ((Line) newLine).setStartX(startNode.getX());
-        ((Line) newLine).setStartY(startNode.getY());
-        ((Line) newLine).setEndX(endNode.getX());
-        ((Line) newLine).setEndY(endNode.getY());
+        newLine.setStartX(startNode.getX());
+        newLine.setStartY(startNode.getY());
+        newLine.setEndX(endNode.getX());
+        newLine.setEndY(endNode.getY());
 
         edges.add(newLine);
-        addNodeOnLine((Line) newLine);
+        addNodeOnLine(newLine);
 
         // Update number of connecting edges
         startNode.incNumberOfConnectingEdges(1);
@@ -108,20 +121,20 @@ public class SproutModel {
     public void drawCircleFromNodeToItself(int nodeName) {
 
         Node node = nodes.get(nodeName);
-        Shape newCircle = new Circle();
+        Circle newCircle = new Circle();
 
         double radius = width / 100;                                  // TODO: adjust to various window sizes
         double nodeX = node.getX();
         double nodeY = node.getY();
 
         Double[] center = getCircleCenterCoordinates(nodeX, nodeY, radius);
-        ((Circle) newCircle).setCenterX(center[0]);
-        ((Circle) newCircle).setCenterY(center[1]);
-        ((Circle) newCircle).setRadius(radius);
+        newCircle.setCenterX(center[0]);
+        newCircle.setCenterY(center[1]);
+        newCircle.setRadius(radius);
         newCircle.setStrokeWidth(1.0);
 
         edges.add(newCircle);
-        addNodeOnCircle((Circle) newCircle, nodeX, nodeY);
+        addNodeOnCircle(newCircle, nodeX, nodeY);
 
         // Update number of connecting edges
         node.incNumberOfConnectingEdges(2);
@@ -204,7 +217,7 @@ public class SproutModel {
 /*
         System.out.println("Bredde: " + Shape.intersect(pathTmp, path).getBoundsInLocal().getWidth());
 */
-        if (Shape.intersect(pathTmp, path).getBoundsInLocal().getWidth() > COLLISIONWIDTH) {
+        if (Shape.intersect(pathTmp, path).getBoundsInLocal().getWidth() > COLLISION_WIDTH) {
             return true;
         }
         for (Shape line : lines) {
@@ -225,6 +238,14 @@ public class SproutModel {
 
     public boolean getIsCollided() {
         return isCollided;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
+    }
+
+    public void setWidth(int width) {
+        this.width = width;
     }
 }
 
