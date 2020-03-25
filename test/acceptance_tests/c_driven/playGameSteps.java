@@ -2,9 +2,8 @@ package acceptance_tests.c_driven;
 
 
 import Model.Node;
-import cucumber.api.java.en.Given;
-import cucumber.api.java.en.Then;
 import holders.ErrorMessageHolder;
+import io.cucumber.java.en.*;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Shape;
 import org.junit.After;
