@@ -29,20 +29,10 @@ public class playGameSteps {
     private int numberOfEdges;
     private String scannerInput;
 
-    // For testing console output
-    private final ByteArrayOutputStream outContent;
-    private final ByteArrayOutputStream errContent;
-    private final PrintStream originalOut;
-    private final PrintStream originalErr;
-
     public playGameSteps(Main main, ErrorMessageHolder errorMessageHolder) {
         this.main = main;
         this.errorMessageHolder = errorMessageHolder;
         this.scannerInput = "";
-        this.outContent = new ByteArrayOutputStream();
-        this.errContent = new ByteArrayOutputStream();
-        this.originalOut = System.out;
-        this.originalErr = System.err;
     }
 
     @Given("that a game has nodes {int} and {int}")
@@ -60,18 +50,6 @@ public class playGameSteps {
         scannerInput += int1 + " " + int2 + "\n" + int1 + " " + int3 + "\n";
         numberOfEdges += 2;
         numberOfNodes += 2;
-    }
-
-    @Before
-    public void setUpStreams() {
-        System.setOut(new PrintStream(outContent));
-        System.setErr(new PrintStream(errContent));
-    }
-
-    @After
-    public void restoreStreams() {
-        System.setOut(originalOut);
-        System.setErr(originalErr);
     }
 
     @Given("the user chooses nodes {int} and {int}")

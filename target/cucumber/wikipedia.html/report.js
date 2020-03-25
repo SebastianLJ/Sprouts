@@ -365,4 +365,14 @@ formatter.match({
 formatter.result({
   "status": "passed"
 });
+formatter.step({
+  "name": "a message with the text \"You must start the game with at least 2 nodes\" is given to the user",
+  "keyword": "Then "
+});
+formatter.match({
+  "location": "acceptance_tests.c_driven.startGameSteps.aMessageWithTheTextIsGivenToTheUser(java.lang.String)"
+});
+formatter.result({
+  "status": "passed"
+});
 });

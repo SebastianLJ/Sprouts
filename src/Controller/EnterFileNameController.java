@@ -44,7 +44,7 @@ public class EnterFileNameController implements Initializable {
         try {
             int n = fileSimulationController.validateFile();
             if (n == 0) {
-                fileResponseLabel.setText("File is valid");
+                fileResponseLabel.setText("File syntax is valid");
                 System.out.println("File syntax is valid");
                 //This line gets the Stage information
                 Stage window = (Stage)((Node) event.getSource()).getScene().getWindow();

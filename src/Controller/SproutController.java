@@ -11,6 +11,7 @@ public class SproutController {
     //    private SproutView sproutView;
     private SproutModel sproutModel;
     private boolean gameOnGoing;
+    // For testing
     private String outputExceptionMessage;
 
 
@@ -25,11 +26,12 @@ public class SproutController {
         if (gameOnGoing) {
             // TODO
         } else {
-            if (noOfInitialNodes > 0) {
+            if (noOfInitialNodes > 1) {
                 sproutModel.addRandomNodes(noOfInitialNodes);
                 gameOnGoing = true;
             } else {
-                throw new NotEnoughInitialNodesException("You must start the game with at least 2 nodes");
+                outputExceptionMessage = "You must start the game with at least 2 nodes";
+                throw new NotEnoughInitialNodesException(outputExceptionMessage);
             }
         }
     }
@@ -40,7 +42,7 @@ public class SproutController {
 
     public void attemptDrawEdgeBetweenNodes(int startNode, int endNode) throws IllegalNodesChosenException {
 
-        if (!sproutModel.hasNodeWithName(startNode) || !sproutModel.hasNodeWithName(endNode)) {
+        if (!(sproutModel.hasNodeWithName(startNode) && sproutModel.hasNodeWithName(endNode))) {
             outputExceptionMessage = "One or both nodes chosen does not exist";
             throw new IllegalNodesChosenException(outputExceptionMessage);
         } else if ((startNode != endNode && (sproutModel.getNumberOfEdges(startNode) == 3 || sproutModel.getNumberOfEdges(endNode) == 3)) ||

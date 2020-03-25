@@ -33,6 +33,7 @@ public class startGameSteps {
     public void theUserInputsInitialNodes(Integer int1) {
         Scanner scanner = new Scanner(int1.toString());
         main.acceptUserInput(scanner);
+        errorMessageHolder.setErrorMessage(main.getController().getOutputExceptionMessage());
     }
 
     @Then("a new game is created")

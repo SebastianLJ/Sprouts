@@ -23,7 +23,7 @@ public class FileSimulationController implements Initializable {
     private SproutController sproutController = new SproutController();
     public Label filenameLabel;
     public ListView moveList;
-    private String filename;
+    public String filename;
     private long simSpeed = 500; //speed in ms
 
     public FileSimulationController() {
@@ -90,7 +90,7 @@ public class FileSimulationController implements Initializable {
         int n = Integer.parseInt(line);
         try {
             sproutController.attemptInitializeGame(n);
-            System.out.println("successfully initialized game");
+            System.out.println("Successfully initialized game");
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }

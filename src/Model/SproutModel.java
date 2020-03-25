@@ -17,10 +17,7 @@ public class SproutModel {
     final static public double COLLISIONWIDTH = 1.5;
     private boolean isCollided;
     private Point point;
-
-
     private Path pathTmp;
-
 
     public SproutModel() {
         edges = new ArrayList<>();

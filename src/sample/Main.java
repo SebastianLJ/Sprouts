@@ -95,8 +95,8 @@ public class Main extends Application {
     }
 
     public static void main(String[] args) throws NotEnoughInitialNodesException, IllegalNodesChosenException {
-        acceptUserInput(new Scanner(System.in));  // uncomment for console driven game
-//        launch(args);                             // uncomment for javaFX driven game
+//        acceptUserInput(new Scanner(System.in));  // uncomment for console driven game
+        launch(args);                             // uncomment for javaFX driven game
     }
 
     public static void acceptUserInput(Scanner scanner) {
