@@ -1,15 +1,29 @@
 package Controller;
 
 import Exceptions.NumberOfInitialNodesException;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.SelectionMode;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+import javafx.util.Callback;
+import javafx.util.Duration;
 
 import java.io.*;
 import java.net.URL;
@@ -22,7 +36,6 @@ public class FileSimulationController implements Initializable {
     public Label filenameLabel;
     public ListView moveList;
     private String filename;
-    private long simSpeed = 0; //speed in ms
     private ArrayList<String> moves = new ArrayList<>();
 
     public FileSimulationController() {
@@ -88,33 +101,53 @@ public class FileSimulationController implements Initializable {
         //reset game
         sproutController.resetGame();
 
-        //init starting points
-        int n = Integer.parseInt(moves.get(0));
-        boolean legalGame = true;
-        String[] move = {"-1", "-1"};
-        try {
-            sproutController.attemptInitializeGame(n);
-            System.out.println("successfully initialized game");
+        moveList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
-            //execute moves
-            for (int i = 1; i < moves.size(); i++) {
-                move = moves.get(i).split("\\s");
-                Thread.sleep(simSpeed);
-                sproutController.attemptDrawEdgeBetweenNodes(Integer.parseInt(move[0]) - 1, Integer.parseInt(move[1]) - 1);
-                System.out.println("successfully executed move : from " + move[0] + " to " + move[1]);
+        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1), new EventHandler<ActionEvent>() {
+
+            private int i = 0;
+
+            @Override
+            public void handle(ActionEvent event) {
+                //init starting points
+                boolean legalGame = true;
+                String[] move = {"-1", "-1"};
+                int n = Integer.parseInt(moves.get(0));
+                try {
+                    if (i == 0) {
+                        sproutController.attemptInitializeGame(n);
+                        System.out.println("successfully initialized game");
+                    } else {
+                        //execute moves
+                        moveList.getSelectionModel().select(i - 1);
+                        move = moves.get(i).split("\\s");
+                        sproutController.attemptDrawEdgeBetweenNodes(Integer.parseInt(move[0]) - 1, Integer.parseInt(move[1]) - 1);
+                        System.out.println("successfully executed move : from " + move[0] + " to " + move[1]);
+
+                    }
+                    i++;
+                } catch (NumberOfInitialNodesException e) {
+                    System.out.println(e.getMessage());
+                    legalGame = false;
+                } catch (Exception e) {
+                    System.out.println("Failed at executing move : from " + move[0] + " to " + move[1]);
+                    System.out.println(e.getMessage());
+                    legalGame = false;
+                }
+                if (legalGame && i == moves.size()) {
+                    System.out.println("Legal game - File successfully simulated");
+                } else if (i == moves.size()) {
+                    System.out.println("Illegal game - File unsuccessfully simulated");
+                }
             }
-        } catch (NumberOfInitialNodesException e) {
-            System.out.println(e.getMessage());
-            legalGame = false;
-        } catch (Exception e) {
-            System.out.println("Failed at executing move : from " + move[0] + " to " + move[1]);
-            System.out.println(e.getMessage());
-            legalGame = false;
-        }
-        if (legalGame) {
-            System.out.println("Legal game - File successfully simulated");
-        } else {
-            System.out.println("Illegal game - File unsuccessfully simulated");
-        }
+        }));
+        timeline.setCycleCount(moves.size());
+        timeline.play();
+
+
+    }
+
+    private void run() {
+
     }
 }
