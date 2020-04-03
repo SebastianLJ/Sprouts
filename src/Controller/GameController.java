@@ -3,7 +3,6 @@ package Controller;
 import Exceptions.IllegalNodesChosenException;
 import Exceptions.NumberOfInitialNodesException;
 import View.View;
-import javafx.animation.FadeTransition;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
@@ -14,10 +13,8 @@ import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 
 import java.io.IOException;
 import java.net.URL;
@@ -90,7 +87,7 @@ public class GameController implements Initializable {
             if (gameType == CLICK_TO_DRAW_MODE) {
                 node.getShape().setOnMouseClicked(this::clickToDraw);
             } else {
-                // Another method
+                // Another method for drag to draw game mode
             }
         }
     }
@@ -103,30 +100,17 @@ public class GameController implements Initializable {
                 attemptDrawEdgeBetweenNodes(primedNode, (Circle) mouseEvent.getSource());
                 updateCanvas();
             } catch (IllegalNodesChosenException e) {
-                invalidLocationError();
-                primedNode.setStroke(Color.BLACK);
+                view.illegalEdgeAnimation(gamePane, sproutController.createEdge(primedNode, (Circle) mouseEvent.getSource()));
+                view.unPrimeNode(primedNode);
                 nodeIsPrimed = false;
-                System.out.println(e.getMessage()); // Too many edges from node TODO maybe display this in some visual way. (flash the screen)
             }
         }
-    }
-
-    private void invalidLocationError() {
-        anchorPane.setStyle("-fx-background-color: orangered, white; -fx-background-insets: 0,20; -fx-padding: 20;");
-        FadeTransition fadeTransition = new FadeTransition(Duration.seconds(0.2), anchorPane);
-        fadeTransition.setFromValue(1.0);
-        fadeTransition.setToValue(0.4);
-        fadeTransition.setCycleCount(2);
-        fadeTransition.setAutoReverse(true);
-        fadeTransition.play();
-        fadeTransition.setOnFinished(e ->
-                anchorPane.setStyle("-fx-background-color: antiquewhite, white; -fx-background-insets: 0,20; -fx-padding: 20;"));
     }
 
     @SuppressWarnings("unused")
     public void onMouseClicked(MouseEvent mouseClicked) {
         if (!(mouseClicked.getTarget() instanceof Circle) && primedNode != null) {
-            primedNode.setStroke(Color.BLACK);
+            view.unPrimeNode(primedNode);
             nodeIsPrimed = false;
         }
     }
@@ -138,7 +122,7 @@ public class GameController implements Initializable {
 
     private void attemptDrawEdgeBetweenNodes(Circle startNode, Circle endNode) throws IllegalNodesChosenException {
         sproutController.attemptDrawEdgeBetweenNodes(startNode, endNode);
-        startNode.setStroke(Color.BLACK);
+        view.unPrimeNode(startNode);
         nodeIsPrimed = false; // A edge has been drawn and the node i no longer primed
     }
 
@@ -148,7 +132,7 @@ public class GameController implements Initializable {
      * @param clickedNode the node the user has clicked
      */
     private void primeNodeToDrawEdgeFrom(Circle clickedNode) {
-        clickedNode.setStroke(Color.RED);
+        view.primeNode(clickedNode);
         primedNode = clickedNode;
         nodeIsPrimed = true;
     }

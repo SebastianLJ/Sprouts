@@ -5,6 +5,7 @@ import Exceptions.NumberOfInitialNodesException;
 import Model.SproutModel;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Shape;
 
 import java.util.List;
 
@@ -105,5 +106,9 @@ public class SproutController {
         } else {
             sproutModel.drawEdgeBetweenNodes(startNode, endNode);
         }
+    }
+
+    public Shape createEdge(Circle startNode, Circle endNode) {
+        return sproutModel.createEdgeBetweenNodes(startNode, endNode);
     }
 }

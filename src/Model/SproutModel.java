@@ -1,5 +1,6 @@
 package Model;
 
+import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 
 import javafx.scene.input.MouseEvent;
@@ -110,12 +111,7 @@ public class SproutModel {
 
         Node startNode = nodes.get(startNodeName);
         Node endNode = nodes.get(endNodeName);
-        Line newLine = new Line();
-
-        newLine.setStartX(startNode.getX());
-        newLine.setStartY(startNode.getY());
-        newLine.setEndX(endNode.getX());
-        newLine.setEndY(endNode.getY());
+        Line newLine = createLineToDraw(startNode, endNode);
 
         edges.add(newLine);
         addNodeOnLine(newLine);
@@ -127,12 +123,33 @@ public class SproutModel {
         nodes.set(endNodeName, endNode);
     }
 
+    private Line createLineToDraw(Node startNode, Node endNode) {
+        Line newLine = new Line();
+        newLine.setStartX(startNode.getX());
+        newLine.setStartY(startNode.getY());
+        newLine.setEndX(endNode.getX());
+        newLine.setEndY(endNode.getY());
+
+        return newLine;
+    }
+
     public void drawCircleFromNodeToItself(int nodeName) {
 
         Node node = nodes.get(nodeName);
+        Circle newCircle = createCircleToDraw(node);
+
+        edges.add(newCircle);
+        addNodeOnCircle(newCircle, node.getX(), node.getY());
+
+        // Update number of connecting edges
+        node.incNumberOfConnectingEdges(2);
+        nodes.set(nodeName, node);
+    }
+
+    private Circle createCircleToDraw(Node node) {
         Circle newCircle = new Circle();
 
-        double radius = width / 100;                                  // TODO: adjust to various window sizes
+        double radius = width / 50.;                                  // TODO: adjust to various window sizes
         double nodeX = node.getX();
         double nodeY = node.getY();
 
@@ -140,14 +157,10 @@ public class SproutModel {
         newCircle.setCenterX(center[0]);
         newCircle.setCenterY(center[1]);
         newCircle.setRadius(radius);
-        newCircle.setStrokeWidth(1.0);
+        newCircle.setFill(Color.TRANSPARENT);
+        newCircle.setStroke(Color.BLACK);
 
-        edges.add(newCircle);
-        addNodeOnCircle(newCircle, nodeX, nodeY);
-
-        // Update number of connecting edges
-        node.incNumberOfConnectingEdges(2);
-        nodes.set(nodeName, node);
+        return newCircle;
     }
 
     public void addNodeOnLine(Line edge) {
@@ -292,19 +305,40 @@ public class SproutModel {
         return -1; // Should never be reached
     }
 
-    public void drawEdgeBetweenNodes(Circle startNode, Circle endNode) {
-        int nameOfStartNode = 0, nameOfEndNode = 0;
+    public Node findNode(Circle nodeToFind) {
+        Node node = null;
+        for (Node n : nodes) {
+            if (n.getShape() == nodeToFind) {
+                return n;
+            }
+        }
+        return node;
+    }
+
+    public int findNameOfNode(Circle nodeToFind) {
+        int nameOfNode = 0;
         int i = 0;
         for (Node node : nodes) {
-            if (node.getShape() == startNode) {
-                nameOfStartNode = i;
-            }
-            if (node.getShape() == endNode) {
-                nameOfEndNode = i;
+            if (node.getShape() == nodeToFind) {
+                nameOfNode = i;
             }
             i++;
         }
+        return nameOfNode;
+    }
+
+    public void drawEdgeBetweenNodes(Circle startNode, Circle endNode) {
+        int nameOfStartNode = findNameOfNode(startNode);
+        int nameOfEndNode = findNameOfNode(endNode);
         drawEdgeBetweenNodes(nameOfStartNode, nameOfEndNode);
+    }
+
+    public Shape createEdgeBetweenNodes(Circle startNode, Circle endNode) {
+        if (startNode == endNode) {
+            return createCircleToDraw(findNode(startNode));
+        } else {
+            return createLineToDraw(startNode, endNode);
+        }
     }
 
     public Circle getNewestNode() {
@@ -313,6 +347,10 @@ public class SproutModel {
 
     public Shape getNewestEdge() {
         return edges.get(edges.size()-1);
+    }
+
+    public Line createLineToDraw(Circle startNode, Circle endNode) {
+        return createLineToDraw(findNode(startNode), findNode(endNode));
     }
 }
 
