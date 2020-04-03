@@ -106,4 +106,8 @@ public class View {
             gamePane.getChildren().add(shape);
         }
     }
+
+    public void resetView(Pane gamePane) {
+        gamePane.getChildren().clear();
+    }
 }

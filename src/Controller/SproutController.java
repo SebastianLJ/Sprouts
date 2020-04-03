@@ -78,8 +78,8 @@ public class SproutController {
     }
 
     public void updateSize(double width, double height) {
-        sproutModel.setWidth((int) width);
-        sproutModel.setHeight((int) height);
+        sproutModel.setWidth(width);
+        sproutModel.setHeight(height);
     }
 
     public void resetGame() {

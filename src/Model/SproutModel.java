@@ -14,8 +14,8 @@ public class SproutModel {
     private List<Shape> edges;
     private List<Node> nodes;
 
-    private int height = 280;       // TODO: make user-settable
-    private int width = 500;        // TODO: make user-settable
+    private double height;
+    private double width;
     private Path path;
     private final static double COLLISION_WIDTH = 1.5;
     private boolean isCollided;
@@ -41,8 +41,8 @@ public class SproutModel {
 
         for (int i = 0; i < amount; i++) {
             do {
-                x = random.nextInt(width - 2*DISTANCE_FROM_BORDER) + DISTANCE_FROM_BORDER;
-                y = random.nextInt(height - 2*DISTANCE_FROM_BORDER) + DISTANCE_FROM_BORDER;
+                x = random.nextInt((int) width - 2*DISTANCE_FROM_BORDER) + DISTANCE_FROM_BORDER;
+                y = random.nextInt((int) height - 2*DISTANCE_FROM_BORDER) + DISTANCE_FROM_BORDER;
                 circle.setCenterX(x);
                 circle.setCenterY(y);
             } while (invalidPointLocation(circle));
@@ -279,11 +279,11 @@ public class SproutModel {
         return isCollided;
     }
 
-    public void setHeight(int height) {
+    public void setHeight(double height) {
         this.height = height;
     }
 
-    public void setWidth(int width) {
+    public void setWidth(double width) {
         this.width = width;
     }
 

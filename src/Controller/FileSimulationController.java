@@ -1,8 +1,10 @@
 package Controller;
 
 import Exceptions.NumberOfInitialNodesException;
+import View.View;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
@@ -13,6 +15,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -26,23 +29,28 @@ import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class FileSimulationController implements Initializable {
+    public Pane gamePane;
     private SproutController sproutController = new SproutController();
     public Label filenameLabel;
     public ListView moveList;
     private String filename;
     private ArrayList<String> moves = new ArrayList<>();
 
+    private View view;
+
     public FileSimulationController() {
     }
 
     void setFileName(String filename) {
         this.filename = filename;
-        filenameLabel.setText(filenameLabel.getText() + filename);
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-
+        view = new View(sproutController.getSproutModel());
+        Platform.runLater(() -> {
+            sproutController.updateSize(gamePane.getWidth(), gamePane.getHeight());
+        });
     }
 
     private void goToScene(ActionEvent event, String fxmlToLoad) throws IOException {
@@ -95,6 +103,8 @@ public class FileSimulationController implements Initializable {
         //reset game
         sproutController.resetGame();
 
+        view.resetView(gamePane);
+
         moveList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
         Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(0.5), new EventHandler<ActionEvent>() {
@@ -110,14 +120,15 @@ public class FileSimulationController implements Initializable {
                 try {
                     if (i == 0) {
                         sproutController.attemptInitializeGame(n);
+                        view.initializeNodes(gamePane);
                         System.out.println("successfully initialized game");
                     } else {
                         //execute moves
                         moveList.getSelectionModel().select(i - 1);
                         move = moves.get(i).split("\\s");
                         sproutController.attemptDrawEdgeBetweenNodes(Integer.parseInt(move[0]) - 1, Integer.parseInt(move[1]) - 1);
+                        view.updateCanvas(gamePane);
                         System.out.println("successfully executed move : from " + move[0] + " to " + move[1]);
-
                     }
                     i++;
                 } catch (NumberOfInitialNodesException e) {
