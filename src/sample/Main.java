@@ -7,7 +7,7 @@ import java.util.Scanner;
 import Controller.SproutController;
 
 public class Main {
-    final static public double COLLISIONWIDTH = 1.5;
+
     static SproutController controller = new SproutController();
 
 
