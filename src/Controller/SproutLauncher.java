@@ -1,5 +1,7 @@
 package Controller;
 
+import Exceptions.IllegalNodesChosenException;
+import Exceptions.NumberOfInitialNodesException;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -7,8 +9,11 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.util.Objects;
+import java.util.Scanner;
 
 public class SproutLauncher extends Application {
+
+    static SproutController controller = new SproutController();
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -25,4 +30,5 @@ public class SproutLauncher extends Application {
     public static void main(String[] args) {
         launch(args);
     }
+
 }

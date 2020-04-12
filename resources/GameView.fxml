@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.Pane?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/10.0.2" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <bottom>
       <Button mnemonicParsing="false" onAction="#goToMainMenu" text="Back" BorderPane.alignment="CENTER" />
    </bottom>
@@ -17,11 +17,11 @@
       <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
    </padding>
    <center>
-      <AnchorPane style="-fx-background-color: antiquewhite, white; -fx-background-insets: 0,20; -fx-padding: 20;" BorderPane.alignment="CENTER">
+      <AnchorPane fx:id="anchorPane" style="-fx-background-color: antiquewhite, white; -fx-background-insets: 0,20; -fx-padding: 20;" BorderPane.alignment="CENTER">
          <BorderPane.margin>
             <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
          </BorderPane.margin>
-         <Pane fx:id="gamePane" layoutX="168.0" layoutY="55.0" onMouseDragged="#mouseDraggedHandler" onMousePressed="#mousePressedHandler" onMouseReleased="#mouseReleasedHandler" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+         <Pane fx:id="gamePane" layoutX="168.0" layoutY="55.0" onMouseClicked="#onMouseClicked" onMouseDragged="#mouseDraggedHandler" onMousePressed="#mousePressedHandler" onMouseReleased="#mouseReleasedHandler" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
       </AnchorPane>
    </center>
 </BorderPane>
