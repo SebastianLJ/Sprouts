@@ -10,6 +10,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
@@ -161,7 +162,9 @@ public class GameController implements Initializable {
             sproutController.completeDrawing();
             view.setUpSuccessfulPathSettings(mouseReleased);
         }
-
+    }
+    public void keyPressedHandler(KeyEvent keyPressed){
+        System.out.println("test");
 
     }
 
