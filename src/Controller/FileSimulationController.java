@@ -2,6 +2,7 @@ package Controller;
 
 import Exceptions.NumberOfInitialNodesException;
 import View.View;
+import com.sun.javafx.scene.traversal.TopMostTraversalEngine;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
@@ -9,20 +10,22 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.SelectionMode;
+import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 import javafx.util.Duration;
 
+import javax.tools.Tool;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Objects;
@@ -31,10 +34,13 @@ import java.util.ResourceBundle;
 public class FileSimulationController implements Initializable {
     public Pane gamePane;
     private SproutController sproutController = new SproutController();
-    public Label filenameLabel;
-    public ListView moveList;
+    public ListView<String> moveList;
     private String filename;
     private ArrayList<String> moves = new ArrayList<>();
+
+    private ArrayList<ListCell<String>> cells = new ArrayList<>();
+
+    public final Tooltip toolTip = new Tooltip();
 
     private View view;
 
@@ -50,6 +56,11 @@ public class FileSimulationController implements Initializable {
         view = new View(sproutController.getSproutModel());
         Platform.runLater(() -> {
             sproutController.updateSize(gamePane.getWidth(), gamePane.getHeight());
+        });
+        moveList.setCellFactory(listView -> {
+            ToolTipCell cell = new ToolTipCell();
+            cells.add(cell);
+            return cell;
         });
     }
 
@@ -103,6 +114,7 @@ public class FileSimulationController implements Initializable {
         //reset game
         sproutController.resetGame();
 
+        // Reset view
         view.resetView(gamePane);
 
         moveList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
@@ -132,9 +144,11 @@ public class FileSimulationController implements Initializable {
                     }
                     i++;
                 } catch (NumberOfInitialNodesException e) {
+                    prepareTooltip(e.getMessage());
                     System.out.println(e.getMessage());
                     legalGame = false;
                 } catch (Exception e) {
+                    prepareTooltip("Failed at executing move : from " + move[0] + " to " + move[1] + "\n" + e.getMessage());
                     System.out.println("Failed at executing move : from " + move[0] + " to " + move[1]);
                     System.out.println(e.getMessage());
                     legalGame = false;
@@ -144,6 +158,11 @@ public class FileSimulationController implements Initializable {
                 } else if (i == moves.size()) {
                     System.out.println("Illegal game - File unsuccessfully simulated");
                 }
+            }
+
+            private void prepareTooltip(String s) {
+                toolTip.setText(s);
+                cells.get(i).setTooltip(toolTip);
             }
         }));
         timeline.setCycleCount(moves.size());

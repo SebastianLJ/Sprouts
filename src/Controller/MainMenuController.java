@@ -1,9 +1,13 @@
 package Controller;
 
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -12,6 +16,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -32,6 +37,7 @@ public class MainMenuController implements Initializable {
     private boolean promptedForDragGame;
     private boolean promptedForClickGame;
 
+    private DoubleProperty fontSize = new SimpleDoubleProperty(10);
 
     private void startGame(MouseEvent event, int numberOfInitialNodes) throws IOException {
         FXMLLoader loader = new FXMLLoader(
@@ -70,7 +76,7 @@ public class MainMenuController implements Initializable {
         mainMenu.getChildren().remove(mainMenuIndex + whichGameType);
     }
 
-    public void startDragToDrawGame(ActionEvent event) throws IOException {
+    public void startDragToDrawGame(ActionEvent event) {
         if (promptedForClickGame) {
             removeAskForNumberOfStartingNodes();
             promptedForNumberOfStartingNodes = false;
@@ -78,6 +84,7 @@ public class MainMenuController implements Initializable {
         whichGameType = 1;
         promptedForDragGame = true;
         askForNumberOfStartingNodes();
+        System.out.println(((Button) event.getSource()).getWidth());
     }
 
     public void startEnterFileName(ActionEvent event) throws IOException {
@@ -129,6 +136,11 @@ public class MainMenuController implements Initializable {
             });
 
             container.getChildren().addAll(input, startGameButton);
+            container.setStyle("-fx-padding: 10;" + "-fx-border-style: solid inside;"
+                    + "-fx-border-width: 2;" + "-fx-border-insets: 5;"
+                    + "-fx-border-radius: 5;" + "-fx-border-color: blue;");
+            container.setAlignment(Pos.CENTER);
+            HBox.setHgrow(input, Priority.ALWAYS);
 
             mainMenu.getChildren().add(mainMenuIndex + whichGameType, container);
 
@@ -138,6 +150,5 @@ public class MainMenuController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-
     }
 }
