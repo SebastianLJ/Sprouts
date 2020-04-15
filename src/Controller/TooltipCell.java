@@ -4,8 +4,8 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.Tooltip;
 
 
-public class ToolTipCell extends ListCell<String> {
-    public ToolTipCell() {
+public class TooltipCell extends ListCell<String> {
+    public TooltipCell() {
     }
 
     @Override
