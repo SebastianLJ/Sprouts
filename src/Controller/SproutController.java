@@ -46,7 +46,7 @@ public class SproutController {
     public void attemptDrawEdgeBetweenNodes(int startNode, int endNode) throws IllegalNodesChosenException {
 
         if (!(sproutModel.hasNodeWithName(startNode) && sproutModel.hasNodeWithName(endNode))) {
-            outputExceptionMessage = "One or both nodes chosen does not exist";
+            outputExceptionMessage = "One or both nodes does not exist";
             throw new IllegalNodesChosenException(outputExceptionMessage);
         } else if ((startNode != endNode && (sproutModel.getNumberOfEdges(startNode) == 3 || sproutModel.getNumberOfEdges(endNode) == 3)) ||
                    (startNode == endNode && sproutModel.getNumberOfEdges(startNode) > 1)) {
@@ -98,7 +98,7 @@ public class SproutController {
 
     public void attemptDrawEdgeBetweenNodes(Circle startNode, Circle endNode) throws IllegalNodesChosenException {
         if (!(sproutModel.hasNodeWithName(startNode) && sproutModel.hasNodeWithName(endNode))) {
-            outputExceptionMessage = "One or both nodes chosen does not exist";
+            outputExceptionMessage = "One or both nodes does not exist";
             throw new IllegalNodesChosenException(outputExceptionMessage);
         } else if ((startNode != endNode && (sproutModel.getNumberOfEdges(startNode) == 3 || sproutModel.getNumberOfEdges(endNode) == 3)) ||
                 (startNode == endNode && sproutModel.getNumberOfEdges(startNode) > 1)) {

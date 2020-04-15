@@ -16,6 +16,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import javafx.animation.Animation.Status;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -100,6 +101,7 @@ public class FileSimulationController implements Initializable {
             return lineNumber;
         }
         moves.add(line);
+        moveList.getItems().add(line);
         while ((line = reader.readLine()) != null) {
             lineNumber++;
             if (!line.matches("\\d+\\s\\d+")) {
@@ -113,21 +115,25 @@ public class FileSimulationController implements Initializable {
     }
 
     public void runFile(ActionEvent event) {
-        // Reset model
-        sproutController.resetGame();
 
-        // Reset ListView
-        resetCells();
+        if (timeline.getStatus() == Status.STOPPED) {
 
-        // Reset view
-        view.resetView(gamePane);
+            // Reset model
+            sproutController.resetGame();
 
-        timeline.stop();
+            // Reset ListView
+            resetCells();
 
-        legalGame = true;
-        i = 0;
-        timeline.setCycleCount(moves.size());
-        timeline.play();
+            // Reset view
+            view.resetView(gamePane);
+
+            timeline.stop();
+
+            legalGame = true;
+            i = 0;
+            timeline.setCycleCount(moves.size());
+            timeline.play();
+        }
     }
 
     private Timeline createTimeline() {
@@ -142,9 +148,10 @@ public class FileSimulationController implements Initializable {
                     int n = Integer.parseInt(moves.get(0));
                     try {
                         if (i == 0) {
+                            setColorForCell("-fx-background-color: green");
                             sproutController.attemptInitializeGame(n);
                             view.initializeNodes(gamePane);
-                            System.out.println("successfully initialized game");
+                            System.out.println("successfully initialized game with " + n + " nodes");
                         } else {
                             //execute moves
                             setColorForCell("-fx-background-color: green");
@@ -155,6 +162,8 @@ public class FileSimulationController implements Initializable {
                         }
                         i++;
                     } catch (NumberOfInitialNodesException e) {
+                        setColorForCell("-fx-background-color: red");
+                        setText(String.valueOf(n),"");
                         prepareTooltip(e.getMessage());
                         legalGame = false;
                     } catch (Exception e) {
@@ -165,6 +174,8 @@ public class FileSimulationController implements Initializable {
                     }
                     if (legalGame && i == moves.size()) {
                         System.out.println("Legal game - File successfully simulated");
+                        // Should timeline.stop(); not be here ?
+
                     } else if (!legalGame) {
                         System.out.println("Illegal game - File unsuccessfully simulated");
                         timeline.stop();
@@ -173,30 +184,33 @@ public class FileSimulationController implements Initializable {
             }
 
             private void setText(String n1, String n2) {
-                cells.get(i).setText(n1 + " " + n2 + " (Hover to learn more)");
+                cells.get(i+1).setText(n1 + " " + n2 + " (Hover to learn more)");
             }
 
             private void setColorForCell(String s) {
                 if (i % 2 == 0 && s.contains("green")) {
-                    cells.get(i).setStyle("-fx-background-color: darkgreen");
+                    cells.get(i+1).setStyle("-fx-background-color: darkgreen"); //TODO +1?
                 } else {
-                    cells.get(i).setStyle(s);
+                    cells.get(i+1).setStyle(s);
                 }
             }
 
             private void prepareTooltip(String s) {
                 toolTip.setText(s);
-                cells.get(i).setTooltip(toolTip);
+                cells.get(i+1).setTooltip(toolTip);
             }
         }));
     }
 
     private void resetCells() {
-        cells.get(i).setTooltip(null);
-        if (cells.get(i).getText() != null) cells.get(i).setText(cells.get(i).getText().substring(0,3));
 
         int i = 0;
         for (ListCell<String> cell : cells) {
+            // reset cell error bar
+            cell.setTooltip(null);
+            // reset cell hover text
+            if (cell.getText() != null) cell.setText(cell.getText().replace(" (Hover to learn more)", ""));
+            // reset cell color
             cell.setStyle(i++ % 2 == 0 ? "-fx-background-color: white;" : "-fx-background-color: GHOSTWHITE;");
         }
     }
