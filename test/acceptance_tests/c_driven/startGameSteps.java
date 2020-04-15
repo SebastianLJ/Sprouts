@@ -1,5 +1,6 @@
 package acceptance_tests.c_driven;
 
+import Controller.SproutLauncher;
 import Exceptions.IllegalNodesChosenException;
 import Exceptions.NumberOfInitialNodesException;
 import holders.ErrorMessageHolder;
@@ -15,10 +16,10 @@ import static org.junit.Assert.*;
 
 public class startGameSteps {
 
-    private Main main;
+    private SproutLauncher main;
     private ErrorMessageHolder errorMessageHolder;
 
-    public startGameSteps(Main main, ErrorMessageHolder errorMessageHolder) {
+    public startGameSteps(SproutLauncher main, ErrorMessageHolder errorMessageHolder) {
         this.main = main;
         this.errorMessageHolder = errorMessageHolder;
     }

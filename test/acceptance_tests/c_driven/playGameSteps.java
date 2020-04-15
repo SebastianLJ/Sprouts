@@ -1,6 +1,7 @@
 package acceptance_tests.c_driven;
 
 
+import Controller.SproutLauncher;
 import Model.Node;
 import holders.ErrorMessageHolder;
 import io.cucumber.java.en.*;
@@ -20,7 +21,7 @@ import static org.junit.Assert.*;
 
 public class playGameSteps {
 
-    private Main main;
+    private SproutLauncher main;
     private ErrorMessageHolder errorMessageHolder;
     private int startNode;
     private int endNode;
@@ -28,7 +29,7 @@ public class playGameSteps {
     private int numberOfEdges;
     private String scannerInput;
 
-    public playGameSteps(Main main, ErrorMessageHolder errorMessageHolder) {
+    public playGameSteps(SproutLauncher main, ErrorMessageHolder errorMessageHolder) {
         this.main = main;
         this.errorMessageHolder = errorMessageHolder;
         this.scannerInput = "";
