@@ -2,7 +2,6 @@ package Controller;
 
 import Exceptions.NumberOfInitialNodesException;
 import View.View;
-import com.sun.javafx.scene.traversal.TopMostTraversalEngine;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
