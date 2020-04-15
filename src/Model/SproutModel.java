@@ -5,6 +5,7 @@ import javafx.scene.shape.*;
 
 import javafx.scene.input.MouseEvent;
 
+import java.awt.geom.PathIterator;
 import java.util.*;
 
 public class SproutModel {
@@ -23,7 +24,7 @@ public class SproutModel {
 
 
     private Path pathTmp;
-    private Line pathTmp2;
+
 
 
     public SproutModel() {
@@ -206,30 +207,24 @@ public class SproutModel {
         path = new Path();
         pathTmp = new Path();
         path.getElements().add(new MoveTo(point.getX(), point.getY()));
-        pathTmp2 = new Line();
-        pathTmp2.setStartX(point.getX());
-        pathTmp2.setStartY(point.getY());
     }
 
 
     public void drawPath(MouseEvent event) {
         if(isCollided){
-/*
+
             System.out.println("you collided draw somewhere else");
-*/
+
         }
         else {
             pathTmp.getElements().add(new MoveTo(point.getX(), point.getY()));
-            pathTmp2.setStartX(point.getX());
-            pathTmp2.setStartY(point.getY());
             point = new Point((int) event.getX(), (int) event.getY());
             pathTmp.getElements().add(new LineTo(point.getX(), point.getY()));
-            pathTmp2.setEndX(point.getX());
-            pathTmp2.setEndY(point.getY());
             if (doPathsCollide()){
                 System.out.println("test");
                 isCollided = true;
                 path.getElements().clear();
+                pathTmp.getElements().clear();
                 System.out.println("collision at " + point.getX() + ", " + point.getY());
             } else {
                 path.getElements().add(new LineTo(point.getX(), point.getY()));
@@ -243,17 +238,10 @@ public class SproutModel {
         }
 
     public boolean doPathsCollide() {
-/*
-        System.out.println("Bredde: " + Shape.intersect(pathTmp, path).getBoundsInLocal().getWidth());
-*/
 
+        Shape test = Shape.intersect(pathTmp, path);
 
-        Shape test = Shape.intersect(pathTmp2, path);
-        pathTmp.getElements().remove(pathTmp.getElements().size()-2);
-
-
-
-        if ((path.intersects(pathTmp2.getBoundsInLocal()))) {
+        if (test.getBoundsInLocal().getWidth()!=-1) {
             return true;
         }
         for (Shape line : lines) {
