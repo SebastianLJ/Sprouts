@@ -7,7 +7,6 @@ import holders.ErrorMessageHolder;
 
 
 import io.cucumber.java.en.*;
-import sample.Main;
 import Model.Point;
 
 import java.util.Scanner;

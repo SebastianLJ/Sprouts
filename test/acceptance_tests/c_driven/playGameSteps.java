@@ -9,7 +9,6 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Shape;
 import org.junit.After;
 import org.junit.Before;
-import sample.Main;
 
 
 import java.io.ByteArrayOutputStream;

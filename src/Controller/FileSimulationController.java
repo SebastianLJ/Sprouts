@@ -12,9 +12,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.SelectionMode;
+import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -31,18 +29,25 @@ import java.util.ResourceBundle;
 public class FileSimulationController implements Initializable {
     public Pane gamePane;
     private SproutController sproutController = new SproutController();
-    public Label filenameLabel;
-    public ListView moveList;
+    public ListView<String> moveList;
     private String filename;
     private ArrayList<String> moves = new ArrayList<>();
 
+    private ArrayList<ListCell<String>> cells = new ArrayList<>();
+
+    public final Tooltip toolTip = new Tooltip();
+
     private View view;
+    private boolean legalGame;
+    private Timeline timeline = createTimeline();
+    private int i = 0;
 
     public FileSimulationController() {
     }
 
     void setFileName(String filename) {
-        this.filename = filename;
+        String userDirectory = System.getProperty("user.dir");
+        this.filename = userDirectory + File.separator + "gameTestFiles" + File.separator + filename;
     }
 
     @Override
@@ -51,6 +56,14 @@ public class FileSimulationController implements Initializable {
         Platform.runLater(() -> {
             sproutController.updateSize(gamePane.getWidth(), gamePane.getHeight());
         });
+        moveList.setCellFactory(listView -> {
+            TooltipCell cell = new TooltipCell();
+            cells.add(cell);
+            return cell;
+        });
+        toolTip.setShowDelay(Duration.ZERO);
+        toolTip.setShowDuration(Duration.INDEFINITE);
+        toolTip.setHideDelay(Duration.ZERO);
     }
 
     private void goToScene(ActionEvent event, String fxmlToLoad) throws IOException {
@@ -99,56 +112,92 @@ public class FileSimulationController implements Initializable {
         return 0;
     }
 
-    public void runFile(ActionEvent event) throws IOException, InterruptedException {
-        //reset game
+    public void runFile(ActionEvent event) {
+        // Reset model
         sproutController.resetGame();
 
+        // Reset ListView
+        resetCells();
+
+        // Reset view
         view.resetView(gamePane);
 
-        moveList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        timeline.stop();
 
-        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(0.5), new EventHandler<ActionEvent>() {
+        legalGame = true;
+        i = 0;
+        timeline.setCycleCount(moves.size());
+        timeline.play();
+    }
 
-            private int i = 0;
+    private Timeline createTimeline() {
+        return new Timeline(new KeyFrame(Duration.seconds(0.5), new EventHandler<>() {
 
             @Override
             public void handle(ActionEvent event) {
-                //init starting points
-                boolean legalGame = true;
-                String[] move = {"-1", "-1"};
-                int n = Integer.parseInt(moves.get(0));
-                try {
-                    if (i == 0) {
-                        sproutController.attemptInitializeGame(n);
-                        view.initializeNodes(gamePane);
-                        System.out.println("successfully initialized game");
-                    } else {
-                        //execute moves
-                        moveList.getSelectionModel().select(i - 1);
-                        move = moves.get(i).split("\\s");
-                        sproutController.attemptDrawEdgeBetweenNodes(Integer.parseInt(move[0]) - 1, Integer.parseInt(move[1]) - 1);
-                        view.updateCanvas(gamePane);
-                        System.out.println("successfully executed move : from " + move[0] + " to " + move[1]);
+                System.out.println(legalGame);
+                if (legalGame) {
+                    //init starting points
+                    String[] move = {"-1", "-1"};
+                    int n = Integer.parseInt(moves.get(0));
+                    try {
+                        if (i == 0) {
+                            sproutController.attemptInitializeGame(n);
+                            view.initializeNodes(gamePane);
+                            System.out.println("successfully initialized game");
+                        } else {
+                            //execute moves
+                            setColorForCell("-fx-background-color: green");
+                            move = moves.get(i).split("\\s");
+                            sproutController.attemptDrawEdgeBetweenNodes(Integer.parseInt(move[0]) - 1, Integer.parseInt(move[1]) - 1);
+                            view.updateCanvas(gamePane);
+                            System.out.println("successfully executed move : from " + move[0] + " to " + move[1]);
+                        }
+                        i++;
+                    } catch (NumberOfInitialNodesException e) {
+                        prepareTooltip(e.getMessage());
+                        legalGame = false;
+                    } catch (Exception e) {
+                        setColorForCell("-fx-background-color: red");
+                        setText(move[0], move[1]);
+                        prepareTooltip("Failed at executing move : from " + move[0] + " to " + move[1] + "\n" + e.getMessage());
+                        legalGame = false;
                     }
-                    i++;
-                } catch (NumberOfInitialNodesException e) {
-                    System.out.println(e.getMessage());
-                    legalGame = false;
-                } catch (Exception e) {
-                    System.out.println("Failed at executing move : from " + move[0] + " to " + move[1]);
-                    System.out.println(e.getMessage());
-                    legalGame = false;
-                }
-                if (legalGame && i == moves.size()) {
-                    System.out.println("Legal game - File successfully simulated");
-                } else if (i == moves.size()) {
-                    System.out.println("Illegal game - File unsuccessfully simulated");
+                    if (legalGame && i == moves.size()) {
+                        System.out.println("Legal game - File successfully simulated");
+                    } else if (!legalGame) {
+                        System.out.println("Illegal game - File unsuccessfully simulated");
+                        timeline.stop();
+                    }
                 }
             }
+
+            private void setText(String n1, String n2) {
+                cells.get(i).setText(n1 + " " + n2 + " (Hover to learn more)");
+            }
+
+            private void setColorForCell(String s) {
+                if (i % 2 == 0 && s.contains("green")) {
+                    cells.get(i).setStyle("-fx-background-color: darkgreen");
+                } else {
+                    cells.get(i).setStyle(s);
+                }
+            }
+
+            private void prepareTooltip(String s) {
+                toolTip.setText(s);
+                cells.get(i).setTooltip(toolTip);
+            }
         }));
-        timeline.setCycleCount(moves.size());
-        timeline.play();
+    }
 
+    private void resetCells() {
+        cells.get(i).setTooltip(null);
+        if (cells.get(i).getText() != null) cells.get(i).setText(cells.get(i).getText().substring(0,3));
 
+        int i = 0;
+        for (ListCell<String> cell : cells) {
+            cell.setStyle(i++ % 2 == 0 ? "-fx-background-color: white;" : "-fx-background-color: GHOSTWHITE;");
+        }
     }
 }

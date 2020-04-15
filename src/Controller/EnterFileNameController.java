@@ -58,8 +58,12 @@ public class EnterFileNameController implements Initializable {
                 fileResponseLabel.setText("Syntax error at line " + n);
                 System.out.println("Syntax error at line " + n);
             }
-        } catch (Exception e) {
-            fileResponseLabel.setText("File not found");
+        } catch (Exception e) {;
+            if (e.getMessage() == null) {
+                fileResponseLabel.setText("File is empty");
+            } else {
+                fileResponseLabel.setText("File not found");
+            }
         }
     }
 

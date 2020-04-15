@@ -8,7 +8,7 @@
 <?import javafx.scene.text.Font?>
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.MainMenuController">
-   <VBox fx:id="mainMenu" alignment="CENTER" layoutX="218.0" layoutY="100.0" prefHeight="200.0" prefWidth="162.0" spacing="16.0" AnchorPane.bottomAnchor="100.0" AnchorPane.leftAnchor="220.0" AnchorPane.rightAnchor="220.0" AnchorPane.topAnchor="100.0">
+   <VBox fx:id="mainMenu" alignment="CENTER" layoutX="218.0" layoutY="100.0" prefHeight="200.0" prefWidth="303.0" spacing="16.0" AnchorPane.bottomAnchor="100.0" AnchorPane.leftAnchor="220.0" AnchorPane.rightAnchor="220.0" AnchorPane.topAnchor="100.0">
       <opaqueInsets>
          <Insets />
       </opaqueInsets>
@@ -17,17 +17,17 @@
             <Font name="System Bold" size="16.0" />
          </font>
       </Label>
-      <Button maxWidth="300" mnemonicParsing="false" onAction="#startClickToDrawGame" text="Click To Draw">
+      <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#startClickToDrawGame" text="Click To Draw">
          <font>
             <Font size="16.0" />
          </font>
       </Button>
-      <Button maxWidth="300" mnemonicParsing="false" onAction="#startDragToDrawGame" text="Drag To Draw">
+      <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#startDragToDrawGame" text="Drag To Draw">
          <font>
             <Font size="16.0" />
          </font>
       </Button>
-      <Button maxWidth="300" mnemonicParsing="false" onAction="#startEnterFileName" text="Simulate From File">
+      <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#startEnterFileName" text="Simulate From File">
          <font>
             <Font size="16.0" />
          </font>
