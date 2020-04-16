@@ -27,7 +27,7 @@ formatter.match({
   "location": "acceptance_tests.c_driven.playGameSteps.theUserChoosesNodesAnd(java.lang.Integer,java.lang.Integer)"
 });
 formatter.result({
-  "error_message": "java.lang.ExceptionInInitializerError\n\tat Model.SproutModel.addRandomNodes(SproutModel.java:39)\n\tat Controller.SproutController.attemptInitializeGame(SproutController.java:33)\n\tat sample.Main.acceptUserInput(Main.java:24)\n\tat acceptance_tests.c_driven.playGameSteps.theUserChoosesNodesAnd(playGameSteps.java:58)\n\tat ✽.the user chooses nodes 1 and 2(file:///Users/birkberger/Documents/IntelliJProjects/Sprouts/use_cases/c_driven/draw_a_line.feature:7)\nCaused by: java.lang.RuntimeException: No toolkit found\n\tat com.sun.javafx.tk.Toolkit.getToolkit(Toolkit.java:272)\n\tat com.sun.javafx.perf.PerformanceTracker.logEvent(PerformanceTracker.java:100)\n\tat javafx.scene.Node.\u003cclinit\u003e(Node.java:407)\n\tat Model.SproutModel.addRandomNodes(SproutModel.java:39)\n\tat Controller.SproutController.attemptInitializeGame(SproutController.java:33)\n\tat sample.Main.acceptUserInput(Main.java:24)\n\tat acceptance_tests.c_driven.playGameSteps.theUserChoosesNodesAnd(playGameSteps.java:58)\n\tat java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.base/java.lang.reflect.Method.invoke(Method.java:566)\n\tat io.cucumber.java.Invoker.invoke(Invoker.java:27)\n\tat io.cucumber.java.JavaStepDefinition.execute(JavaStepDefinition.java:27)\n\tat io.cucumber.core.runner.PickleStepDefinitionMatch.runStep(PickleStepDefinitionMatch.java:59)\n\tat io.cucumber.core.runner.TestStep.executeStep(TestStep.java:64)\n\tat io.cucumber.core.runner.TestStep.run(TestStep.java:49)\n\tat io.cucumber.core.runner.PickleStepTestStep.run(PickleStepTestStep.java:46)\n\tat io.cucumber.core.runner.TestCase.run(TestCase.java:51)\n\tat io.cucumber.core.runner.Runner.runPickle(Runner.java:66)\n\tat io.cucumber.junit.PickleRunners$NoStepDescriptions.run(PickleRunners.java:149)\n\tat io.cucumber.junit.FeatureRunner.runChild(FeatureRunner.java:83)\n\tat io.cucumber.junit.FeatureRunner.runChild(FeatureRunner.java:24)\n\tat org.junit.runners.ParentRunner$4.run(ParentRunner.java:331)\n\tat org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:79)\n\tat org.junit.runners.ParentRunner.runChildren(ParentRunner.java:329)\n\tat org.junit.runners.ParentRunner.access$100(ParentRunner.java:66)\n\tat org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:293)\n\tat org.junit.runners.ParentRunner$3.evaluate(ParentRunner.java:306)\n\tat org.junit.runners.ParentRunner.run(ParentRunner.java:413)\n\tat io.cucumber.junit.Cucumber.runChild(Cucumber.java:185)\n\tat io.cucumber.junit.Cucumber.runChild(Cucumber.java:83)\n\tat org.junit.runners.ParentRunner$4.run(ParentRunner.java:331)\n\tat org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:79)\n\tat org.junit.runners.ParentRunner.runChildren(ParentRunner.java:329)\n\tat org.junit.runners.ParentRunner.access$100(ParentRunner.java:66)\n\tat org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:293)\n\tat io.cucumber.junit.Cucumber$RunCucumber.evaluate(Cucumber.java:219)\n\tat org.junit.runners.ParentRunner$3.evaluate(ParentRunner.java:306)\n\tat org.junit.runners.ParentRunner.run(ParentRunner.java:413)\n\tat org.junit.runner.JUnitCore.run(JUnitCore.java:137)\n\tat com.intellij.junit4.JUnit4IdeaTestRunner.startRunnerWithArgs(JUnit4IdeaTestRunner.java:68)\n\tat com.intellij.rt.execution.junit.IdeaTestRunner$Repeater.startRunnerWithArgs(IdeaTestRunner.java:47)\n\tat com.intellij.rt.execution.junit.JUnitStarter.prepareStreamsAndStart(JUnitStarter.java:242)\n\tat com.intellij.rt.execution.junit.JUnitStarter.main(JUnitStarter.java:70)\n",
+  "error_message": "java.lang.IllegalArgumentException: bound must be positive\n\tat java.base/java.util.Random.nextInt(Random.java:388)\n\tat Model.SproutModel.addRandomNodes(SproutModel.java:46)\n\tat Controller.SproutController.attemptInitializeGame(SproutController.java:33)\n\tat Controller.SproutLauncher.acceptUserInput(SproutLauncher.java:58)\n\tat acceptance_tests.c_driven.playGameSteps.theUserChoosesNodesAnd(playGameSteps.java:58)\n\tat ✽.the user chooses nodes 1 and 2(file:///Users/birkberger/Documents/IntelliJProjects/Sprouts/use_cases/c_driven/draw_a_line.feature:7)\n",
   "status": "failed"
 });
 formatter.step({
@@ -93,7 +93,7 @@ formatter.match({
   "location": "acceptance_tests.c_driven.playGameSteps.theUserChoosesNodesAnd(java.lang.Integer,java.lang.Integer)"
 });
 formatter.result({
-  "error_message": "java.lang.NoClassDefFoundError: Could not initialize class javafx.scene.shape.Circle\n\tat Model.SproutModel.addRandomNodes(SproutModel.java:39)\n\tat Controller.SproutController.attemptInitializeGame(SproutController.java:33)\n\tat sample.Main.acceptUserInput(Main.java:24)\n\tat acceptance_tests.c_driven.playGameSteps.theUserChoosesNodesAnd(playGameSteps.java:58)\n\tat ✽.the user chooses nodes 1 and 1(file:///Users/birkberger/Documents/IntelliJProjects/Sprouts/use_cases/c_driven/draw_a_line.feature:15)\n",
+  "error_message": "java.lang.IllegalArgumentException: bound must be positive\n\tat java.base/java.util.Random.nextInt(Random.java:388)\n\tat Model.SproutModel.addRandomNodes(SproutModel.java:46)\n\tat Controller.SproutController.attemptInitializeGame(SproutController.java:33)\n\tat Controller.SproutLauncher.acceptUserInput(SproutLauncher.java:58)\n\tat acceptance_tests.c_driven.playGameSteps.theUserChoosesNodesAnd(playGameSteps.java:58)\n\tat ✽.the user chooses nodes 1 and 1(file:///Users/birkberger/Documents/IntelliJProjects/Sprouts/use_cases/c_driven/draw_a_line.feature:15)\n",
   "status": "failed"
 });
 formatter.step({
@@ -139,7 +139,7 @@ formatter.match({
   "location": "acceptance_tests.c_driven.playGameSteps.theUserChoosesNodesAnd(java.lang.Integer,java.lang.Integer)"
 });
 formatter.result({
-  "error_message": "java.lang.NoClassDefFoundError: Could not initialize class javafx.scene.shape.Circle\n\tat Model.SproutModel.addRandomNodes(SproutModel.java:39)\n\tat Controller.SproutController.attemptInitializeGame(SproutController.java:33)\n\tat sample.Main.acceptUserInput(Main.java:24)\n\tat acceptance_tests.c_driven.playGameSteps.theUserChoosesNodesAnd(playGameSteps.java:58)\n\tat ✽.the user chooses nodes 1 and 3(file:///Users/birkberger/Documents/IntelliJProjects/Sprouts/use_cases/c_driven/draw_a_line.feature:21)\n",
+  "error_message": "java.lang.IllegalArgumentException: bound must be positive\n\tat java.base/java.util.Random.nextInt(Random.java:388)\n\tat Model.SproutModel.addRandomNodes(SproutModel.java:46)\n\tat Controller.SproutController.attemptInitializeGame(SproutController.java:33)\n\tat Controller.SproutLauncher.acceptUserInput(SproutLauncher.java:58)\n\tat acceptance_tests.c_driven.playGameSteps.theUserChoosesNodesAnd(playGameSteps.java:58)\n\tat ✽.the user chooses nodes 1 and 3(file:///Users/birkberger/Documents/IntelliJProjects/Sprouts/use_cases/c_driven/draw_a_line.feature:21)\n",
   "status": "failed"
 });
 formatter.step({
@@ -153,7 +153,7 @@ formatter.result({
   "status": "skipped"
 });
 formatter.step({
-  "name": "a message with the text \"One or both nodes chosen does not exist\" is given to the user",
+  "name": "a message with the text \"One or both nodes does not exist\" is given to the user",
   "keyword": "And "
 });
 formatter.match({
@@ -195,7 +195,7 @@ formatter.match({
   "location": "acceptance_tests.c_driven.playGameSteps.theUserChoosesNodesAnd(java.lang.Integer,java.lang.Integer)"
 });
 formatter.result({
-  "error_message": "java.lang.NoClassDefFoundError: Could not initialize class javafx.scene.shape.Circle\n\tat Model.SproutModel.addRandomNodes(SproutModel.java:39)\n\tat Controller.SproutController.attemptInitializeGame(SproutController.java:33)\n\tat sample.Main.acceptUserInput(Main.java:24)\n\tat acceptance_tests.c_driven.playGameSteps.theUserChoosesNodesAnd(playGameSteps.java:58)\n\tat ✽.the user chooses nodes 1 and 2(file:///Users/birkberger/Documents/IntelliJProjects/Sprouts/use_cases/c_driven/draw_a_line.feature:28)\n",
+  "error_message": "java.lang.IllegalArgumentException: bound must be positive\n\tat java.base/java.util.Random.nextInt(Random.java:388)\n\tat Model.SproutModel.addRandomNodes(SproutModel.java:46)\n\tat Controller.SproutController.attemptInitializeGame(SproutController.java:33)\n\tat Controller.SproutLauncher.acceptUserInput(SproutLauncher.java:58)\n\tat acceptance_tests.c_driven.playGameSteps.theUserChoosesNodesAnd(playGameSteps.java:58)\n\tat ✽.the user chooses nodes 1 and 2(file:///Users/birkberger/Documents/IntelliJProjects/Sprouts/use_cases/c_driven/draw_a_line.feature:28)\n",
   "status": "failed"
 });
 formatter.step({
@@ -241,7 +241,7 @@ formatter.match({
   "location": "acceptance_tests.c_driven.playGameSteps.theUserChoosesNodesAnd(java.lang.Integer,java.lang.Integer)"
 });
 formatter.result({
-  "error_message": "java.lang.NoClassDefFoundError: Could not initialize class javafx.scene.shape.Circle\n\tat Model.SproutModel.addRandomNodes(SproutModel.java:39)\n\tat Controller.SproutController.attemptInitializeGame(SproutController.java:33)\n\tat sample.Main.acceptUserInput(Main.java:24)\n\tat acceptance_tests.c_driven.playGameSteps.theUserChoosesNodesAnd(playGameSteps.java:58)\n\tat ✽.the user chooses nodes 1 and 3(file:///Users/birkberger/Documents/IntelliJProjects/Sprouts/use_cases/c_driven/draw_a_line.feature:40)\n",
+  "error_message": "java.lang.IllegalArgumentException: bound must be positive\n\tat java.base/java.util.Random.nextInt(Random.java:388)\n\tat Model.SproutModel.addRandomNodes(SproutModel.java:46)\n\tat Controller.SproutController.attemptInitializeGame(SproutController.java:33)\n\tat Controller.SproutLauncher.acceptUserInput(SproutLauncher.java:58)\n\tat acceptance_tests.c_driven.playGameSteps.theUserChoosesNodesAnd(playGameSteps.java:58)\n\tat ✽.the user chooses nodes 1 and 3(file:///Users/birkberger/Documents/IntelliJProjects/Sprouts/use_cases/c_driven/draw_a_line.feature:40)\n",
   "status": "failed"
 });
 formatter.step({
@@ -313,7 +313,7 @@ formatter.match({
   "location": "acceptance_tests.c_driven.startGameSteps.theUserInputsInitialNodes(java.lang.Integer)"
 });
 formatter.result({
-  "error_message": "java.lang.NoClassDefFoundError: Could not initialize class javafx.scene.shape.Circle\n\tat Model.SproutModel.addRandomNodes(SproutModel.java:39)\n\tat Controller.SproutController.attemptInitializeGame(SproutController.java:33)\n\tat sample.Main.acceptUserInput(Main.java:24)\n\tat acceptance_tests.c_driven.startGameSteps.theUserInputsInitialNodes(startGameSteps.java:35)\n\tat ✽.the user inputs 3 initial nodes(file:///Users/birkberger/Documents/IntelliJProjects/Sprouts/use_cases/c_driven/initialize_game.feature:7)\n",
+  "error_message": "java.lang.IllegalArgumentException: bound must be positive\n\tat java.base/java.util.Random.nextInt(Random.java:388)\n\tat Model.SproutModel.addRandomNodes(SproutModel.java:46)\n\tat Controller.SproutController.attemptInitializeGame(SproutController.java:33)\n\tat Controller.SproutLauncher.acceptUserInput(SproutLauncher.java:58)\n\tat acceptance_tests.c_driven.startGameSteps.theUserInputsInitialNodes(startGameSteps.java:35)\n\tat ✽.the user inputs 3 initial nodes(file:///Users/birkberger/Documents/IntelliJProjects/Sprouts/use_cases/c_driven/initialize_game.feature:7)\n",
   "status": "failed"
 });
 formatter.step({

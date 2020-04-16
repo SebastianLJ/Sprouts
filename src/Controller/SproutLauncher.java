@@ -1,5 +1,6 @@
 package Controller;
 
+import Exceptions.GameOverException;
 import Exceptions.IllegalNodesChosenException;
 import Exceptions.NumberOfInitialNodesException;
 import javafx.application.Application;
@@ -69,7 +70,7 @@ public class SproutLauncher extends Application {
 
             try {
                 controller.attemptDrawEdgeBetweenNodes(startNode, endNode);
-            } catch (IllegalNodesChosenException e) {
+            } catch (Exception e) {
                 System.out.println(e.getMessage());
             }
         }

@@ -1,8 +1,11 @@
 package Controller;
 
+import Exceptions.GameOverException;
 import Exceptions.IllegalNodesChosenException;
 import Exceptions.NumberOfInitialNodesException;
+import Model.Node;
 import Model.SproutModel;
+//import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Shape;
@@ -39,21 +42,16 @@ public class SproutController {
         }
     }
 
-    public boolean isGameOnGoing() {
-        return gameOnGoing;
-    }
+    public void attemptDrawEdgeBetweenNodes(int startNodeName, int endNodeName) throws IllegalNodesChosenException, GameOverException {
 
-    public void attemptDrawEdgeBetweenNodes(int startNode, int endNode) throws IllegalNodesChosenException {
-
-        if (!(sproutModel.hasNodeWithName(startNode) && sproutModel.hasNodeWithName(endNode))) {
+        if (!(sproutModel.hasNodeWithName(startNodeName) && sproutModel.hasNodeWithName(endNodeName))) {
             outputExceptionMessage = "One or both nodes does not exist";
             throw new IllegalNodesChosenException(outputExceptionMessage);
-        } else if ((startNode != endNode && (sproutModel.getNumberOfEdges(startNode) == 3 || sproutModel.getNumberOfEdges(endNode) == 3)) ||
-                   (startNode == endNode && sproutModel.getNumberOfEdges(startNode) > 1)) {
-            outputExceptionMessage = "Nodes cannot have more than 3 connecting edges";
-            throw new IllegalNodesChosenException(outputExceptionMessage);
         } else {
-            sproutModel.drawEdgeBetweenNodes(startNode, endNode);
+            Circle startNode = sproutModel.getNodeWithName(startNodeName);
+            Circle endNode = sproutModel.getNodeWithName(endNodeName);
+            attemptDrawEdgeBetweenNodes(startNode, endNode);
+            gameOnGoing = false;
         }
     }
 
@@ -84,7 +82,10 @@ public class SproutController {
 
     public void resetGame() {
         sproutModel.resetGame();
-        gameOnGoing = false;
+    }
+
+    public void resetGameWithInitialNodes(List<Node> initialGameNodes) {
+        sproutModel.resetGameWithInitalNodes(initialGameNodes);
     }
 
 
@@ -96,7 +97,8 @@ public class SproutController {
         return sproutModel.getNodes();
     }
 
-    public void attemptDrawEdgeBetweenNodes(Circle startNode, Circle endNode) throws IllegalNodesChosenException {
+    public void attemptDrawEdgeBetweenNodes(Circle startNode, Circle endNode) throws IllegalNodesChosenException, GameOverException {
+
         if (!(sproutModel.hasNodeWithName(startNode) && sproutModel.hasNodeWithName(endNode))) {
             outputExceptionMessage = "One or both nodes does not exist";
             throw new IllegalNodesChosenException(outputExceptionMessage);
@@ -106,10 +108,22 @@ public class SproutController {
             throw new IllegalNodesChosenException(outputExceptionMessage);
         } else {
             sproutModel.drawEdgeBetweenNodes(startNode, endNode);
+
+            if (sproutModel.hasNoRemainingLegalMoves()) {
+                outputExceptionMessage = "There are no more legal moves. The winner is player " + sproutModel.getCurrentPlayer();
+                gameOnGoing = false;
+                throw new GameOverException(outputExceptionMessage);
+            } else {
+                sproutModel.changeTurns();
+            }
         }
     }
 
     public Shape createEdge(Circle startNode, Circle endNode) {
         return sproutModel.createEdgeBetweenNodes(startNode, endNode);
+    }
+
+    public boolean isGameOnGoing() {
+        return gameOnGoing;
     }
 }

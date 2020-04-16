@@ -1,5 +1,6 @@
 package Controller;
 
+import Exceptions.GameOverException;
 import Exceptions.IllegalNodesChosenException;
 import Exceptions.NumberOfInitialNodesException;
 import View.View;
@@ -104,6 +105,8 @@ public class GameController implements Initializable {
                 view.illegalEdgeAnimation(gamePane, sproutController.createEdge(primedNode, (Circle) mouseEvent.getSource()));
                 view.unPrimeNode(primedNode);
                 nodeIsPrimed = false;
+            } catch (GameOverException e) {
+                // TODO: connect to view
             }
         }
     }
@@ -121,7 +124,7 @@ public class GameController implements Initializable {
         newNode.setOnMouseClicked(this::clickToDraw); // Add listener to the new node
     }
 
-    private void attemptDrawEdgeBetweenNodes(Circle startNode, Circle endNode) throws IllegalNodesChosenException {
+    private void attemptDrawEdgeBetweenNodes(Circle startNode, Circle endNode) throws IllegalNodesChosenException, GameOverException {
         sproutController.attemptDrawEdgeBetweenNodes(startNode, endNode);
         view.unPrimeNode(startNode);
         nodeIsPrimed = false; // A edge has been drawn and the node i no longer primed

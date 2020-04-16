@@ -1,5 +1,7 @@
 package Controller;
 
+import Exceptions.GameOverException;
+import Exceptions.IllegalNodesChosenException;
 import Exceptions.NumberOfInitialNodesException;
 import View.View;
 import javafx.animation.KeyFrame;
@@ -29,6 +31,7 @@ import java.util.ResourceBundle;
 
 public class FileSimulationController implements Initializable {
     public Pane gamePane;
+    public Label gameResponseLabel;
     private SproutController sproutController = new SproutController();
     public ListView<String> moveList;
     private String filename;
@@ -121,10 +124,10 @@ public class FileSimulationController implements Initializable {
             // Reset model
             sproutController.resetGame();
 
-            // Reset ListView
-            resetCells();
+            // Reset frame pane: Table and response labels
+            resetFramePane();
 
-            // Reset view
+            // Reset game pane
             view.resetView(gamePane);
 
             timeline.stop();
@@ -161,23 +164,31 @@ public class FileSimulationController implements Initializable {
                             System.out.println("successfully executed move : from " + move[0] + " to " + move[1]);
                         }
                         i++;
-                    } catch (NumberOfInitialNodesException e) {
-                        setColorForCell("-fx-background-color: red");
-                        setText(String.valueOf(n),"");
-                        prepareTooltip(e.getMessage());
-                        legalGame = false;
                     } catch (Exception e) {
-                        setColorForCell("-fx-background-color: red");
-                        setText(move[0], move[1]);
-                        prepareTooltip("Failed at executing move : from " + move[0] + " to " + move[1] + "\n" + e.getMessage());
-                        legalGame = false;
+                        if (e instanceof NumberOfInitialNodesException) {
+                            setColorForCell("-fx-background-color: red");
+                            setText(String.valueOf(n),"");
+                            prepareTooltip(e.getMessage());
+                            legalGame = false;
+                        } else if (e instanceof IllegalNodesChosenException) {
+                            setColorForCell("-fx-background-color: red");
+                            setText(move[0], move[1]);
+                            prepareTooltip("Failed at executing move : from " + move[0] + " to " + move[1] + "\n" + e.getMessage());
+                            legalGame = false;
+                        } else if (e instanceof GameOverException) {
+                            gameResponseLabel.setText(e.getMessage());
+                            timeline.stop();
+                        }
                     }
                     if (legalGame && i == moves.size()) {
                         System.out.println("Legal game - File successfully simulated");
+                        gameResponseLabel.setText("Game is incomplete.");
+                        timeline.stop();
                         // Should timeline.stop(); not be here ?
 
                     } else if (!legalGame) {
                         System.out.println("Illegal game - File unsuccessfully simulated");
+                        gameResponseLabel.setText("Game stopped prematurely.");
                         timeline.stop();
                     }
                 }
@@ -202,7 +213,9 @@ public class FileSimulationController implements Initializable {
         }));
     }
 
-    private void resetCells() {
+    private void resetFramePane() {
+
+        gameResponseLabel.setText("");
 
         int i = 0;
         for (ListCell<String> cell : cells) {
