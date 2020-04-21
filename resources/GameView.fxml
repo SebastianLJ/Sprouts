@@ -2,13 +2,14 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.Pane?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="419.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <bottom>
-      <Button mnemonicParsing="false" onAction="#goToMainMenu" text="Back" BorderPane.alignment="CENTER" />
+      <Button mnemonicParsing="false" onAction="#goToMainMenu" text="Back" BorderPane.alignment="BOTTOM_CENTER" />
    </bottom>
    <opaqueInsets>
       <Insets />
@@ -16,12 +17,15 @@
    <padding>
       <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
    </padding>
-   <center>
-      <AnchorPane fx:id="anchorPane" style="-fx-background-color: antiquewhite, white; -fx-background-insets: 0,20; -fx-padding: 20;" BorderPane.alignment="CENTER">
+   <top>
+      <AnchorPane fx:id="anchorPane" prefHeight="293.0" prefWidth="536.0" style="-fx-background-color: antiquewhite, white; -fx-background-insets: 0,20; -fx-padding: 20;" BorderPane.alignment="CENTER">
          <BorderPane.margin>
             <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
          </BorderPane.margin>
-         <Pane fx:id="gamePane" layoutX="168.0" layoutY="55.0" onMouseClicked="#onMouseClicked" onMouseDragged="#mouseDraggedHandler" onMousePressed="#mousePressedHandler" onMouseReleased="#mouseReleasedHandler" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+         <Pane fx:id="gamePane" layoutX="40.0" layoutY="40.0" onMouseClicked="#onMouseClicked" onMouseDragged="#mouseDraggedHandler" onMousePressed="#mousePressedHandler" onMouseReleased="#mouseReleasedHandler" prefHeight="242.0" prefWidth="496.0" AnchorPane.bottomAnchor="47.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0" />
       </AnchorPane>
+   </top>
+   <center>
+      <Label fx:id="gameResponseLabel" alignment="CENTER" contentDisplay="CENTER" prefHeight="17.0" prefWidth="493.0" textAlignment="CENTER" BorderPane.alignment="CENTER" />
    </center>
 </BorderPane>
