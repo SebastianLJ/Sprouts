@@ -39,8 +39,6 @@ public class FileSimulationController implements Initializable {
 
     private ArrayList<ListCell<String>> cells = new ArrayList<>();
 
-    public final Tooltip toolTip = new Tooltip();
-
     private View view;
     private boolean legalGame;
     private Timeline timeline = createTimeline();
@@ -65,9 +63,6 @@ public class FileSimulationController implements Initializable {
             cells.add(cell);
             return cell;
         });
-        toolTip.setShowDelay(Duration.ZERO);
-        toolTip.setShowDuration(Duration.INDEFINITE);
-        toolTip.setHideDelay(Duration.ZERO);
     }
 
     private void goToScene(ActionEvent event, String fxmlToLoad) throws IOException {
@@ -118,113 +113,82 @@ public class FileSimulationController implements Initializable {
     }
 
     public void runFile(ActionEvent event) {
+        // Reset model
+        sproutController.resetGame();
 
-        if (timeline.getStatus() == Status.STOPPED) {
+        // Reset ListView
+        view.resetCells(cells);
 
-            // Reset model
-            sproutController.resetGame();
+        // Reset view
+        view.resetGameView(gamePane);
 
-            // Reset frame pane: Table and response labels
-            resetFramePane();
+        // Reset GameResponseLabel
+        view.setGameResponseLabelText(gameResponseLabel, "");
 
-            // Reset game pane
-            view.resetView(gamePane);
+        timeline.stop();
 
-            timeline.stop();
-
-            legalGame = true;
-            i = 0;
-            timeline.setCycleCount(moves.size());
-            timeline.play();
-        }
+        legalGame = true;
+        i = 0;
+        timeline.setCycleCount(moves.size());
+        timeline.play();
     }
 
     private Timeline createTimeline() {
         return new Timeline(new KeyFrame(Duration.seconds(0.5), new EventHandler<>() {
 
+            String message;
+            String color;
+
             @Override
             public void handle(ActionEvent event) {
-                System.out.println(legalGame);
                 if (legalGame) {
                     //init starting points
                     String[] move = {"-1", "-1"};
-                    int n = Integer.parseInt(moves.get(0));
                     try {
                         if (i == 0) {
-                            setColorForCell("-fx-background-color: green");
+                            int n = Integer.parseInt(moves.get(0));
                             sproutController.attemptInitializeGame(n);
                             view.initializeNodes(gamePane);
-                            System.out.println("successfully initialized game with " + n + " nodes");
+                            message = "successfully initialized game";
                         } else {
                             //execute moves
-                            setColorForCell("-fx-background-color: green");
                             move = moves.get(i).split("\\s");
                             sproutController.attemptDrawEdgeBetweenNodes(Integer.parseInt(move[0]) - 1, Integer.parseInt(move[1]) - 1);
                             view.updateCanvas(gamePane);
-                            System.out.println("successfully executed move : from " + move[0] + " to " + move[1]);
+                            message = "successfully executed move : from " + move[0] + " to " + move[1];
                         }
-                        i++;
-                    } catch (Exception e) {
-                        if (e instanceof NumberOfInitialNodesException) {
-                            setColorForCell("-fx-background-color: red");
-                            setText(String.valueOf(n),"");
-                            prepareTooltip(e.getMessage());
-                            legalGame = false;
-                        } else if (e instanceof IllegalNodesChosenException) {
-                            setColorForCell("-fx-background-color: red");
-                            setText(move[0], move[1]);
-                            prepareTooltip("Failed at executing move : from " + move[0] + " to " + move[1] + "\n" + e.getMessage());
-                            legalGame = false;
-                        } else if (e instanceof GameOverException) {
-                            gameResponseLabel.setText(e.getMessage());
-                            timeline.stop();
-                        }
+                        color = i % 2 == 0 ? "-fx-background-color: darkgreen": "-fx-background-color: green";
+                    } catch (NumberOfInitialNodesException e) {
+                        color = "-fx-background-color: red";
+                        message = e.getMessage();
+                        legalGame = false;
+                    } catch (IllegalNodesChosenException e) {
+                        color = "-fx-background-color: red";
+                        message = "Failed at executing move : from " + move[0] + " to " + move[1] + "\n" + e.getMessage();
+                        legalGame = false;
+                    } catch (GameOverException e) {
+                        color = "-fx-background-color: yellow";
+                        message = e.getMessage();
+                        gameResponseLabel.setText(e.getMessage());
+                        timeline.stop();
                     }
+
+                    i++;
+                    view.setColorForCell(color, cells.get(i));
+                    view.prepareTooltip(message, cells.get(i));
+
                     if (legalGame && i == moves.size()) {
                         System.out.println("Legal game - File successfully simulated");
-                        gameResponseLabel.setText("Game is incomplete.");
-                        timeline.stop();
-                        // Should timeline.stop(); not be here ?
+                        view.setGameResponseLabelText(gameResponseLabel, "Game is incomplete.");
+                        // Should timeline.stop(); not be here ? Nej for den kører kun til moves.size() se condition for if statement
 
                     } else if (!legalGame) {
                         System.out.println("Illegal game - File unsuccessfully simulated");
-                        gameResponseLabel.setText("Game stopped prematurely.");
+                        view.setGameResponseLabelText(gameResponseLabel, "Game stopped prematurely.");
                         timeline.stop();
                     }
                 }
             }
-
-            private void setText(String n1, String n2) {
-                cells.get(i+1).setText(n1 + " " + n2 + " (Hover to learn more)");
-            }
-
-            private void setColorForCell(String s) {
-                if (i % 2 == 0 && s.contains("green")) {
-                    cells.get(i+1).setStyle("-fx-background-color: darkgreen"); //TODO +1?
-                } else {
-                    cells.get(i+1).setStyle(s);
-                }
-            }
-
-            private void prepareTooltip(String s) {
-                toolTip.setText(s);
-                cells.get(i+1).setTooltip(toolTip);
-            }
         }));
-    }
-
-    private void resetFramePane() {
-
-        gameResponseLabel.setText("");
-
-        int i = 0;
-        for (ListCell<String> cell : cells) {
-            // reset cell error bar
-            cell.setTooltip(null);
-            // reset cell hover text
-            if (cell.getText() != null) cell.setText(cell.getText().replace(" (Hover to learn more)", ""));
-            // reset cell color
-            cell.setStyle(i++ % 2 == 0 ? "-fx-background-color: white;" : "-fx-background-color: GHOSTWHITE;");
-        }
     }
 }

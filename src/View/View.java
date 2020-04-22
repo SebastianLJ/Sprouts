@@ -8,6 +8,9 @@ import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -18,6 +21,8 @@ import javafx.scene.shape.Shape;
 import javafx.util.Duration;
 
 import java.security.Key;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class View {
@@ -91,7 +96,7 @@ public class View {
         if (shape instanceof Line) {
             double x = ((Line) shape).getStartX();
             double y = ((Line) shape).getStartY();
-            Line lineAnimation = new Line(x,y,x,y);
+            Line lineAnimation = new Line(x, y, x, y);
             gamePane.getChildren().add(0, lineAnimation);
             Timeline timeline = new Timeline();
             KeyValue kvX = new KeyValue(lineAnimation.endXProperty(), ((Line) shape).getEndX());
@@ -104,7 +109,36 @@ public class View {
         }
     }
 
-    public void resetView(Pane gamePane) {
+    public void resetGameView(Pane gamePane) {
         gamePane.getChildren().clear();
+    }
+
+    public void resetCells(ArrayList<ListCell<String>> cells) {
+        int i = 0;
+        for (ListCell<String> cell : cells) {
+            cells.get(i).setTooltip(null);
+            cell.setStyle(i++ % 2 == 0 ? "-fx-background-color: white;" : "-fx-background-color: GHOSTWHITE;");
+        }
+    }
+
+    public void setColorForCell(String s, ListCell<String> cell) {
+        cell.setStyle(s);
+    }
+
+    public void prepareTooltip(String message, ListCell<String> cell) {
+        Tooltip toolTip = new Tooltip();
+        setUpTooltipPreferences(toolTip);
+        toolTip.setText(message);
+        cell.setTooltip(toolTip);
+    }
+
+    private void setUpTooltipPreferences(Tooltip toolTip) {
+        toolTip.setShowDelay(Duration.ZERO);
+        toolTip.setShowDuration(Duration.INDEFINITE);
+        toolTip.setHideDelay(Duration.ZERO);
+    }
+
+    public void setGameResponseLabelText(Label gameResponseLabel, String s) {
+        gameResponseLabel.setText(s);
     }
 }
