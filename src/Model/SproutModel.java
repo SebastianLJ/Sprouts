@@ -22,6 +22,7 @@ public class SproutModel {
     private final static double COLLISION_WIDTH = 1.5;
     private boolean isCollided;
     private Point point;
+    private GameFlow gameFlow;
 
 
 
