@@ -27,7 +27,8 @@ formatter.match({
   "location": "acceptance_tests.c_driven.playGameSteps.theUserChoosesNodesAnd(java.lang.Integer,java.lang.Integer)"
 });
 formatter.result({
-  "status": "passed"
+  "error_message": "java.lang.IllegalArgumentException: bound must be positive\n\tat java.base/java.util.Random.nextInt(Random.java:388)\n\tat Model.SproutModel.addRandomNodes(SproutModel.java:46)\n\tat Controller.SproutController.attemptInitializeGame(SproutController.java:33)\n\tat Controller.SproutLauncher.acceptUserInput(SproutLauncher.java:58)\n\tat acceptance_tests.c_driven.playGameSteps.theUserChoosesNodesAnd(playGameSteps.java:58)\n\tat ✽.the user chooses nodes 1 and 2(file:///Users/birkberger/Documents/IntelliJProjects/Sprouts/use_cases/c_driven/draw_a_line.feature:7)\n",
+  "status": "failed"
 });
 formatter.step({
   "name": "nodes 1 and 2 exist",
@@ -37,7 +38,7 @@ formatter.match({
   "location": "acceptance_tests.c_driven.playGameSteps.nodesAndExist(java.lang.Integer,java.lang.Integer)"
 });
 formatter.result({
-  "status": "passed"
+  "status": "skipped"
 });
 formatter.step({
   "name": "nodes 1 and 2 are valid",
@@ -47,7 +48,7 @@ formatter.match({
   "location": "acceptance_tests.c_driven.playGameSteps.nodesAndAreValid(java.lang.Integer,java.lang.Integer)"
 });
 formatter.result({
-  "status": "passed"
+  "status": "skipped"
 });
 formatter.step({
   "name": "a new node is created on the line between the two nodes",
@@ -57,7 +58,7 @@ formatter.match({
   "location": "acceptance_tests.c_driven.playGameSteps.aNewNodeIsCreatedOnTheLineBetweenTheTwoNodes()"
 });
 formatter.result({
-  "status": "passed"
+  "status": "skipped"
 });
 formatter.step({
   "name": "the game has been extended by 1 line(s) and 1 node(s)",
@@ -67,7 +68,7 @@ formatter.match({
   "location": "acceptance_tests.c_driven.playGameSteps.theGameHasBeenExtendedByLineSAndNodeS(java.lang.Integer,java.lang.Integer)"
 });
 formatter.result({
-  "status": "passed"
+  "status": "skipped"
 });
 formatter.scenario({
   "name": "Connect node to itself",
@@ -92,7 +93,8 @@ formatter.match({
   "location": "acceptance_tests.c_driven.playGameSteps.theUserChoosesNodesAnd(java.lang.Integer,java.lang.Integer)"
 });
 formatter.result({
-  "status": "passed"
+  "error_message": "java.lang.IllegalArgumentException: bound must be positive\n\tat java.base/java.util.Random.nextInt(Random.java:388)\n\tat Model.SproutModel.addRandomNodes(SproutModel.java:46)\n\tat Controller.SproutController.attemptInitializeGame(SproutController.java:33)\n\tat Controller.SproutLauncher.acceptUserInput(SproutLauncher.java:58)\n\tat acceptance_tests.c_driven.playGameSteps.theUserChoosesNodesAnd(playGameSteps.java:58)\n\tat ✽.the user chooses nodes 1 and 1(file:///Users/birkberger/Documents/IntelliJProjects/Sprouts/use_cases/c_driven/draw_a_line.feature:15)\n",
+  "status": "failed"
 });
 formatter.step({
   "name": "a new node is created on the circle between the two nodes",
@@ -102,7 +104,7 @@ formatter.match({
   "location": "acceptance_tests.c_driven.playGameSteps.aNewNodeIsCreatedOnTheCircleBetweenTheTwoNodes()"
 });
 formatter.result({
-  "status": "passed"
+  "status": "skipped"
 });
 formatter.step({
   "name": "the game has been extended by 1 line(s) and 1 node(s)",
@@ -112,7 +114,7 @@ formatter.match({
   "location": "acceptance_tests.c_driven.playGameSteps.theGameHasBeenExtendedByLineSAndNodeS(java.lang.Integer,java.lang.Integer)"
 });
 formatter.result({
-  "status": "passed"
+  "status": "skipped"
 });
 formatter.scenario({
   "name": "Choose one existing and one non-existing node",
@@ -137,7 +139,8 @@ formatter.match({
   "location": "acceptance_tests.c_driven.playGameSteps.theUserChoosesNodesAnd(java.lang.Integer,java.lang.Integer)"
 });
 formatter.result({
-  "status": "passed"
+  "error_message": "java.lang.IllegalArgumentException: bound must be positive\n\tat java.base/java.util.Random.nextInt(Random.java:388)\n\tat Model.SproutModel.addRandomNodes(SproutModel.java:46)\n\tat Controller.SproutController.attemptInitializeGame(SproutController.java:33)\n\tat Controller.SproutLauncher.acceptUserInput(SproutLauncher.java:58)\n\tat acceptance_tests.c_driven.playGameSteps.theUserChoosesNodesAnd(playGameSteps.java:58)\n\tat ✽.the user chooses nodes 1 and 3(file:///Users/birkberger/Documents/IntelliJProjects/Sprouts/use_cases/c_driven/draw_a_line.feature:21)\n",
+  "status": "failed"
 });
 formatter.step({
   "name": "the game has been extended by 0 line(s) and 0 node(s)",
@@ -147,17 +150,17 @@ formatter.match({
   "location": "acceptance_tests.c_driven.playGameSteps.theGameHasBeenExtendedByLineSAndNodeS(java.lang.Integer,java.lang.Integer)"
 });
 formatter.result({
-  "status": "passed"
+  "status": "skipped"
 });
 formatter.step({
-  "name": "a message with the text \"One or both nodes chosen does not exist\" is given to the user",
+  "name": "a message with the text \"One or both nodes does not exist\" is given to the user",
   "keyword": "And "
 });
 formatter.match({
   "location": "acceptance_tests.c_driven.startGameSteps.aMessageWithTheTextIsGivenToTheUser(java.lang.String)"
 });
 formatter.result({
-  "status": "passed"
+  "status": "skipped"
 });
 formatter.scenario({
   "name": "Choose one valid node and one invalid node",
@@ -192,7 +195,8 @@ formatter.match({
   "location": "acceptance_tests.c_driven.playGameSteps.theUserChoosesNodesAnd(java.lang.Integer,java.lang.Integer)"
 });
 formatter.result({
-  "status": "passed"
+  "error_message": "java.lang.IllegalArgumentException: bound must be positive\n\tat java.base/java.util.Random.nextInt(Random.java:388)\n\tat Model.SproutModel.addRandomNodes(SproutModel.java:46)\n\tat Controller.SproutController.attemptInitializeGame(SproutController.java:33)\n\tat Controller.SproutLauncher.acceptUserInput(SproutLauncher.java:58)\n\tat acceptance_tests.c_driven.playGameSteps.theUserChoosesNodesAnd(playGameSteps.java:58)\n\tat ✽.the user chooses nodes 1 and 2(file:///Users/birkberger/Documents/IntelliJProjects/Sprouts/use_cases/c_driven/draw_a_line.feature:28)\n",
+  "status": "failed"
 });
 formatter.step({
   "name": "the game has been extended by 0 line(s) and 0 node(s)",
@@ -202,7 +206,7 @@ formatter.match({
   "location": "acceptance_tests.c_driven.playGameSteps.theGameHasBeenExtendedByLineSAndNodeS(java.lang.Integer,java.lang.Integer)"
 });
 formatter.result({
-  "status": "passed"
+  "status": "skipped"
 });
 formatter.step({
   "name": "a message with the text \"Nodes cannot have more than 3 connecting edges\" is given to the user",
@@ -212,7 +216,7 @@ formatter.match({
   "location": "acceptance_tests.c_driven.startGameSteps.aMessageWithTheTextIsGivenToTheUser(java.lang.String)"
 });
 formatter.result({
-  "status": "passed"
+  "status": "skipped"
 });
 formatter.scenario({
   "name": "Choose two existing nodes",
@@ -237,7 +241,8 @@ formatter.match({
   "location": "acceptance_tests.c_driven.playGameSteps.theUserChoosesNodesAnd(java.lang.Integer,java.lang.Integer)"
 });
 formatter.result({
-  "status": "passed"
+  "error_message": "java.lang.IllegalArgumentException: bound must be positive\n\tat java.base/java.util.Random.nextInt(Random.java:388)\n\tat Model.SproutModel.addRandomNodes(SproutModel.java:46)\n\tat Controller.SproutController.attemptInitializeGame(SproutController.java:33)\n\tat Controller.SproutLauncher.acceptUserInput(SproutLauncher.java:58)\n\tat acceptance_tests.c_driven.playGameSteps.theUserChoosesNodesAnd(playGameSteps.java:58)\n\tat ✽.the user chooses nodes 1 and 3(file:///Users/birkberger/Documents/IntelliJProjects/Sprouts/use_cases/c_driven/draw_a_line.feature:40)\n",
+  "status": "failed"
 });
 formatter.step({
   "name": "nodes 1 and 3 exist",
@@ -247,7 +252,7 @@ formatter.match({
   "location": "acceptance_tests.c_driven.playGameSteps.nodesAndExist(java.lang.Integer,java.lang.Integer)"
 });
 formatter.result({
-  "status": "passed"
+  "status": "skipped"
 });
 formatter.step({
   "name": "nodes 1 and 3 are valid",
@@ -257,7 +262,7 @@ formatter.match({
   "location": "acceptance_tests.c_driven.playGameSteps.nodesAndAreValid(java.lang.Integer,java.lang.Integer)"
 });
 formatter.result({
-  "status": "passed"
+  "status": "skipped"
 });
 formatter.step({
   "name": "a new node is created on the line between the two nodes",
@@ -267,7 +272,7 @@ formatter.match({
   "location": "acceptance_tests.c_driven.playGameSteps.aNewNodeIsCreatedOnTheLineBetweenTheTwoNodes()"
 });
 formatter.result({
-  "status": "passed"
+  "status": "skipped"
 });
 formatter.step({
   "name": "the game has been extended by 1 line(s) and 1 node(s)",
@@ -277,7 +282,7 @@ formatter.match({
   "location": "acceptance_tests.c_driven.playGameSteps.theGameHasBeenExtendedByLineSAndNodeS(java.lang.Integer,java.lang.Integer)"
 });
 formatter.result({
-  "status": "passed"
+  "status": "skipped"
 });
 formatter.uri("file:use_cases/c_driven/initialize_game.feature");
 formatter.feature({
@@ -308,7 +313,8 @@ formatter.match({
   "location": "acceptance_tests.c_driven.startGameSteps.theUserInputsInitialNodes(java.lang.Integer)"
 });
 formatter.result({
-  "status": "passed"
+  "error_message": "java.lang.IllegalArgumentException: bound must be positive\n\tat java.base/java.util.Random.nextInt(Random.java:388)\n\tat Model.SproutModel.addRandomNodes(SproutModel.java:46)\n\tat Controller.SproutController.attemptInitializeGame(SproutController.java:33)\n\tat Controller.SproutLauncher.acceptUserInput(SproutLauncher.java:58)\n\tat acceptance_tests.c_driven.startGameSteps.theUserInputsInitialNodes(startGameSteps.java:35)\n\tat ✽.the user inputs 3 initial nodes(file:///Users/birkberger/Documents/IntelliJProjects/Sprouts/use_cases/c_driven/initialize_game.feature:7)\n",
+  "status": "failed"
 });
 formatter.step({
   "name": "a new game is created",
@@ -318,7 +324,7 @@ formatter.match({
   "location": "acceptance_tests.c_driven.startGameSteps.aNewGameIsCreated()"
 });
 formatter.result({
-  "status": "passed"
+  "status": "skipped"
 });
 formatter.step({
   "name": "the game has 3 nodes and 0 lines drawn",
@@ -328,7 +334,7 @@ formatter.match({
   "location": "acceptance_tests.c_driven.startGameSteps.theGameHasNodesAndLinesDrawn(int,int)"
 });
 formatter.result({
-  "status": "passed"
+  "status": "skipped"
 });
 formatter.scenario({
   "name": "Start game with 0 nodes",

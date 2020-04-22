@@ -1,15 +1,18 @@
 package Controller;
 
+import Exceptions.GameOverException;
 import Exceptions.IllegalNodesChosenException;
 import Exceptions.NumberOfInitialNodesException;
 import View.View;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -17,6 +20,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 
+import java.awt.*;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Objects;
@@ -26,6 +30,7 @@ public class GameController implements Initializable {
     @SuppressWarnings("WeakerAccess")
     public Pane gamePane;
     public AnchorPane anchorPane;
+    @FXML public Label gameResponseLabel;
 
     private SproutController sproutController;
     private int gameType; // 0 is clickToDraw and 1 is dragToDraw
@@ -104,6 +109,8 @@ public class GameController implements Initializable {
                 view.illegalEdgeAnimation(gamePane, sproutController.createEdge(primedNode, (Circle) mouseEvent.getSource()));
                 view.unPrimeNode(primedNode);
                 nodeIsPrimed = false;
+            } catch (GameOverException e) {
+                gameResponseLabel.setText(e.getMessage());
             }
         }
     }
@@ -121,7 +128,7 @@ public class GameController implements Initializable {
         newNode.setOnMouseClicked(this::clickToDraw); // Add listener to the new node
     }
 
-    private void attemptDrawEdgeBetweenNodes(Circle startNode, Circle endNode) throws IllegalNodesChosenException {
+    private void attemptDrawEdgeBetweenNodes(Circle startNode, Circle endNode) throws IllegalNodesChosenException, GameOverException {
         sproutController.attemptDrawEdgeBetweenNodes(startNode, endNode);
         view.unPrimeNode(startNode);
         nodeIsPrimed = false; // A edge has been drawn and the node i no longer primed

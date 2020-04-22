@@ -1,5 +1,6 @@
 package Model;
 
+import Exceptions.IllegalNodesChosenException;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 
@@ -27,6 +28,7 @@ public class SproutModel {
     public SproutModel() {
         edges = new ArrayList<>();
         nodes = new ArrayList<>();
+        gameFlow = new GameFlow();
     }
 
     public void addRandomNodes(int amount) {
@@ -78,6 +80,11 @@ public class SproutModel {
         nodes.clear();
     }
 
+    public void resetGameWithInitalNodes(List<Node> initialNodes) {
+        edges.clear();
+        nodes = initialNodes;
+    }
+
     public List<Node> getNodes() {
         return nodes;
     }
@@ -88,6 +95,19 @@ public class SproutModel {
 
     public boolean hasNodeWithName(int name) {
         return name < nodes.size();
+    }
+
+    public boolean hasNodeWithName(Circle nodeToFind) {
+        for (Node node : nodes) {
+            if (node.getShape() == nodeToFind) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Circle getNodeWithName(int name) throws IllegalNodesChosenException {
+        return nodes.get(name).getShape();
     }
 
     public int getNumberOfEdges(int name) {
@@ -208,7 +228,9 @@ public class SproutModel {
 
     public void drawPath(MouseEvent event) {
         if(isCollided){
-            System.out.println("self collision");
+
+            System.out.println("you collided draw somewhere else");
+
         }
         else {
             Path pathTmp = new Path();
@@ -271,15 +293,6 @@ public class SproutModel {
         this.width = width;
     }
 
-    public boolean hasNodeWithName(Circle nodeToFind) {
-        for (Node node : nodes) {
-            if (node.getShape() == nodeToFind) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public int getNumberOfEdges(Circle nodeToFind) {
         for (Node node : nodes) {
             if (node.getShape() == nodeToFind) {
@@ -335,6 +348,23 @@ public class SproutModel {
 
     public Line createLineToDraw(Circle startNode, Circle endNode) {
         return createLineToDraw(findNode(startNode), findNode(endNode));
+    }
+
+    public void changeTurns() {
+        gameFlow.changeTurn();
+    }
+
+    public boolean hasNoRemainingLegalMoves() {
+        return gameFlow.noRemainingLegalMoves(nodes);
+    }
+
+    public int getCurrentPlayer() {
+        return gameFlow.getCurrentPlayer();
+
+    }
+
+    public void setNodes(List<Node> nodes) {
+        this.nodes = nodes;
     }
 }
 
