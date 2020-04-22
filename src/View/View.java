@@ -71,12 +71,12 @@ public class View {
         scene.setCursor(Cursor.DEFAULT);
     }
 
-    public void unPrimeNode(Circle primedNode) {
+    public void deselectNode(Circle primedNode) {
         primedNode.setStrokeWidth(0);
         primedNode.setStroke(Color.BLACK);
     }
 
-    public void primeNode(Circle primedNode) {
+    public void selectNode(Circle primedNode) {
         primedNode.setStrokeWidth(2.0);
         primedNode.setStroke(Color.GREEN);
     }

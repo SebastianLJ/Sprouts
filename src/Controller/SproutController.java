@@ -3,9 +3,7 @@ package Controller;
 import Exceptions.GameOverException;
 import Exceptions.IllegalNodesChosenException;
 import Exceptions.NumberOfInitialNodesException;
-import Model.Node;
 import Model.SproutModel;
-//import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Shape;
@@ -83,11 +81,6 @@ public class SproutController {
     public void resetGame() {
         sproutModel.resetGame();
     }
-
-    public void resetGameWithInitialNodes(List<Node> initialGameNodes) {
-        sproutModel.resetGameWithInitalNodes(initialGameNodes);
-    }
-
 
     public String getOutputExceptionMessage() {
         return outputExceptionMessage;

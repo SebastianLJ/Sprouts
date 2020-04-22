@@ -15,6 +15,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -23,20 +24,30 @@ public class SproutLauncher extends Application {
     static SproutController controller = new SproutController();
     private DoubleProperty fontSize = new SimpleDoubleProperty(10);
 
+    /**
+     * @author Emil Sommer Desler
+     * Starts the initial stage that is used in the entire program to show different scenes to the user.
+     * @param stage The stage used to show scenes to the user.
+     * @throws IOException Thrown by the FXMLLoader if the fxml document is not present.
+     */
     @Override
-    public void start(Stage stage) throws Exception {
+    public void start(Stage stage) throws IOException {
         stage.setTitle("Sprouts");
 
         FXMLLoader fxmlLoader = new FXMLLoader(Objects.requireNonNull(SproutLauncher.class.getClassLoader().getResource("MainMenu.fxml")));
 
         Parent root = fxmlLoader.load();
+
+        // Gets the screen size of the users computer
         Rectangle2D screenBounds = Screen.getPrimary().getBounds();
 
+        // Sets the scene to half of the width and height of the screen size
         Scene scene = new Scene(root, screenBounds.getWidth()/2, screenBounds.getHeight()/2);
 
-        fontSize.bind(scene.widthProperty().add(scene.heightProperty()).divide(50));
+        // TODO Make things scale-able
+        /*fontSize.bind(scene.widthProperty().add(scene.heightProperty()).divide(50));
         VBox mainMenu = (VBox) fxmlLoader.getNamespace().get("mainMenu");
-        mainMenu.styleProperty().bind(Bindings.concat("-fx-font-size: ", fontSize.asString()));
+        mainMenu.styleProperty().bind(Bindings.concat("-fx-font-size: ", fontSize.asString()));*/
 
         stage.setScene(scene);
         stage.show();

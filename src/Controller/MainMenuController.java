@@ -13,7 +13,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -39,6 +38,13 @@ public class MainMenuController implements Initializable {
 
     private DoubleProperty fontSize = new SimpleDoubleProperty(10);
 
+    /**
+     * @author Emil Sommer Desler
+     * This method in run on a button click and starts either a click to draw game or a drag to draw game.
+     * @param event The mouse click on the button.
+     * @param numberOfInitialNodes User inputs how many nodes the game must start with.
+     * @throws IOException Thrown by the FXMLLoader if the fxml document is not present.
+     */
     private void startGame(MouseEvent event, int numberOfInitialNodes) throws IOException {
         FXMLLoader loader = new FXMLLoader(
                 SproutLauncher.class.getClassLoader().getResource(
@@ -62,7 +68,7 @@ public class MainMenuController implements Initializable {
         window.show();
     }
 
-    public void startClickToDrawGame(ActionEvent event) throws IOException {
+    public void startClickToDrawGame() {
         if (promptedForDragGame) {
             removeAskForNumberOfStartingNodes();
             promptedForNumberOfStartingNodes = false;
@@ -87,6 +93,13 @@ public class MainMenuController implements Initializable {
         System.out.println(((Button) event.getSource()).getWidth());
     }
 
+    /**
+     * @author Emil Sommer Desler
+     * This method is executed when the user decides to simulate a file.
+     * This method opens a display where the user can enter the name of the file.txt he want to simulate.
+     * @param event The mouse click on the button.
+     * @throws IOException Thrown by the FXMLLoader if the fxml document is not present.
+     */
     public void startEnterFileName(ActionEvent event) throws IOException {
         Parent enterFileNameParent = FXMLLoader.load(
                 Objects.requireNonNull(SproutLauncher.class.getClassLoader().getResource(
@@ -102,6 +115,11 @@ public class MainMenuController implements Initializable {
         window.show();
     }
 
+    /**
+     * @author Emil Sommer Desler
+     * Creates the dialog that ask the number of how many starting nodes
+     * to begin the game with.
+     */
     private void askForNumberOfStartingNodes() {
         if (!promptedForNumberOfStartingNodes) {
             HBox container = new HBox();
@@ -112,6 +130,7 @@ public class MainMenuController implements Initializable {
             input.setPadding(new Insets(8));
             input.setMaxWidth(mainMenu.getWidth()/2);
 
+            // Watches the user input is only numbers and no more than 99 starting nodes.
             input.textProperty().addListener((observable, oldValue, newValue) -> {
                 if (!newValue.matches("\\d*")) {
                     input.setText(newValue.replaceAll("[^\\d]", ""));
@@ -136,9 +155,9 @@ public class MainMenuController implements Initializable {
             });
 
             container.getChildren().addAll(input, startGameButton);
-            container.setStyle("-fx-padding: 10;" + "-fx-border-style: solid inside;"
+            /*container.setStyle("-fx-padding: 10;" + "-fx-border-style: solid inside;"
                     + "-fx-border-width: 2;" + "-fx-border-insets: 5;"
-                    + "-fx-border-radius: 5;" + "-fx-border-color: blue;");
+                    + "-fx-border-radius: 5;" + "-fx-border-color: blue;");*/
             container.setAlignment(Pos.CENTER);
             HBox.setHgrow(input, Priority.ALWAYS);
 

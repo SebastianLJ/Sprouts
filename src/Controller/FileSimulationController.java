@@ -52,6 +52,13 @@ public class FileSimulationController implements Initializable {
         this.filename = userDirectory + File.separator + "gameTestFiles" + File.separator + filename;
     }
 
+    /**
+     * @author Emil Sommer Desler
+     * Initialize the scene connecting it you the view class that handles the visual updates to the scene
+     * Also sets up the cell factory that allow to create custom cells for the list showing the moves in the simulated files.
+     * @param url Required - Not used.
+     * @param resourceBundle Required - Not used.
+     */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         view = new View(sproutController.getSproutModel());
@@ -112,7 +119,11 @@ public class FileSimulationController implements Initializable {
         return 0;
     }
 
-    public void runFile(ActionEvent event) {
+    /**
+     * @author Sebastian Lund & Emil Sommer Desler
+     * Runs the simulation of the given file when the user clicks the button.
+     */
+    public void runFile() {
         // Reset model
         sproutController.resetGame();
 
@@ -125,14 +136,19 @@ public class FileSimulationController implements Initializable {
         // Reset GameResponseLabel
         view.setGameResponseLabelText(gameResponseLabel, "");
 
+        // Reset simulator
         timeline.stop();
-
         legalGame = true;
         i = 0;
         timeline.setCycleCount(moves.size());
         timeline.play();
     }
 
+    /**
+     * @author Sebastian Lund & Emil Sommer Desler
+     * Creates the timeline object that handles the simulation of the text file.
+     * @return The created timeline
+     */
     private Timeline createTimeline() {
         return new Timeline(new KeyFrame(Duration.seconds(0.5), new EventHandler<>() {
 

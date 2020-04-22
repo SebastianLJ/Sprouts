@@ -32,6 +32,13 @@ public class SproutModel {
         gameFlow = new GameFlow();
     }
 
+    /**
+     * @author Emil Sommer Desler
+     * Creates a certain amount of nodes with a random placement on the map.
+     * The method wil ensure the created nodes will have a certain edge from the border of the map
+     * and a certain distance from each other.
+     * @param amount
+     */
     public void addRandomNodes(int amount) {
         Random random = new Random();
 
@@ -58,9 +65,6 @@ public class SproutModel {
                 return true;
             }
             if (DISTANCE_BETWEEN_POINTS > distanceBetweenCircleCenter(node.getShape(), circle)) {
-/*
-                System.out.println(distanceBetweenCircleCenter(node.getShape(), circle));
-*/
                 return true;
             }
         }
@@ -79,11 +83,6 @@ public class SproutModel {
     public void resetGame() {
         edges.clear();
         nodes.clear();
-    }
-
-    public void resetGameWithInitalNodes(List<Node> initialNodes) {
-        edges.clear();
-        nodes = initialNodes;
     }
 
     public List<Node> getNodes() {
@@ -302,13 +301,12 @@ public class SproutModel {
     }
 
     public Node findNode(Circle nodeToFind) {
-        Node node = null;
         for (Node n : nodes) {
             if (n.getShape() == nodeToFind) {
                 return n;
             }
         }
-        return node;
+        return null;
     }
 
     public int findNameOfNode(Circle nodeToFind) {

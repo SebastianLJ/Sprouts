@@ -67,7 +67,12 @@ public class EnterFileNameController implements Initializable {
         }
     }
 
-
+    /**
+     * @author Emil Sommer Desler
+     * Return the user to the main menu when clicking the button "Main Menu" in the application.
+     * @param event The mouse click on the button.
+     * @throws IOException Thrown by the FXMLLoader if the fxml document is not present.
+     */
     public void goToMainMenu(MouseEvent event) throws IOException {
         Parent mainMenuParent = FXMLLoader.load(
                 Objects.requireNonNull(SproutLauncher.class.getClassLoader().getResource(
