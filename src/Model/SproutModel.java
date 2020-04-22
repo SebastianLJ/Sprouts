@@ -223,7 +223,6 @@ public class SproutModel {
             } else {
                 path.getElements().add(new LineTo(point.getX(), point.getY()));
                 pathTmp.getElements().clear();
-                System.out.println("");
             }
         }
     }
@@ -235,27 +234,16 @@ public class SproutModel {
     public boolean doPathsCollide(Path pathTmp) {
 
         Shape test = Shape.intersect(pathTmp, path);
+        Path test3 = (Path) test;
 
         System.out.println("pathTmp elements: " + pathTmp.getElements());
         System.out.println("path elements: " + path.getElements());
 
-      /*  Path test2 = new Path();
-        test2.getElements().addAll(new MoveTo(252, 130), new LineTo(252, 129), new LineTo(252, 128), new LineTo(252, 127),
-                new LineTo(252, 126), new LineTo(252, 125), new LineTo(252 ,124));
-        Path test3 = new Path();
-        test3.getElements().addAll(new MoveTo(252.0, 124.0), new LineTo(252, 123.0));
-        Shape test4 = Shape.intersect(test2, test3);
-        System.out.println("test width"+ test4.getBoundsInLocal().getWidth());
-        Path test5 = new Path();
-        test5.getElements().addAll(new MoveTo (381.0, 185.0), new LineTo(382.0, 185.0));
-        Path test6 = new Path();
-        test6.getElements().addAll(new MoveTo(365.0, 192.0), new LineTo(365.0, 191.0), new LineTo(366.0, 191.0), new LineTo(367.0, 191.0),
-                new LineTo(367.0, 190.0), new LineTo(368.0, 190.0), new LineTo(368.0, 189.0),
-                new LineTo(370.0, 188.0), new LineTo(370.0, 187.0), new LineTo(372.0, 185.0), new LineTo(372.0, 184.0));*/
+        System.out.println("test3 path: " + test3.getElements());
 
 
 
-        if (test.getBoundsInLocal().getWidth()!=-1) {
+        if (test3.getElements().size()!=0) {
             return true;
         }
         for (Shape line : lines) {

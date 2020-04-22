@@ -53,7 +53,6 @@ public class View {
     public void setUpDrawingSettings(MouseEvent mousePressed, Pane gamePane) {
         Scene scene = ((javafx.scene.Node) mousePressed.getSource()).getScene();
         scene.setCursor(Cursor.CROSSHAIR);
-        model.getPath().setStroke(Color.BLACK); //view
         gamePane.getChildren().add(model.getPath());
     }
 
