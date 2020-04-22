@@ -229,9 +229,7 @@ public class SproutModel {
 
     public void drawPath(MouseEvent event) {
         if(isCollided){
-
             System.out.println("you collided draw somewhere else");
-
         }
         else {
             Path pathTmp = new Path();
