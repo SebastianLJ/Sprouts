@@ -1,5 +1,6 @@
 package Model;
 
+import Exceptions.CollisionException;
 import Exceptions.IllegalNodesChosenException;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
@@ -115,7 +116,7 @@ public class SproutModel {
         return nodes.get(name).getNumberOfConnectingEdges();
     }
 
-    public void drawEdgeBetweenNodes(int startNode, int endNode) {
+    public void drawEdgeBetweenNodes(int startNode, int endNode) throws CollisionException {
 
         if (startNode == endNode) {
             drawCircleFromNodeToItself(startNode);
@@ -126,30 +127,34 @@ public class SproutModel {
         // slet fra database in case (nodes list, edges list)
     }
 
-    public void drawLineBetweenNodes(int startNodeName, int endNodeName) {
+    public void drawLineBetweenNodes(int startNodeName, int endNodeName) throws CollisionException {
 
         Node startNode = nodes.get(startNodeName);
         Node endNode = nodes.get(endNodeName);
-        Line newLine = createLineToDraw(startNode, endNode);
+        Path path = createLineToDraw(startNode, endNode);
 
-        edges.add(newLine);
-        addNodeOnLine(newLine);
+        if (!doPathsCollide(path)) {
+            edges.add(path);
+            addNodeOnLine(path);
 
-        // Update number of connecting edges
-        startNode.incNumberOfConnectingEdges(1);
-        endNode.incNumberOfConnectingEdges(1);
-        nodes.set(startNodeName, startNode);
-        nodes.set(endNodeName, endNode);
+            // Update number of connecting edges
+            startNode.incNumberOfConnectingEdges(1);
+            endNode.incNumberOfConnectingEdges(1);
+            nodes.set(startNodeName, startNode);
+            nodes.set(endNodeName, endNode);
+        } else {
+            throw new CollisionException("");
+        }
+
+
     }
 
-    private Line createLineToDraw(Node startNode, Node endNode) {
-        Line newLine = new Line();
-        newLine.setStartX(startNode.getX());
-        newLine.setStartY(startNode.getY());
-        newLine.setEndX(endNode.getX());
-        newLine.setEndY(endNode.getY());
+    private Path createLineToDraw(Node startNode, Node endNode) {
+        Path path = new Path();
+        path.getElements().add(new MoveTo(startNode.getX(), startNode.getY()));
+        path.getElements().add(new LineTo(endNode.getX(), endNode.getY()));
 
-        return newLine;
+        return path;
     }
 
     public void drawCircleFromNodeToItself(int nodeName) {
@@ -182,12 +187,13 @@ public class SproutModel {
         return newCircle;
     }
 
-    public void addNodeOnLine(Line edge) {
-
-        double edgeIntervalX = Math.abs(edge.getEndX() - edge.getStartX());
-        double edgeIntervalY = Math.abs(edge.getEndY() - edge.getStartY());
-        double newNodeX = Math.min(edge.getStartX(), edge.getEndX()) + (edgeIntervalX / 2);
-        double newNodeY = Math.min(edge.getStartY(), edge.getEndY()) + (edgeIntervalY / 2);
+    public void addNodeOnLine(Path path) {
+        MoveTo startPoint = ((MoveTo) path.getElements().get(0));
+        LineTo endPoint = ((LineTo) path.getElements().get(path.getElements().size()-1));
+        double edgeIntervalX = Math.abs(endPoint.getX() - startPoint.getX());
+        double edgeIntervalY = Math.abs(endPoint.getY() - startPoint.getY());
+        double newNodeX = Math.min(startPoint.getX(), endPoint.getX()) + (edgeIntervalX / 2);
+        double newNodeY = Math.min(startPoint.getY(), endPoint.getY()) + (edgeIntervalY / 2);
 
         Node newNode = new Node(newNodeX, newNodeY, 2);
         nodes.add(newNode);
@@ -253,7 +259,7 @@ public class SproutModel {
         }
 
     public boolean doPathsCollide(Path pathTmp) {
-
+        /*
         Shape test = Shape.intersect(pathTmp, path);
         Path test3 = (Path) test;
 
@@ -267,8 +273,16 @@ public class SproutModel {
         if (test3.getElements().size()!=0) {
             return true;
         }
-        for (Shape line : lines) {
-            if (Shape.intersect(path, line).getBoundsInLocal().getWidth() != -1) {
+        */
+
+
+
+        System.out.println("Edges size: " + edges.size());
+        System.out.println("Edges " + edges);
+        System.out.println("Path " + pathTmp);
+        for (Shape shape : edges) {
+            System.out.println(Shape.intersect(pathTmp, shape).getBoundsInLocal().getWidth());
+            if (Shape.intersect(pathTmp, shape).getBoundsInLocal().getWidth() != -1) {
                 return true;
             }
         }
@@ -323,7 +337,7 @@ public class SproutModel {
         return nameOfNode;
     }
 
-    public void drawEdgeBetweenNodes(Circle startNode, Circle endNode) {
+    public void drawEdgeBetweenNodes(Circle startNode, Circle endNode) throws CollisionException {
         int nameOfStartNode = findNameOfNode(startNode);
         int nameOfEndNode = findNameOfNode(endNode);
         drawEdgeBetweenNodes(nameOfStartNode, nameOfEndNode);
@@ -345,7 +359,7 @@ public class SproutModel {
         return edges.get(edges.size()-1);
     }
 
-    public Line createLineToDraw(Circle startNode, Circle endNode) {
+    public Path createLineToDraw(Circle startNode, Circle endNode) {
         return createLineToDraw(findNode(startNode), findNode(endNode));
     }
 

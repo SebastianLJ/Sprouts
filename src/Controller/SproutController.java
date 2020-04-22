@@ -1,5 +1,6 @@
 package Controller;
 
+import Exceptions.CollisionException;
 import Exceptions.GameOverException;
 import Exceptions.IllegalNodesChosenException;
 import Exceptions.NumberOfInitialNodesException;
@@ -42,7 +43,7 @@ public class SproutController {
         }
     }
 
-    public void attemptDrawEdgeBetweenNodes(int startNodeName, int endNodeName) throws IllegalNodesChosenException, GameOverException {
+    public void attemptDrawEdgeBetweenNodes(int startNodeName, int endNodeName) throws IllegalNodesChosenException, GameOverException, CollisionException {
 
         if (!(sproutModel.hasNodeWithName(startNodeName) && sproutModel.hasNodeWithName(endNodeName))) {
             outputExceptionMessage = "One or both nodes does not exist";
@@ -97,7 +98,7 @@ public class SproutController {
         return sproutModel.getNodes();
     }
 
-    public void attemptDrawEdgeBetweenNodes(Circle startNode, Circle endNode) throws IllegalNodesChosenException, GameOverException {
+    public void attemptDrawEdgeBetweenNodes(Circle startNode, Circle endNode) throws IllegalNodesChosenException, GameOverException, CollisionException {
 
         if (!(sproutModel.hasNodeWithName(startNode) && sproutModel.hasNodeWithName(endNode))) {
             outputExceptionMessage = "One or both nodes does not exist";
