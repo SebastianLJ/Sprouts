@@ -90,7 +90,6 @@ public class MainMenuController implements Initializable {
         whichGameType = 1;
         promptedForDragGame = true;
         askForNumberOfStartingNodes();
-        System.out.println(((Button) event.getSource()).getWidth());
     }
 
     /**

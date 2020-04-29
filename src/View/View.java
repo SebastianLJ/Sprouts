@@ -39,7 +39,7 @@ public class View {
         }
     }
 
-    public Circle updateCanvas(Pane gamePane) {
+    public Circle updateCanvasClick(Pane gamePane) {
         // Get edge
         Shape newEdge = model.getNewestEdge();
 
@@ -50,6 +50,11 @@ public class View {
         legalEdgeAnimation(gamePane, newEdge);
 
         // Add new node to view
+        gamePane.getChildren().add(newNode);
+        return newNode;
+    }
+    public Circle updateCanvasDrag(Pane gamePane){
+        Circle newNode = model.getNewestNode();
         gamePane.getChildren().add(newNode);
         return newNode;
     }

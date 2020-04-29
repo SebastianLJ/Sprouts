@@ -18,7 +18,6 @@ import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import javafx.animation.Animation.Status;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -175,7 +174,7 @@ public class FileSimulationController implements Initializable {
                             //execute moves
                             move = moves.get(i).split("\\s");
                             sproutController.attemptDrawEdgeBetweenNodes(Integer.parseInt(move[0]) - 1, Integer.parseInt(move[1]) - 1);
-                            view.updateCanvas(gamePane);
+                            view.updateCanvasClick(gamePane);
                             message = "successfully executed move : from " + move[0] + " to " + move[1];
                         }
                         color = i % 2 == 0 ? "-fx-background-color: darkgreen": "-fx-background-color: green";
