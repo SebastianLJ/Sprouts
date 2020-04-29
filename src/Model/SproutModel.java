@@ -191,6 +191,13 @@ public class SproutModel {
         Node newNode = new Node(newNodeX, newNodeY, 2);
         nodes.add(newNode);
     }
+    public void addNodeOnLineDrag(Path edge){
+        int size = edge.getElements().size();
+        LineTo test = (LineTo) (edge.getElements().get(size/2));
+        Node newNode = new Node(test.getX(), test.getY(), 2);
+        nodes.add(newNode);
+
+    }
 
     public void addNodeOnCircle(Circle edge, double originNodeX, double originNodeY) {
 
@@ -248,7 +255,8 @@ public class SproutModel {
     }
 
     public void finishPath() {
-            lines.add(path);
+            edges.add(path);
+            addNodeOnLineDrag(path);
         }
 
     public boolean doPathsCollide(Path pathTmp) {
@@ -256,17 +264,11 @@ public class SproutModel {
         Shape test = Shape.intersect(pathTmp, path);
         Path test3 = (Path) test;
 
-        System.out.println("pathTmp elements: " + pathTmp.getElements());
-        System.out.println("path elements: " + path.getElements());
-
-        System.out.println("test3 path: " + test3.getElements());
-
-
 
         if (test3.getElements().size()!=0) {
             return true;
         }
-        for (Shape line : lines) {
+        for (Shape line : edges) {
             if (Shape.intersect(path, line).getBoundsInLocal().getWidth() != -1) {
                 return true;
             }

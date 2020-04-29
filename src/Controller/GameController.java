@@ -13,7 +13,6 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Circle;
@@ -118,13 +117,13 @@ public class GameController implements Initializable {
         } else {
             try {
                 attemptDrawEdgeBetweenNodes(selectedNode, (Circle) mouseEvent.getSource());
-                updateCanvas();
+                updateCanvasClick();
             } catch (IllegalNodesChosenException e) {
                 view.illegalEdgeAnimation(gamePane, sproutController.createEdge(selectedNode, (Circle) mouseEvent.getSource()));
                 view.deselectNode(selectedNode);
                 theUserHasSelectedANode = false;
             } catch (GameOverException e) {
-                updateCanvas();
+                updateCanvasClick();
                 gameResponseLabel.setText(e.getMessage());
             }
         }
@@ -144,9 +143,17 @@ public class GameController implements Initializable {
         }
     }
 
-    private void updateCanvas() {
-        Circle newNode = view.updateCanvas(gamePane); // update canvas and get newNode created
+    private void updateCanvasClick() {
+        Circle newNode = view.updateCanvasClick(gamePane); // update canvas and get newNode created
         newNode.setOnMouseClicked(this::clickToDraw); // Add listener to the new node
+    }
+
+    private void updateCanvasDrag(){
+        Circle newNode = view.updateCanvasDrag(gamePane);
+/*
+        newNode.setOnMouseClicked();
+*/
+
     }
 
     private void attemptDrawEdgeBetweenNodes(Circle startNode, Circle endNode) throws IllegalNodesChosenException, GameOverException {
@@ -189,11 +196,8 @@ public class GameController implements Initializable {
         if (gameType == DRAG_TO_DRAW_MODE) {
             sproutController.completeDrawing();
             view.setUpSuccessfulPathSettings(mouseReleased);
+            updateCanvasDrag();
         }
-    }
-    public void keyPressedHandler(KeyEvent keyPressed){
-        System.out.println("test");
-
     }
 
     void setNumberOfInitialNodes(int numberOfInitialNodes) {
