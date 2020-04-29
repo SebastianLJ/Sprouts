@@ -75,7 +75,7 @@ public class SproutModel {
     private int distanceBetweenCircleCenter(Circle circle1, Circle circle2) {
         double dx = circle2.getCenterX()-circle1.getCenterX();
         double dy = circle2.getCenterY()-circle1.getCenterY();
- 
+
         return (int) Math.ceil(Math.sqrt(dx*dx+dy*dy));
     }
 
@@ -333,6 +333,20 @@ public class SproutModel {
         } else {
             return createLineToDraw(startNode, endNode);
         }
+    }
+
+    public boolean isInNode(double x, double y) {
+        for (Node node : nodes) {
+            if (getDistance(x,y,node.getX(),node.getY()) < node.getShape().getRadius()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public double getDistance(double x1, double y1, double x2, double y2) {
+        return Math.sqrt(Math.pow(x2-x1,2)+Math.pow(y2-y1,2));
+
     }
 
     public Circle getNewestNode() {

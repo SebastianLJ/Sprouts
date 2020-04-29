@@ -17,6 +17,7 @@ public class SproutController {
     private boolean gameOnGoing;
     // For testing
     private String outputExceptionMessage;
+    private boolean drawingInit = false;
 
 
     public SproutController() {
@@ -54,15 +55,22 @@ public class SproutController {
     }
 
     public void setupDrawing(MouseEvent mousePressed){
-        sproutModel.initializePath(mousePressed);
+        if (sproutModel.isInNode(mousePressed.getX(), mousePressed.getY())) {
+            drawingInit = true;
+            sproutModel.initializePath(mousePressed);
+        }
     }
 
     public void beginDrawing(MouseEvent mouseDragged){
-        sproutModel.drawPath(mouseDragged);
+        if (drawingInit) {
+            sproutModel.drawPath(mouseDragged);
+        }
     }
 
     public void completeDrawing(){
-        sproutModel.finishPath();
+        if (drawingInit) {
+            sproutModel.finishPath();
+        }
     }
 
     public boolean isCollided(){
