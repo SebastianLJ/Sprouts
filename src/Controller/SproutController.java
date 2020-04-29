@@ -67,8 +67,8 @@ public class SproutController {
         }
     }
 
-    public void completeDrawing(){
-        if (drawingInit) {
+    public void completeDrawing(MouseEvent mouseReleased){
+        if (drawingInit && sproutModel.isInNode(mouseReleased.getX(), mouseReleased.getY())) {
             sproutModel.finishPath();
         }
     }

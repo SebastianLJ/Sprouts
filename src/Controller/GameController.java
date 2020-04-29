@@ -114,6 +114,7 @@ public class GameController implements Initializable {
     private void clickToDraw(MouseEvent mouseEvent) {
         if (!theUserHasSelectedANode) {
             primeNodeToDrawEdgeFrom((Circle) mouseEvent.getSource());
+
         } else {
             try {
                 attemptDrawEdgeBetweenNodes(selectedNode, (Circle) mouseEvent.getSource());
@@ -217,11 +218,15 @@ public class GameController implements Initializable {
      */
     public void mouseReleasedHandler(MouseEvent mouseReleased) {
         if (gameType == DRAG_TO_DRAW_MODE && !sproutController.getSproutModel().getIsCollided()) {
-            sproutController.completeDrawing();
+            sproutController.completeDrawing(mouseReleased);
             sproutController.addNodeOnValidLineDrag();
             updateCanvasDrag();
             view.setUpSuccessfulPathSettings(mouseReleased);
         }
+    }
+
+    public void drawRecommendedLine(Circle selectedNode) {
+
     }
 
     void setNumberOfInitialNodes(int numberOfInitialNodes) {

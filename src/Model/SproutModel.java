@@ -249,7 +249,7 @@ public class SproutModel {
             pathTmp.getElements().add(new MoveTo(point.getX(), point.getY()));
             point = new Point((int) event.getX(), (int) event.getY());
             pathTmp.getElements().add(new LineTo(point.getX(), point.getY()));
-            if (doPathsCollide(pathTmp)){
+            if (!isInNode(point.getX(), point.getY()) && doPathsCollide(pathTmp)){
                 path.getElements().clear();
                 pathTmp.getElements().clear();
                 isCollided = true;
