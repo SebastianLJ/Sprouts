@@ -193,7 +193,7 @@ public class GameController implements Initializable {
 
     @SuppressWarnings("unused")
     public void mouseReleasedHandler(MouseEvent mouseReleased) {
-        if (gameType == DRAG_TO_DRAW_MODE) {
+        if (gameType == DRAG_TO_DRAW_MODE && !sproutController.getSproutModel().getIsCollided()) {
             sproutController.completeDrawing();
             view.setUpSuccessfulPathSettings(mouseReleased);
             updateCanvasDrag();
