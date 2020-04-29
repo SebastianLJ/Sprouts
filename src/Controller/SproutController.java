@@ -65,6 +65,10 @@ public class SproutController {
         sproutModel.finishPath();
     }
 
+    public void addNodeOnValidLineDrag(){
+        sproutModel.addNodeOnLineDrag();
+    }
+
     public boolean isCollided(){
         return sproutModel.getIsCollided();
     }

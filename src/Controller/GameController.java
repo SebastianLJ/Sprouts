@@ -148,6 +148,12 @@ public class GameController implements Initializable {
         newNode.setOnMouseClicked(this::clickToDraw); // Add listener to the new node
     }
 
+
+    /**
+     * @author Noah Bastian Christiansen
+     * This method is called when the user finishes his/her move  in drag to draw.
+     * If the user had no collisions and drew a valid line this method will call upon the view to display the newly generated node.
+     */
     private void updateCanvasDrag(){
         Circle newNode = view.updateCanvasDrag(gamePane);
 /*
@@ -174,6 +180,12 @@ public class GameController implements Initializable {
     }
 
     @SuppressWarnings("unused")
+    /**
+     * @author Noah Bastian Christiansen
+     * Constantly called when the user is dragging his mouse in order to draw.
+     * Calls the model's method that draws path to mousevent's coordinates and the method that checks for intersections/collisions
+     * @param mouseDragged the mouse drag the user performs. This MouseEvent contains coordinates.
+     */
     public void mouseDraggedHandler(MouseEvent mouseDragged) {
         if (gameType == DRAG_TO_DRAW_MODE) {
             sproutController.beginDrawing(mouseDragged);
@@ -182,7 +194,12 @@ public class GameController implements Initializable {
             }
         }
     }
-
+    /**
+     * @author Noah Bastian Christiansen
+     * This method is called when the user presses on a node in the gamemode drag to draw.
+     * It takes a mouseEvent and sets up the model and the view
+     * @param mousePressed The mouse press the user performs.
+     */
     @SuppressWarnings("unused")
     public void mousePressedHandler(MouseEvent mousePressed) {
         if (gameType == DRAG_TO_DRAW_MODE) {
@@ -192,11 +209,18 @@ public class GameController implements Initializable {
     }
 
     @SuppressWarnings("unused")
+    /**
+     * @author Noah Bastian Christiansen
+     * This method is called when the user finishes a drawing in drag to draw.
+     * If the user had no collisions the path can be added to list of valid lines and a new node can be generated on the path.
+     * @param mouseReleased The mouse release the user performs.
+     */
     public void mouseReleasedHandler(MouseEvent mouseReleased) {
         if (gameType == DRAG_TO_DRAW_MODE && !sproutController.getSproutModel().getIsCollided()) {
             sproutController.completeDrawing();
-            view.setUpSuccessfulPathSettings(mouseReleased);
+            sproutController.addNodeOnValidLineDrag();
             updateCanvasDrag();
+            view.setUpSuccessfulPathSettings(mouseReleased);
         }
     }
 

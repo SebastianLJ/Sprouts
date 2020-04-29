@@ -191,12 +191,14 @@ public class SproutModel {
         Node newNode = new Node(newNodeX, newNodeY, 2);
         nodes.add(newNode);
     }
-    public void addNodeOnLineDrag(Path edge){
-        int size = edge.getElements().size();
-        LineTo test = (LineTo) (edge.getElements().get(size/2));
+    /**
+     * @author Noah Bastian Christiansen
+     */
+    public void addNodeOnLineDrag(){
+        int size = path.getElements().size();
+        LineTo test = (LineTo) (path.getElements().get(size/2));
         Node newNode = new Node(test.getX(), test.getY(), 2);
         nodes.add(newNode);
-
     }
 
     public void addNodeOnCircle(Circle edge, double originNodeX, double originNodeY) {
@@ -225,13 +227,18 @@ public class SproutModel {
         return center;
     }
 
+    /**
+     * @author Noah Bastian Christiansen
+     */
     public void initializePath(MouseEvent event) {
         isCollided = false;
         point = new Point((int) event.getX(), (int) event.getY());
         path = new Path();
         path.getElements().add(new MoveTo(point.getX(), point.getY()));
     }
-
+    /**
+     * @author Noah Bastian Christiansen
+     */
 
     public void drawPath(MouseEvent event) {
         if(isCollided){
@@ -253,12 +260,11 @@ public class SproutModel {
             }
         }
     }
-
+    /**
+     * @author Noah Bastian Christiansen
+     */
     public void finishPath(){
-        if(!isCollided) {
             edges.add(path);
-            addNodeOnLineDrag(path);
-        }
         }
 
     public boolean doPathsCollide(Path pathTmp) {
