@@ -254,9 +254,11 @@ public class SproutModel {
         }
     }
 
-    public void finishPath() {
+    public void finishPath(){
+        if(!isCollided) {
             edges.add(path);
             addNodeOnLineDrag(path);
+        }
         }
 
     public boolean doPathsCollide(Path pathTmp) {
