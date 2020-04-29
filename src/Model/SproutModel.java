@@ -75,7 +75,7 @@ public class SproutModel {
     private int distanceBetweenCircleCenter(Circle circle1, Circle circle2) {
         double dx = circle2.getCenterX()-circle1.getCenterX();
         double dy = circle2.getCenterY()-circle1.getCenterY();
-
+ 
         return (int) Math.ceil(Math.sqrt(dx*dx+dy*dy));
     }
 

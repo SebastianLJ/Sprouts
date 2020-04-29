@@ -95,7 +95,12 @@ public class FileSimulationController implements Initializable {
         goToScene(event, "EnterFileName.fxml");
     }
 
-    //returns linenumber of syntax error or 0 if no error
+    /**
+     * @author Sebastian Lund
+     * Checks file for invalid syntax using regex.
+     * @return 0 if file is valid / linenumber of invalid syntax if file is invalid.
+     * @throws IOException file reader exception.
+     */
     public int validateFile() throws IOException {
         File file = new File(filename);
         BufferedReader reader = new BufferedReader(new FileReader(file));

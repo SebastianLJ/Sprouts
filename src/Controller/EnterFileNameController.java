@@ -27,6 +27,13 @@ public class EnterFileNameController implements Initializable {
 
     }
 
+    /**
+     * @author Sebastian Lund
+     * Gets filename from user input and performs syntax check on the given file.
+     * Sets fileResponseLabel to "Syntax error at line n" / "File syntax is valid".
+     * @param event user event for proceeding to next stage.
+     * @throws IOException Thrown by the FXMLLoader if the fxml document is not present.
+     */
     public void startSimulationOfFile(ActionEvent event) throws IOException {
 
         FXMLLoader loader = new FXMLLoader(
