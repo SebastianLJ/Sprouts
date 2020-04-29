@@ -1,18 +1,19 @@
 package Model;
 
+import Exceptions.CollisionException;
 import Exceptions.IllegalNodesChosenException;
+import javafx.geometry.Bounds;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 
 import javafx.scene.input.MouseEvent;
 
-import java.awt.geom.PathIterator;
 import java.util.*;
+
 
 public class SproutModel {
     private static final int DISTANCE_BETWEEN_POINTS = 20;
     private static final int DISTANCE_FROM_BORDER = 20;
-    private ArrayList<Shape> lines = new ArrayList<>();
     private List<Shape> edges;
     private List<Node> nodes;
 
@@ -23,7 +24,6 @@ public class SproutModel {
     private boolean isCollided;
     private Point point;
     private GameFlow gameFlow;
-
 
 
     public SproutModel() {
@@ -75,7 +75,7 @@ public class SproutModel {
     private int distanceBetweenCircleCenter(Circle circle1, Circle circle2) {
         double dx = circle2.getCenterX()-circle1.getCenterX();
         double dy = circle2.getCenterY()-circle1.getCenterY();
- 
+
         return (int) Math.ceil(Math.sqrt(dx*dx+dy*dy));
     }
 
@@ -114,34 +114,36 @@ public class SproutModel {
         return nodes.get(name).getNumberOfConnectingEdges();
     }
 
-    public void drawEdgeBetweenNodes(int startNode, int endNode) {
+    public void drawEdgeBetweenNodes(int startNode, int endNode) throws CollisionException {
 
         if (startNode == endNode) {
             drawCircleFromNodeToItself(startNode);
         } else {
             drawLineBetweenNodes(startNode, endNode);
         }
-        // TODO: check for collision
-        // slet fra database in case (nodes list, edges list)
     }
 
-    public void drawLineBetweenNodes(int startNodeName, int endNodeName) {
+    public void drawLineBetweenNodes(int startNodeName, int endNodeName) throws CollisionException {
 
         Node startNode = nodes.get(startNodeName);
         Node endNode = nodes.get(endNodeName);
-        Line newLine = createLineToDraw(startNode, endNode);
+        Line newLine = getLineBetweenNodes(startNode, endNode);
 
-        edges.add(newLine);
-        addNodeOnLine(newLine);
+        if (LineCollides(newLine)) {
+            throw new CollisionException("Line collided with an exisiting line");
+        } else {
+            edges.add(newLine);
+            addNodeOnLine(newLine);
 
-        // Update number of connecting edges
-        startNode.incNumberOfConnectingEdges(1);
-        endNode.incNumberOfConnectingEdges(1);
-        nodes.set(startNodeName, startNode);
-        nodes.set(endNodeName, endNode);
+            // Update number of connecting edges
+            startNode.incNumberOfConnectingEdges(1);
+            endNode.incNumberOfConnectingEdges(1);
+            nodes.set(startNodeName, startNode);
+            nodes.set(endNodeName, endNode);
+        }
     }
 
-    private Line createLineToDraw(Node startNode, Node endNode) {
+    private Line getLineBetweenNodes(Node startNode, Node endNode) {
         Line newLine = new Line();
         newLine.setStartX(startNode.getX());
         newLine.setStartY(startNode.getY());
@@ -249,7 +251,7 @@ public class SproutModel {
             pathTmp.getElements().add(new MoveTo(point.getX(), point.getY()));
             point = new Point((int) event.getX(), (int) event.getY());
             pathTmp.getElements().add(new LineTo(point.getX(), point.getY()));
-            if (doPathsCollide(pathTmp)){
+            if (doesPathCollide(pathTmp)){
                 path.getElements().clear();
                 pathTmp.getElements().clear();
                 isCollided = true;
@@ -264,24 +266,79 @@ public class SproutModel {
      * @author Noah Bastian Christiansen
      */
     public void finishPath(){
-            edges.add(path);
+        edges.add(path);
+    }
+
+    public Node getCoordinates(PathElement pe) {
+
+        String pathElemString = pe.toString();
+
+        double x = Double.parseDouble(pathElemString.substring(pathElemString.indexOf("x")+2, pathElemString.indexOf(",")));
+        double y = Double.parseDouble(pathElemString.substring(pathElemString.indexOf("y")+2, pathElemString.indexOf("]")));
+
+        Node node = new Node(x,y,0);
+
+        return node;
+    }
+
+    public Line getLineBetweenPathElements(List<PathElement> pathElements) {
+
+        PathElement pe1 = pathElements.get(0);
+        PathElement pe2 = pathElements.get(1);
+
+        Node pathCoor1 = getCoordinates(pe1);
+        Node pathCoor2 = getCoordinates(pe2);
+        return getLineBetweenNodes(pathCoor1, pathCoor2);
+    }
+
+    public boolean LineCollides(Line attemptedLine) {
+
+        boolean collision = false;
+        Bounds lineBounds = attemptedLine.getBoundsInLocal();
+
+        for (Shape edge : edges) {
+            collision = edge.intersects(lineBounds) || collision;
         }
 
-    public boolean doPathsCollide(Path pathTmp) {
+        return collision;
+    }
 
-        Shape test = Shape.intersect(pathTmp, path);
-        Path test3 = (Path) test;
+    public boolean doesPathCollide(Path tmpPath) {
 
+        Line tmpPathLine = getLineBetweenPathElements(tmpPath.getElements());
 
-        if (test3.getElements().size()!=0) {
-            return true;
+        int pathSize = path.getElements().size();
+        int numberOfPathElementsToIgnore = 0;
+        double pathLength = 0;
+
+        for (int i = 1; i < pathSize-1; i++) {
+
+            // Create line between every two path elements
+            Line pathLine = getLineBetweenPathElements(path.getElements().subList(i-1,i+1));
+            // Add line length to summed path length
+            pathLength += Math.max(pathLine.getBoundsInLocal().getWidth(), pathLine.getBoundsInLocal().getHeight());
+            // While the path length remains short => ignore a path head element for collision
+            numberOfPathElementsToIgnore += pathLength < 70 ? 1 : 0;
         }
-        for (Shape line : edges) {
-            if (Shape.intersect(path, line).getBoundsInLocal().getWidth() != -1) {
+
+        for (int i = 1; i < pathSize-1-numberOfPathElementsToIgnore; i++) {
+
+            // Create line between every two path elements
+            Line pathLine = getLineBetweenPathElements(path.getElements().subList(i-1,i+1));
+            Bounds pathLineBounds = pathLine.getBoundsInLocal();
+
+            // Check collision between most recently drawn and previously drawn path segments
+            if (tmpPathLine.intersects(pathLineBounds)) {
                 return true;
             }
         }
 
+        // Check collision between existing canvas edges and most recently drawn path segment
+        for (Shape edge : edges) {
+            if (Shape.intersect(path, edge).getBoundsInLocal().getWidth() != -1) {
+                return true;
+            }
+        }
         return false;
     }
 
@@ -331,7 +388,7 @@ public class SproutModel {
         return nameOfNode;
     }
 
-    public void drawEdgeBetweenNodes(Circle startNode, Circle endNode) {
+    public void drawEdgeBetweenNodes(Circle startNode, Circle endNode) throws CollisionException {
         int nameOfStartNode = findNameOfNode(startNode);
         int nameOfEndNode = findNameOfNode(endNode);
         drawEdgeBetweenNodes(nameOfStartNode, nameOfEndNode);
@@ -341,7 +398,7 @@ public class SproutModel {
         if (startNode == endNode) {
             return createCircleToDraw(findNode(startNode));
         } else {
-            return createLineToDraw(startNode, endNode);
+            return getLineBetweenNodes(startNode, endNode);
         }
     }
 
@@ -353,8 +410,8 @@ public class SproutModel {
         return edges.get(edges.size()-1);
     }
 
-    public Line createLineToDraw(Circle startNode, Circle endNode) {
-        return createLineToDraw(findNode(startNode), findNode(endNode));
+    public Line getLineBetweenNodes(Circle startNode, Circle endNode) {
+        return getLineBetweenNodes(findNode(startNode), findNode(endNode));
     }
 
     public void changeTurns() {

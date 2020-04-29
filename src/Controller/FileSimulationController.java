@@ -1,5 +1,6 @@
 package Controller;
 
+import Exceptions.CollisionException;
 import Exceptions.GameOverException;
 import Exceptions.IllegalNodesChosenException;
 import Exceptions.NumberOfInitialNodesException;
@@ -189,6 +190,11 @@ public class FileSimulationController implements Initializable {
                     } catch (GameOverException e) {
                         color = "-fx-background-color: yellow";
                         message = e.getMessage();
+                        gameResponseLabel.setText(e.getMessage());
+                        timeline.stop();
+                    } catch (CollisionException e) {
+                        color = "-fx-background-color: red";
+                        message = "Failed at executing move : from " + move[0] + " to " + move[1];
                         gameResponseLabel.setText(e.getMessage());
                         timeline.stop();
                     }
