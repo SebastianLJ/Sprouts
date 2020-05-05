@@ -244,14 +244,12 @@ public class GameController implements Initializable {
      * @param mouseReleased The mouse release the user performs.
      */
     public void mouseReleasedHandler(MouseEvent mouseReleased) {
-        if (gameType == DRAG_TO_DRAW_MODE && !sproutController.getSproutModel().getIsCollided()) {
+        if (gameType == DRAG_TO_DRAW_MODE && !sproutController.getSproutModel().getIsCollided() && dragged) {
             sproutController.completeDrawing();
-            if(dragged){
             sproutController.addNodeOnValidLineDrag();
             updateCanvasDrag();
-            dragged=false;
-            }
             view.setUpSuccessfulPathSettings(mouseReleased);
+            dragged=false;
         }
     }
 
