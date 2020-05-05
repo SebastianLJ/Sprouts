@@ -36,6 +36,7 @@ public class GameController implements Initializable {
     private View view;
     private boolean theUserHasSelectedANode;
     private Circle selectedNode;
+    private boolean dragged;
 
     void setGameType(int whichGameType) {
         gameType = whichGameType;
@@ -190,6 +191,30 @@ public class GameController implements Initializable {
      * @param mouseDragged the mouse drag the user performs. This MouseEvent contains coordinates.
      */
     public void mouseDraggedHandler(MouseEvent mouseDragged) {
+        //left bottom corner (-17,232)
+        //upper left corner (-17, -17)
+        //bottom right corner (472,232)
+        //top right corner (472,-17)
+        System.out.println("width: "+ gamePane.getWidth());
+        System.out.println("height: " + gamePane.getHeight());
+        System.out.println("boundsInLocal: " + gamePane.getBoundsInLocal());
+        dragged=true;
+        System.out.println("x: " + mouseDragged.getX());
+        System.out.println("y: " + mouseDragged.getY());
+
+
+
+        if(!gamePane.contains(mouseDragged.getX(),mouseDragged.getY())){
+            System.out.println("not in pane 1!");
+            return;
+        }
+
+
+   /*     if(mouseDragged.getY()>235 || mouseDragged.getX() > 472 || mouseDragged.getX() < -17 || mouseDragged.getY()<-17){
+            System.out.println("not in pane 2 !" );
+            return;
+        }*/
+
         if (gameType == DRAG_TO_DRAW_MODE) {
             sproutController.beginDrawing(mouseDragged);
             if (sproutController.isCollided()) {
@@ -221,8 +246,11 @@ public class GameController implements Initializable {
     public void mouseReleasedHandler(MouseEvent mouseReleased) {
         if (gameType == DRAG_TO_DRAW_MODE && !sproutController.getSproutModel().getIsCollided()) {
             sproutController.completeDrawing();
+            if(dragged){
             sproutController.addNodeOnValidLineDrag();
             updateCanvasDrag();
+            dragged=false;
+            }
             view.setUpSuccessfulPathSettings(mouseReleased);
         }
     }
