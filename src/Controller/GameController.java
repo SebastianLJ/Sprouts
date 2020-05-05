@@ -248,9 +248,9 @@ public class GameController implements Initializable {
             sproutController.completeDrawing();
             sproutController.addNodeOnValidLineDrag();
             updateCanvasDrag();
-            view.setUpSuccessfulPathSettings(mouseReleased);
             dragged=false;
         }
+        view.setUpSuccessfulPathSettings(mouseReleased);
     }
 
     void setNumberOfInitialNodes(int numberOfInitialNodes) {
