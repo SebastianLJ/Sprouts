@@ -82,7 +82,7 @@ public class MainMenuController implements Initializable {
         mainMenu.getChildren().remove(mainMenuIndex + whichGameType);
     }
 
-    public void startDragToDrawGame(ActionEvent event) {
+    public void startDragToDrawGame() {
         if (promptedForClickGame) {
             removeAskForNumberOfStartingNodes();
             promptedForNumberOfStartingNodes = false;
@@ -127,7 +127,6 @@ public class MainMenuController implements Initializable {
             TextField input = new TextField();
             input.setPromptText("# of nodes");
             input.setPadding(new Insets(8));
-            input.setMaxWidth(mainMenu.getWidth()/2);
 
             // Watches the user input is only numbers and no more than 99 starting nodes.
             input.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -154,9 +153,6 @@ public class MainMenuController implements Initializable {
             });
 
             container.getChildren().addAll(input, startGameButton);
-            /*container.setStyle("-fx-padding: 10;" + "-fx-border-style: solid inside;"
-                    + "-fx-border-width: 2;" + "-fx-border-insets: 5;"
-                    + "-fx-border-radius: 5;" + "-fx-border-color: blue;");*/
             container.setAlignment(Pos.CENTER);
             HBox.setHgrow(input, Priority.ALWAYS);
 

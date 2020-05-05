@@ -1,8 +1,6 @@
 package Controller;
 
 import javafx.scene.control.ListCell;
-import javafx.scene.control.Tooltip;
-
 
 public class TooltipCell extends ListCell<String> {
     public TooltipCell() {

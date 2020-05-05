@@ -25,8 +25,10 @@ import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class GameController implements Initializable {
-    @FXML public Pane gamePane;
-    @FXML public Label gameResponseLabel;
+    @FXML
+    public Pane gamePane;
+    @FXML
+    public Label gameResponseLabel;
 
     private SproutController sproutController;
     private int gameType; // 0 is clickToDraw and 1 is dragToDraw
@@ -59,11 +61,11 @@ public class GameController implements Initializable {
     }
 
     /**
+     * @param url            Required - Not used.
+     * @param resourceBundle Required - Not used.
      * @author Emil Sommer Desler
      * Connects this class to the gamecontroller called sproutController and the view that handles all visual updates of the game.
      * Tells the model the size of the game and initializes the game with the given amount of starting nodes.
-     * @param url Required - Not used.
-     * @param resourceBundle Required - Not used.
      */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -108,10 +110,10 @@ public class GameController implements Initializable {
     }
 
     /**
+     * @param mouseEvent The mouse click the user performs.
      * @author Emil Sommer Desler
      * This method handles the game where the user clicks nodes in order to draw edges between them.
      * By clicking a node the user primes that node for drawing and when clicking another node a line is drawn between the nodes (if the line is legal).
-     * @param mouseEvent The mouse click the user performs.
      */
     private void clickToDraw(MouseEvent mouseEvent) {
         if (!theUserHasSelectedANode) {
@@ -134,10 +136,10 @@ public class GameController implements Initializable {
     }
 
     /**
-     * @author Emil Sommer Desler
-     * If the user has selected a node and clicks on something else than a node the selected node is deselected 
-     * and the user is free to select a new node. 
      * @param mouseClick The mouse click the user performs.
+     * @author Emil Sommer Desler
+     * If the user has selected a node and clicks on something else than a node the selected node is deselected
+     * and the user is free to select a new node.
      */
     @SuppressWarnings("unused")
     public void onMouseClicked(MouseEvent mouseClick) {
@@ -158,7 +160,7 @@ public class GameController implements Initializable {
      * This method is called when the user finishes his/her move  in drag to draw.
      * If the user had no collisions and drew a valid line this method will call upon the view to display the newly generated node.
      */
-    private void updateCanvasDrag(){
+    private void updateCanvasDrag() {
         Circle newNode = view.updateCanvasDrag(gamePane);
 /*
         newNode.setOnMouseClicked();
@@ -173,9 +175,9 @@ public class GameController implements Initializable {
     }
 
     /**
+     * @param selectedNode the node the user has selected
      * @author Emil Sommer Desler
      * Save the selectedNode and select it to draw from
-     * @param selectedNode the node the user has selected
      */
     private void primeNodeToDrawEdgeFrom(Circle selectedNode) {
         view.selectNode(selectedNode);
@@ -195,16 +197,15 @@ public class GameController implements Initializable {
         //upper left corner (-17, -17)
         //bottom right corner (472,232)
         //top right corner (472,-17)
-        System.out.println("width: "+ gamePane.getWidth());
+        System.out.println("width: " + gamePane.getWidth());
         System.out.println("height: " + gamePane.getHeight());
         System.out.println("boundsInLocal: " + gamePane.getBoundsInLocal());
-        dragged=true;
+        dragged = true;
         System.out.println("x: " + mouseDragged.getX());
         System.out.println("y: " + mouseDragged.getY());
 
 
-
-        if(!gamePane.contains(mouseDragged.getX(),mouseDragged.getY())){
+        if (!gamePane.contains(mouseDragged.getX(), mouseDragged.getY())) {
             System.out.println("not in pane 1!");
             return;
         }
@@ -222,11 +223,12 @@ public class GameController implements Initializable {
             }
         }
     }
+
     /**
+     * @param mousePressed The mouse press the user performs.
      * @author Noah Bastian Christiansen
      * This method is called when the user presses on a node in the gamemode drag to draw.
      * It takes a mouseEvent and sets up the model and the view
-     * @param mousePressed The mouse press the user performs.
      */
     @SuppressWarnings("unused")
     public void mousePressedHandler(MouseEvent mousePressed) {
@@ -248,7 +250,7 @@ public class GameController implements Initializable {
             sproutController.completeDrawing();
             sproutController.addNodeOnValidLineDrag();
             updateCanvasDrag();
-            dragged=false;
+            dragged = false;
         }
         view.setUpSuccessfulPathSettings(mouseReleased);
     }
