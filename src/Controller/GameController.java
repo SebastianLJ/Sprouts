@@ -24,13 +24,10 @@ import java.net.URL;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
-public class GameController implements Initializable {
+public class GameController extends SproutController implements Initializable {
     @FXML
     public Pane gamePane;
-    @FXML
-    public Label gameResponseLabel;
 
-    private SproutController sproutController;
     private int gameType; // 0 is clickToDraw and 1 is dragToDraw
     private int numberOfInitialNodes;
     private final int CLICK_TO_DRAW_MODE = 0;
@@ -39,6 +36,10 @@ public class GameController implements Initializable {
     private boolean theUserHasSelectedANode;
     private Circle selectedNode;
     private boolean dragged;
+
+    public GameController () {
+        super();
+    }
 
     void setGameType(int whichGameType) {
         gameType = whichGameType;
@@ -69,21 +70,19 @@ public class GameController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        // Create connection to the sproutController that controls the model
-        sproutController = new SproutController();
-
         // Create connection to view that updates view with information from the model
-        view = new View(sproutController.getSproutModel());
+        view = new View(getSproutModel());
 
         Platform.runLater(() -> {
             // Tell the model how big the game is
-            sproutController.updateSize(gamePane.getWidth(), gamePane.getHeight());
+            updateSize(0.0,0.0);
+            updateSize(gamePane.getWidth(), gamePane.getHeight());
 
             try {
-                sproutController.attemptInitializeGame(numberOfInitialNodes);
+                attemptInitializeGame(numberOfInitialNodes);
             } catch (NumberOfInitialNodesException e) {
                 try {
-                    sproutController.attemptInitializeGame(2);
+                    attemptInitializeGame(2);
                 } catch (NumberOfInitialNodesException ex) {
                     ex.printStackTrace();
                 }
@@ -100,7 +99,7 @@ public class GameController implements Initializable {
      * that way update the model accordingly to the moves the player does.
      */
     private void initializeListenerForStartingNodes() {
-        for (Model.Node node : sproutController.getNodes()) {
+        for (Model.Node node : getNodes()) {
             if (gameType == CLICK_TO_DRAW_MODE) {
                 node.getShape().setOnMouseClicked(this::clickToDraw);
             } else {
@@ -123,14 +122,17 @@ public class GameController implements Initializable {
                 attemptDrawEdgeBetweenNodes(selectedNode, (Circle) mouseEvent.getSource());
                 updateCanvasClick();
             } catch (IllegalNodesChosenException e) {
-                view.illegalEdgeAnimation(gamePane, sproutController.createEdge(selectedNode, (Circle) mouseEvent.getSource()));
+                view.illegalEdgeAnimation(gamePane, createEdge(selectedNode, (Circle) mouseEvent.getSource()));
                 view.deselectNode(selectedNode);
                 theUserHasSelectedANode = false;
             } catch (GameOverException e) {
                 updateCanvasClick();
-                gameResponseLabel.setText(e.getMessage());
+                System.out.println("Game Over!");
             } catch (CollisionException e) {
-                gameResponseLabel.setText(e.getMessage());
+                view.illegalEdgeAnimation(gamePane, createEdge(selectedNode, (Circle) mouseEvent.getSource()));
+                view.deselectNode(selectedNode);
+                theUserHasSelectedANode = false;
+                System.out.println("Collision!");
             }
         }
     }
@@ -154,7 +156,6 @@ public class GameController implements Initializable {
         newNode.setOnMouseClicked(this::clickToDraw); // Add listener to the new node
     }
 
-
     /**
      * @author Noah Bastian Christiansen
      * This method is called when the user finishes his/her move  in drag to draw.
@@ -168,8 +169,8 @@ public class GameController implements Initializable {
 
     }
 
-    private void attemptDrawEdgeBetweenNodes(Circle startNode, Circle endNode) throws IllegalNodesChosenException, GameOverException, CollisionException {
-        sproutController.attemptDrawEdgeBetweenNodes(startNode, endNode);
+    public void attemptDrawEdgeBetweenNodes(Circle startNode, Circle endNode) throws IllegalNodesChosenException, GameOverException, CollisionException {
+        super.attemptDrawEdgeBetweenNodes(startNode, endNode);
         view.deselectNode(startNode);
         theUserHasSelectedANode = false; // A edge has been drawn and the node i no longer primed
     }
@@ -217,8 +218,8 @@ public class GameController implements Initializable {
         }*/
 
         if (gameType == DRAG_TO_DRAW_MODE) {
-            sproutController.beginDrawing(mouseDragged);
-            if (sproutController.isCollided()) {
+            beginDrawing(mouseDragged);
+            if (isCollided()) {
                 view.setUpCollisionSettings(mouseDragged);
             }
         }
@@ -233,7 +234,7 @@ public class GameController implements Initializable {
     @SuppressWarnings("unused")
     public void mousePressedHandler(MouseEvent mousePressed) {
         if (gameType == DRAG_TO_DRAW_MODE) {
-            sproutController.setupDrawing(mousePressed);
+            setupDrawing(mousePressed);
             view.setUpDrawingSettings(mousePressed, gamePane);
         }
     }
@@ -246,9 +247,9 @@ public class GameController implements Initializable {
      * @param mouseReleased The mouse release the user performs.
      */
     public void mouseReleasedHandler(MouseEvent mouseReleased) {
-        if (gameType == DRAG_TO_DRAW_MODE && !sproutController.getSproutModel().getIsCollided() && dragged) {
-            sproutController.completeDrawing();
-            sproutController.addNodeOnValidLineDrag();
+        if (gameType == DRAG_TO_DRAW_MODE && !getSproutModel().getIsCollided() && dragged) {
+            completeDrawing();
+            addNodeOnValidLineDrag();
             updateCanvasDrag();
             dragged = false;
         }

@@ -4,6 +4,7 @@ import Exceptions.CollisionException;
 import Exceptions.GameOverException;
 import Exceptions.IllegalNodesChosenException;
 import Exceptions.NumberOfInitialNodesException;
+import Utility.TooltipCell;
 import View.View;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -29,10 +30,9 @@ import java.util.ArrayList;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
-public class FileSimulationController implements Initializable {
+public class FileSimulationController extends SproutController implements Initializable {
     public Pane gamePane;
     public Label gameResponseLabel;
-    private SproutController sproutController = new SproutController();
     public ListView<String> moveList;
     private String filename;
     private ArrayList<String> moves = new ArrayList<>();
@@ -45,6 +45,7 @@ public class FileSimulationController implements Initializable {
     private int i = 0;
 
     public FileSimulationController() {
+        super();
     }
 
     void setFileName(String filename) {
@@ -61,9 +62,9 @@ public class FileSimulationController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        view = new View(sproutController.getSproutModel());
+        view = new View(getSproutModel());
         Platform.runLater(() -> {
-            sproutController.updateSize(gamePane.getWidth(), gamePane.getHeight());
+            updateSize(gamePane.getWidth(), gamePane.getHeight());
         });
         moveList.setCellFactory(listView -> {
             TooltipCell cell = new TooltipCell();
@@ -130,7 +131,7 @@ public class FileSimulationController implements Initializable {
      */
     public void runFile() {
         // Reset model
-        sproutController.resetGame();
+        resetGame();
 
         // Reset ListView
         view.resetCells(cells);
@@ -168,13 +169,13 @@ public class FileSimulationController implements Initializable {
                     try {
                         if (i == 0) {
                             int n = Integer.parseInt(moves.get(0));
-                            sproutController.attemptInitializeGame(n);
+                            attemptInitializeGame(n);
                             view.initializeNodes(gamePane);
                             message = "successfully initialized game";
                         } else {
                             //execute moves
                             move = moves.get(i).split("\\s");
-                            sproutController.attemptDrawEdgeBetweenNodes(Integer.parseInt(move[0]) - 1, Integer.parseInt(move[1]) - 1);
+                            attemptDrawEdgeBetweenNodes(Integer.parseInt(move[0]) - 1, Integer.parseInt(move[1]) - 1);
                             view.updateCanvasClick(gamePane);
                             message = "successfully executed move : from " + move[0] + " to " + move[1];
                         }
@@ -206,8 +207,6 @@ public class FileSimulationController implements Initializable {
                     if (legalGame && i == moves.size()) {
                         System.out.println("Legal game - File successfully simulated");
                         view.setGameResponseLabelText(gameResponseLabel, "Game is incomplete.");
-                        // Should timeline.stop(); not be here ? Nej for den kører kun til moves.size() se condition for if statement
-
                     } else if (!legalGame) {
                         System.out.println("Illegal game - File unsuccessfully simulated");
                         view.setGameResponseLabelText(gameResponseLabel, "Game stopped prematurely.");
