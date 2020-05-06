@@ -73,27 +73,12 @@ public class FileSimulationController extends SproutController implements Initia
         });
     }
 
-    private void goToScene(ActionEvent event, String fxmlToLoad) throws IOException {
-        Parent parent = FXMLLoader.load(
-                Objects.requireNonNull(SproutLauncher.class.getClassLoader().getResource(
-                        fxmlToLoad)
-                ));
-
-        Scene scene = new Scene(parent);
-
-        //This line gets the Stage information
-        Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
-
-        window.setScene(scene);
-        window.show();
-    }
-
     public void goToMainMenu(ActionEvent event) throws IOException {
-        goToScene(event, "MainMenu.fxml");
+        changeScene(event, "MainMenu.fxml");
     }
 
     public void goToEnterFileToSimulate(ActionEvent event) throws IOException {
-        goToScene(event, "EnterFileName.fxml");
+        changeScene(event, "EnterFileName.fxml");
     }
 
     /**

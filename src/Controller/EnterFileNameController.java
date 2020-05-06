@@ -13,12 +13,13 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
-public class EnterFileNameController implements Initializable {
+public class EnterFileNameController extends Controller implements Initializable {
     @FXML public TextField filenameInputField;
     @FXML public Label fileResponseLabel;
 
@@ -80,18 +81,7 @@ public class EnterFileNameController implements Initializable {
      * @param event The mouse click on the button.
      * @throws IOException Thrown by the FXMLLoader if the fxml document is not present.
      */
-    public void goToMainMenu(MouseEvent event) throws IOException {
-        Parent mainMenuParent = FXMLLoader.load(
-                Objects.requireNonNull(SproutLauncher.class.getClassLoader().getResource(
-                        "MainMenu.fxml")
-                ));
-
-        Scene mainMenuScene = new Scene(mainMenuParent);
-
-        //This line gets the Stage information
-        Stage window = (Stage)((Node) event.getSource()).getScene().getWindow();
-
-        window.setScene(mainMenuScene);
-        window.show();
+    public void goToMainMenu(ActionEvent event) throws IOException {
+        changeScene(event, "MainMenu.fxml");
     }
 }

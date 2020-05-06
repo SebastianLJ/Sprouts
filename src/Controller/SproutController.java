@@ -11,7 +11,7 @@ import javafx.scene.shape.Shape;
 
 import java.util.List;
 
-public class SproutController {
+public class SproutController extends Controller {
 
     // private SproutView sproutView;
     private SproutModel sproutModel;

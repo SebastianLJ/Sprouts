@@ -25,7 +25,7 @@ import java.net.URL;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
-public class MainMenuController implements Initializable {
+public class MainMenuController extends Controller implements Initializable {
 
     public VBox mainMenu;
 
@@ -100,18 +100,7 @@ public class MainMenuController implements Initializable {
      * @throws IOException Thrown by the FXMLLoader if the fxml document is not present.
      */
     public void startEnterFileName(ActionEvent event) throws IOException {
-        Parent enterFileNameParent = FXMLLoader.load(
-                Objects.requireNonNull(SproutLauncher.class.getClassLoader().getResource(
-                        "EnterFileName.fxml")
-                ));
-
-        Scene enterFileNameScene = new Scene(enterFileNameParent);
-
-        //This line gets the Stage information
-        Stage window = (Stage)((Node) event.getSource()).getScene().getWindow();
-
-        window.setScene(enterFileNameScene);
-        window.show();
+        changeScene(event, "EnterFileName.fxml");
     }
 
     /**

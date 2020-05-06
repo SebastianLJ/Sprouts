@@ -58,7 +58,6 @@ public class SproutLauncher extends Application {
 //        acceptUserInput(new Scanner(System.in));  // uncomment for console driven game
     }
 
-
     public static void acceptUserInput(Scanner scanner) {
         boolean successfulInput = false;
 

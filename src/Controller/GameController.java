@@ -47,18 +47,7 @@ public class GameController extends SproutController implements Initializable {
 
     @SuppressWarnings("unused")
     public void goToMainMenu(ActionEvent event) throws IOException {
-        Parent mainMenuParent = FXMLLoader.load(
-                Objects.requireNonNull(SproutLauncher.class.getClassLoader().getResource(
-                        "MainMenu.fxml")
-                ));
-
-        Scene mainMenuScene = new Scene(mainMenuParent);
-
-        //This line gets the Stage information
-        Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
-
-        window.setScene(mainMenuScene);
-        window.show();
+        changeScene(event, "MainMenu.fxml");
     }
 
     /**
