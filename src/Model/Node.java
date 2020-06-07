@@ -4,6 +4,7 @@ import javafx.scene.shape.Circle;
 
 public class Node {
 
+    private int nodeRadius = 5;
     private double x;
     private double y;
     private Circle shape;
@@ -13,7 +14,7 @@ public class Node {
         this.x = x;
         this.y = y;
         this.numberOfConnectingEdges = numberOfConnectingEdges;
-        this.shape = new Circle(x, y, 5);
+        this.shape = new Circle(x, y, nodeRadius);
         // TODO: Make radius fit window size
     }
 
@@ -31,6 +32,10 @@ public class Node {
 
     public void incNumberOfConnectingEdges(int amountOfNewEdges) {
         numberOfConnectingEdges += amountOfNewEdges;
+    }
+
+    public int getNodeRadius() {
+        return nodeRadius;
     }
 
     public Circle getShape() {

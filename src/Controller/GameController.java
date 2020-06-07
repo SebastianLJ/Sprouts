@@ -127,6 +127,9 @@ public class GameController implements Initializable {
                 updateCanvasClick();
                 gameResponseLabel.setText(e.getMessage());
             } catch (CollisionException e) {
+                view.illegalEdgeAnimation(gamePane, sproutController.createEdge(selectedNode, (Circle) mouseEvent.getSource()));
+                view.deselectNode(selectedNode);
+                theUserHasSelectedANode = false;
                 gameResponseLabel.setText(e.getMessage());
             }
         }
