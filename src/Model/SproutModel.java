@@ -117,7 +117,7 @@ public class SproutModel {
     public void drawEdgeBetweenNodes(int startNode, int endNode) throws CollisionException {
 
         if (startNode == endNode) {
-            drawCircleFromNodeToItself(startNode);
+            drawLineFromNodeToItself(startNode);
         } else {
             drawLineBetweenNodes(startNode, endNode);
         }
@@ -129,7 +129,7 @@ public class SproutModel {
         Node endNode = nodes.get(endNodeName);
         Line newLine = getLineBetweenNodes(startNode, endNode);
 
-        if (LineCollides(newLine)) {
+        if (shapeCollides(newLine)) {
             throw new CollisionException("Line collided with an exisiting line");
         } else {
             edges.add(newLine);
@@ -150,20 +150,54 @@ public class SproutModel {
         newLine.setEndX(endNode.getX());
         newLine.setEndY(endNode.getY());
 
+        System.out.println("startCoor: (" + newLine.getStartX() + "," + newLine.getStartY() + ")");
+        System.out.println("EndCoor: (" + newLine.getEndX() + "," + newLine.getEndY() + ")");
+
+        System.out.println(newLine.intersects(startNode.getShape().getLayoutBounds()));
+
+        double c1 = startNode.getShape().getCenterX();
+        double c2 = startNode.getShape().getCenterX();
+        double hyp = startNode.getNodeRadius();
+        double b = Math.abs(startNode.getY()-newLine.getStartY());
+        double a = Math.sqrt(Math.pow(hyp,2) - Math.pow(b,2));
+        double newStartX = a + c1;
+        double newStartY = b + c2;
+
+
+        c1 = endNode.getShape().getCenterX();
+        c2 = endNode.getShape().getCenterX();
+        hyp = endNode.getNodeRadius();
+        b = Math.abs(endNode.getY()-newLine.getEndY());
+        a = Math.sqrt(Math.pow(hyp,2) - Math.pow(b,2));
+        double newEndX = a + c1;
+        double newEndY = b + c2;
+
+        newLine.setStartX(newStartX);
+        newLine.setStartY(newStartY);
+        newLine.setEndX(newEndX);
+        newLine.setEndY(newEndY);
+
+        System.out.println("startCoor: (" + newLine.getStartX() + "," + newLine.getStartY() + ")");
+        System.out.println("EndCoor: (" + newLine.getEndX() + "," + newLine.getEndY() + ")");
+
         return newLine;
     }
 
-    public void drawCircleFromNodeToItself(int nodeName) {
+    public void drawLineFromNodeToItself(int nodeName) throws CollisionException {
 
         Node node = nodes.get(nodeName);
         Circle newCircle = createCircleToDraw(node);
 
-        edges.add(newCircle);
-        addNodeOnCircle(newCircle, node.getX(), node.getY());
+        if (shapeCollides(newCircle)) {
+            throw new CollisionException("Line collided with an exisiting line");
+        } else {
+            edges.add(newCircle);
+            addNodeOnCircle(newCircle, node.getX(), node.getY());
 
-        // Update number of connecting edges
-        node.incNumberOfConnectingEdges(2);
-        nodes.set(nodeName, node);
+            // Update number of connecting edges
+            node.incNumberOfConnectingEdges(2);
+            nodes.set(nodeName, node);
+        }
     }
 
     private Circle createCircleToDraw(Node node) {
@@ -251,7 +285,7 @@ public class SproutModel {
             pathTmp.getElements().add(new MoveTo(point.getX(), point.getY()));
             point = new Point((int) event.getX(), (int) event.getY());
             pathTmp.getElements().add(new LineTo(point.getX(), point.getY()));
-            if (doesPathCollide(pathTmp)){
+            if (pathCollides(pathTmp)){
                 path.getElements().clear();
                 pathTmp.getElements().clear();
                 isCollided = true;
@@ -291,7 +325,8 @@ public class SproutModel {
         return getLineBetweenNodes(pathCoor1, pathCoor2);
     }
 
-    public boolean LineCollides(Line attemptedLine) {
+
+    public boolean shapeCollides(Shape attemptedLine) {
 
         boolean collision = false;
         Bounds lineBounds = attemptedLine.getBoundsInLocal();
@@ -303,7 +338,7 @@ public class SproutModel {
         return collision;
     }
 
-    public boolean doesPathCollide(Path tmpPath) {
+    public boolean pathCollides(Path tmpPath) {
 
         Line tmpPathLine = getLineBetweenPathElements(tmpPath.getElements());
 
@@ -328,6 +363,10 @@ public class SproutModel {
             Bounds pathLineBounds = pathLine.getBoundsInLocal();
 
             // Check collision between most recently drawn and previously drawn path segments
+//            if (Shape.intersect(tmpPathLine, pathLine).getBoundsInLocal().getWidth() != -1) {
+//                return true;
+//            }
+
             if (tmpPathLine.intersects(pathLineBounds)) {
                 return true;
             }
