@@ -77,7 +77,7 @@ public class EnterFileNameController extends Controller implements Initializable
      * @author Noah Bastian Christiansen
      * Let's user choose a file to simulate by clicking the button choose file.
      * Sets textfield to be the path of the chosen file.
-     * @param event
+     * @param event The mouse click on the button
      */
 
     public void chooseFile(ActionEvent event){

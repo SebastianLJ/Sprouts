@@ -1,7 +1,6 @@
 package Controller;
 
-import Exceptions.GameOverException;
-import Exceptions.IllegalNodesChosenException;
+
 import Exceptions.NumberOfInitialNodesException;
 import javafx.application.Application;
 import javafx.beans.binding.Bindings;

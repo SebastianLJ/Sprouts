@@ -229,6 +229,7 @@ public class SproutModel {
     }
     /**
      * @author Noah Bastian Christiansen
+     * Adds a new node close to the midpoint of a valid line
      */
     public void addNodeOnLineDrag(){
         int size = path.getElements().size();
@@ -264,26 +265,32 @@ public class SproutModel {
     }
 
     /**
+     * @param mouseClick A mouse click
      * @author Noah Bastian Christiansen
+     * Sets up path object and sets coordinates for starting point of drawing (the position on the pane where the click occured)
      */
-    public void initializePath(MouseEvent event) {
+    public void initializePath(MouseEvent mouseClick) {
         isCollided = false;
-        point = new Point((int) event.getX(), (int) event.getY());
+        point = new Point((int) mouseClick.getX(), (int) mouseClick.getY());
         path = new Path();
         path.getElements().add(new MoveTo(point.getX(), point.getY()));
     }
     /**
+     * @param mouseDrag A mouse drag
      * @author Noah Bastian Christiansen
+     * This method draws the line the user is tracing with his mouse.
+     * The method performs subcalls to pathCollides() to ensure the drawn line is not intersecting with itself or other lines.
+     * The current drawing is removed if it violates the rules.
      */
 
-    public void drawPath(MouseEvent event) {
+    public void drawPath(MouseEvent mouseDrag) {
         if(isCollided){
             System.out.println("you collided draw somewhere else");
         }
         else {
             Path pathTmp = new Path();
             pathTmp.getElements().add(new MoveTo(point.getX(), point.getY()));
-            point = new Point((int) event.getX(), (int) event.getY());
+            point = new Point((int) mouseDrag.getX(), (int) mouseDrag.getY());
             pathTmp.getElements().add(new LineTo(point.getX(), point.getY()));
             if (pathCollides(pathTmp)){
                 path.getElements().clear();
@@ -298,6 +305,7 @@ public class SproutModel {
     }
     /**
      * @author Noah Bastian Christiansen
+     * If turn was ended successfully then the drawn line is added to list of valid lines
      */
     public void finishPath(){
         edges.add(path);
@@ -405,7 +413,11 @@ public class SproutModel {
         }
         return -1; // Should never be reached
     }
-
+    /**
+     * @param nodeToFind The circle whose node object needs to be found
+     * @author Noah Bastian Christiansen
+     *  @return The node that whose shape is the given circle object
+     */
     public Node findNode(Circle nodeToFind) {
         for (Node n : nodes) {
             if (n.getShape() == nodeToFind) {
@@ -414,7 +426,11 @@ public class SproutModel {
         }
         return null;
     }
-
+    /**
+     * @param nodeToFind The circle whose name we want
+     * @author Noah Bastian Christiansen
+     * @return Returns the name/number of the node whose shape is the given circle object.
+     */
     public int findNameOfNode(Circle nodeToFind) {
         int nameOfNode = 0;
         int i = 0;

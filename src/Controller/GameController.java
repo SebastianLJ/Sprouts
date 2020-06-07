@@ -8,20 +8,16 @@ import View.View;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
+
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.Label;
+
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Circle;
-import javafx.stage.Stage;
+
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class GameController extends SproutController implements Initializable {
@@ -151,11 +147,7 @@ public class GameController extends SproutController implements Initializable {
      * If the user had no collisions and drew a valid line this method will call upon the view to display the newly generated node.
      */
     private void updateCanvasDrag() {
-        Circle newNode = view.updateCanvasDrag(gamePane);
-/*
-        newNode.setOnMouseClicked();
-*/
-
+        view.updateCanvasDrag(gamePane);
     }
 
     public void attemptDrawEdgeBetweenNodes(Circle startNode, Circle endNode) throws IllegalNodesChosenException, GameOverException, CollisionException {
@@ -199,12 +191,6 @@ public class GameController extends SproutController implements Initializable {
             System.out.println("not in pane 1!");
             return;
         }
-
-
-   /*     if(mouseDragged.getY()>235 || mouseDragged.getX() > 472 || mouseDragged.getX() < -17 || mouseDragged.getY()<-17){
-            System.out.println("not in pane 2 !" );
-            return;
-        }*/
 
         if (gameType == DRAG_TO_DRAW_MODE) {
             beginDrawing(mouseDragged);

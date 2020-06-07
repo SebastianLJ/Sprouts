@@ -54,22 +54,36 @@ public class SproutController extends Controller {
         }
     }
 
+    /**
+     * @author Noah Bastian Christiansen
+     * @param mousePressed
+     */
     public void setupDrawing(MouseEvent mousePressed){
         sproutModel.initializePath(mousePressed);
     }
 
+    /**
+     * @author Noah Bastian Christiansen
+     * @param mouseDragged
+     */
     public void beginDrawing(MouseEvent mouseDragged){
         sproutModel.drawPath(mouseDragged);
     }
-
+    /**
+     * @author Noah Bastian Christiansen
+     */
     public void completeDrawing(){
         sproutModel.finishPath();
     }
-
+    /**
+     * @author Noah Bastian Christiansen
+     */
     public void addNodeOnValidLineDrag(){
         sproutModel.addNodeOnLineDrag();
     }
-
+    /**
+     * @author Noah Bastian Christiansen
+     */
     public boolean isCollided(){
         return sproutModel.getIsCollided();
     }
