@@ -49,8 +49,7 @@ public class FileSimulationController extends SproutController implements Initia
     }
 
     void setFileName(String filename) {
-        String userDirectory = System.getProperty("user.dir");
-        this.filename = userDirectory + File.separator + "gameTestFiles" + File.separator + filename;
+        this.filename=filename;
     }
 
     /**

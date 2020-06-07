@@ -178,7 +178,7 @@ public class GameController extends SproutController implements Initializable {
     @SuppressWarnings("unused")
     /**
      * @author Noah Bastian Christiansen
-     * Constantly called when the user is dragging his mouse in order to draw.
+     * Repeatedly called when the user is dragging his mouse in order to draw.
      * Calls the model's method that draws path to mousevent's coordinates and the method that checks for intersections/collisions
      * @param mouseDragged the mouse drag the user performs. This MouseEvent contains coordinates.
      */
@@ -229,6 +229,7 @@ public class GameController extends SproutController implements Initializable {
     }
 
     @SuppressWarnings("unused")
+
     /**
      * @author Noah Bastian Christiansen
      * This method is called when the user finishes a drawing in drag to draw.
