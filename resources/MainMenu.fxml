@@ -17,20 +17,29 @@
             <Font name="System Bold" size="16.0" />
          </font>
       </Label>
-      <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#startClickToDrawGame" text="Click To Draw">
+      <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#startClickToDrawGame" text="Click To Draw" wrapText="true">
          <font>
             <Font size="16.0" />
          </font>
+         <padding>
+            <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
+         </padding>
       </Button>
-      <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#startDragToDrawGame" text="Drag To Draw">
+      <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#startDragToDrawGame" text="Drag To Draw" wrapText="true">
          <font>
             <Font size="16.0" />
          </font>
+         <padding>
+            <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
+         </padding>
       </Button>
-      <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#startEnterFileName" text="Simulate From File">
+      <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#startEnterFileName" text="Simulate From File" wrapText="true">
          <font>
             <Font size="16.0" />
          </font>
+         <padding>
+            <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
+         </padding>
       </Button>
    </VBox>
 </AnchorPane>

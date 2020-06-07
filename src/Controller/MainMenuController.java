@@ -25,7 +25,7 @@ import java.net.URL;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
-public class MainMenuController implements Initializable {
+public class MainMenuController extends Controller implements Initializable {
 
     public VBox mainMenu;
 
@@ -82,7 +82,7 @@ public class MainMenuController implements Initializable {
         mainMenu.getChildren().remove(mainMenuIndex + whichGameType);
     }
 
-    public void startDragToDrawGame(ActionEvent event) {
+    public void startDragToDrawGame() {
         if (promptedForClickGame) {
             removeAskForNumberOfStartingNodes();
             promptedForNumberOfStartingNodes = false;
@@ -100,18 +100,7 @@ public class MainMenuController implements Initializable {
      * @throws IOException Thrown by the FXMLLoader if the fxml document is not present.
      */
     public void startEnterFileName(ActionEvent event) throws IOException {
-        Parent enterFileNameParent = FXMLLoader.load(
-                Objects.requireNonNull(SproutLauncher.class.getClassLoader().getResource(
-                        "EnterFileName.fxml")
-                ));
-
-        Scene enterFileNameScene = new Scene(enterFileNameParent);
-
-        //This line gets the Stage information
-        Stage window = (Stage)((Node) event.getSource()).getScene().getWindow();
-
-        window.setScene(enterFileNameScene);
-        window.show();
+        changeScene(event, "EnterFileName.fxml");
     }
 
     /**
@@ -127,7 +116,6 @@ public class MainMenuController implements Initializable {
             TextField input = new TextField();
             input.setPromptText("# of nodes");
             input.setPadding(new Insets(8));
-            input.setMaxWidth(mainMenu.getWidth()/2);
 
             // Watches the user input is only numbers and no more than 99 starting nodes.
             input.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -154,9 +142,6 @@ public class MainMenuController implements Initializable {
             });
 
             container.getChildren().addAll(input, startGameButton);
-            /*container.setStyle("-fx-padding: 10;" + "-fx-border-style: solid inside;"
-                    + "-fx-border-width: 2;" + "-fx-border-insets: 5;"
-                    + "-fx-border-radius: 5;" + "-fx-border-color: blue;");*/
             container.setAlignment(Pos.CENTER);
             HBox.setHgrow(input, Priority.ALWAYS);
 
