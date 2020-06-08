@@ -180,31 +180,31 @@ public class GameController extends SproutController implements Initializable {
                 setupDrawing(mousePressed);
                 view.setUpDrawingSettings(mousePressed, gamePane);
                 isPathInit = true;
-            } catch (PointNotInNode pointNotInNode) {
-                //todo add visual feedback
+            } catch (InvalidPath invalidPath) {
+                System.out.println(invalidPath.getMessage());
             }
         }
     }
 
     @SuppressWarnings("unused")
     /**
-     * @author Noah Bastian Christiansen
+     * @author Noah Bastian Christiansen & Sebastian Lund Jensen
      * Repeatedly called when the user is dragging his mouse in order to draw.
      * Calls the model's method that draws path to mousevent's coordinates and the method that checks for intersections/collisions
      * @param mouseDragged the mouse drag the user performs. This MouseEvent contains coordinates.
      */
-    public void mouseDraggedHandler(MouseEvent mouseDragged) throws PointNotInNode {
+    public void mouseDraggedHandler(MouseEvent mouseDragged) throws InvalidPath {
         //left bottom corner (-17,232)
         //upper left corner (-17, -17)
         //bottom right corner (472,232)
         //top right corner (472,-17)
         if (isPathInit) {
-            System.out.println("width: " + gamePane.getWidth());
+            /*System.out.println("width: " + gamePane.getWidth());
             System.out.println("height: " + gamePane.getHeight());
             System.out.println("boundsInLocal: " + gamePane.getBoundsInLocal());
-            dragged = true;
             System.out.println("x: " + mouseDragged.getX());
-            System.out.println("y: " + mouseDragged.getY());
+            System.out.println("y: " + mouseDragged.getY());*/
+            dragged = true;
 
 
             if (!gamePane.contains(mouseDragged.getX(), mouseDragged.getY())) {
@@ -216,7 +216,13 @@ public class GameController extends SproutController implements Initializable {
                 try {
                     beginDrawing(mouseDragged);
                 } catch (PathForcedToEnd pathForcedToEnd) {
-                    finishPathHelper(mouseDragged);
+                    try {
+                        finishPathHelper(mouseDragged);
+                    } catch (InvalidPath e) {
+                        dragged = false;
+                        isPathInit = false;
+                        System.out.println(e.getMessage());
+                    }
                 }
                 if (isCollided()) {
                     view.setUpCollisionSettings(mouseDragged);
@@ -237,7 +243,7 @@ public class GameController extends SproutController implements Initializable {
         if (gameType == DRAG_TO_DRAW_MODE && !getSproutModel().getIsCollided() && dragged && isPathInit) {
             try {
                 finishPathHelper(mouseReleased);
-            } catch (PointNotInNode pointNotInNode) {
+            } catch (InvalidPath invalidPath) {
                 dragged = false;
                 isPathInit = false;
             }
@@ -245,7 +251,7 @@ public class GameController extends SproutController implements Initializable {
         }
     }
 
-    private void finishPathHelper(MouseEvent mouseEvent) throws PointNotInNode {
+    private void finishPathHelper(MouseEvent mouseEvent) throws InvalidPath {
         completeDrawing(mouseEvent);
         addNodeOnValidLineDrag();
         updateCanvasDrag();

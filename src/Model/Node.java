@@ -34,6 +34,10 @@ public class Node {
         numberOfConnectingEdges += amountOfNewEdges;
     }
 
+    public void decNumberOfConnectingEdges(int amountOfNewEdges) {
+        numberOfConnectingEdges -= amountOfNewEdges;
+    }
+
     public int getNodeRadius() {
         return nodeRadius;
     }

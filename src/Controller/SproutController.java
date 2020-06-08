@@ -55,7 +55,7 @@ public class SproutController extends Controller {
      * @author Noah Bastian Christiansen
      * @param mousePressed
      */
-    public void setupDrawing(MouseEvent mousePressed) throws PointNotInNode {
+    public void setupDrawing(MouseEvent mousePressed) throws InvalidPath {
         sproutModel.initializePath(mousePressed);
 
     }
@@ -70,7 +70,7 @@ public class SproutController extends Controller {
     /**
      * @author Noah Bastian Christiansen
      */
-    public void completeDrawing(MouseEvent mouseEvent) throws PointNotInNode {
+    public void completeDrawing(MouseEvent mouseEvent) throws InvalidPath {
         sproutModel.finishPath(mouseEvent);
     }
     /**

@@ -3,7 +3,7 @@ package Model;
 import Exceptions.CollisionException;
 import Exceptions.IllegalNodesChosenException;
 import Exceptions.PathForcedToEnd;
-import Exceptions.PointNotInNode;
+import Exceptions.InvalidPath;
 import javafx.geometry.Bounds;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
@@ -154,10 +154,10 @@ public class SproutModel {
         newLine.setEndX(endNode.getX());
         newLine.setEndY(endNode.getY());
 
-        System.out.println("startCoor: (" + newLine.getStartX() + "," + newLine.getStartY() + ")");
+        /*System.out.println("startCoor: (" + newLine.getStartX() + "," + newLine.getStartY() + ")");
         System.out.println("EndCoor: (" + newLine.getEndX() + "," + newLine.getEndY() + ")");
 
-        System.out.println(newLine.intersects(startNode.getShape().getLayoutBounds()));
+        System.out.println(newLine.intersects(startNode.getShape().getLayoutBounds()));*/
 
         /*double c1 = startNode.getShape().getCenterX();
         double c2 = startNode.getShape().getCenterX();
@@ -273,23 +273,24 @@ public class SproutModel {
      * @author Noah Bastian Christiansen & Sebastian Lund Jensen
      * Sets up path object and sets coordinates for starting point of drawing (the position on the pane where the click occured)
      */
-    public void initializePath(MouseEvent mouseClick) throws PointNotInNode {
+    public void initializePath(MouseEvent mouseClick) throws InvalidPath {
         isCollided = false;
         leftStartNode = false;
         point = new Point((int) mouseClick.getX(), (int) mouseClick.getY());
         pathStartNode = findNodeFromPoint(point);
-        if (pathStartNode != null) {
+        if (pathStartNode != null && pathStartNode.getNumberOfConnectingEdges() < 3) {
+            pathStartNode.incNumberOfConnectingEdges(1);
             path = new Path();
             path.getElements().add(new MoveTo(point.getX(), point.getY()));
 
         } else {
-            throw new PointNotInNode("");
+            throw new InvalidPath("The start node has too many connecting edges, or the path does not end in node");
         }
     }
 
     /**
      * @param mouseDrag A mouse drag
-     * @author Noah Bastian Christiansen
+     * @author Noah Bastian Christiansen & Sebastian Lund Jensen
      * This method draws the line the user is tracing with his mouse.
      * The method performs subcalls to pathCollides() to ensure the drawn line is not intersecting with itself or other lines.
      * The current drawing is removed if it violates the rules.
@@ -311,6 +312,7 @@ public class SproutModel {
                 path.getElements().clear();
                 pathTmp.getElements().clear();
                 isCollided = true;
+                pathStartNode.decNumberOfConnectingEdges(1);
                 System.out.println("collision at " + point.getX() + ", " + point.getY());
             } else if (leftStartNode && isPointInsideNode(point)) {
                 throw new PathForcedToEnd("Path forcefully ended at: " + point.getX() + ", " + point.getY());
@@ -321,17 +323,21 @@ public class SproutModel {
         }
     }
     /**
-     * @author Noah Bastian Christiansen
+     * @author Noah Bastian Christiansen & Sebastian Lund Jensen
      * If turn was ended successfully then the drawn line is added to list of valid lines
      */
-    public void finishPath(MouseEvent mouseEvent) throws PointNotInNode {
+    public void finishPath(MouseEvent mouseEvent) throws InvalidPath {
+        System.out.println("finish path");
         Point point = new Point((int) mouseEvent.getX(), (int) mouseEvent.getY());
-        if (isPointInsideNode(point)) {
+        Node endNode = findNodeFromPoint(point);
+        if (endNode != null && endNode.getNumberOfConnectingEdges() < 3) {
+            endNode.incNumberOfConnectingEdges(1);
             edges.add(path);
         } else {
             //removes path from model
+            pathStartNode.decNumberOfConnectingEdges(1);
             path.getElements().clear();
-            throw new PointNotInNode("");
+            throw new InvalidPath("The end node has too many connecting edges, or the path does not end in node");
         }
     }
 
