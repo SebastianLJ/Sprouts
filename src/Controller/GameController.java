@@ -187,13 +187,13 @@ public class GameController extends SproutController implements Initializable {
         //upper left corner (-17, -17)
         //bottom right corner (472,232)
         //top right corner (472,-17)
-        System.out.println("width: " + gamePane.getWidth());
-        System.out.println("height: " + gamePane.getHeight());
-        System.out.println("boundsInLocal: " + gamePane.getBoundsInLocal());
+//        System.out.println("width: " + gamePane.getWidth());
+//        System.out.println("height: " + gamePane.getHeight());
+//        System.out.println("boundsInLocal: " + gamePane.getBoundsInLocal());
         dragged = true;
-        System.out.println("x: " + mouseDragged.getX());
-        System.out.println("y: " + mouseDragged.getY());
-
+//        System.out.println("x: " + mouseDragged.getX());
+//        System.out.println("y: " + mouseDragged.getY());
+//
 
         if (!gamePane.contains(mouseDragged.getX(), mouseDragged.getY())) {
             System.out.println("not in pane 1!");
