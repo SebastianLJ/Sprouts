@@ -2,6 +2,7 @@ package Model;
 
 import Exceptions.CollisionException;
 import Exceptions.IllegalNodesChosenException;
+import Exceptions.PathForcedToEnd;
 import Exceptions.PointNotInNode;
 import javafx.geometry.Bounds;
 import javafx.scene.paint.Color;
@@ -25,6 +26,8 @@ public class SproutModel {
     private boolean isCollided;
     private Point point;
     private GameFlow gameFlow;
+    private Node pathStartNode;
+    private boolean leftStartNode = false;
 
 
     public SproutModel() {
@@ -272,8 +275,10 @@ public class SproutModel {
      */
     public void initializePath(MouseEvent mouseClick) throws PointNotInNode {
         isCollided = false;
+        leftStartNode = false;
         point = new Point((int) mouseClick.getX(), (int) mouseClick.getY());
-        if (isPointInsideNode(point)) {
+        pathStartNode = findNodeFromPoint(point);
+        if (pathStartNode != null) {
             path = new Path();
             path.getElements().add(new MoveTo(point.getX(), point.getY()));
 
@@ -290,7 +295,7 @@ public class SproutModel {
      * The current drawing is removed if it violates the rules.
      */
 
-    public void drawPath(MouseEvent mouseDrag) {
+    public void drawPath(MouseEvent mouseDrag) throws PathForcedToEnd {
         if(isCollided){
             System.out.println("you collided draw somewhere else");
         }
@@ -298,12 +303,17 @@ public class SproutModel {
             Path pathTmp = new Path();
             pathTmp.getElements().add(new MoveTo(point.getX(), point.getY()));
             point = new Point((int) mouseDrag.getX(), (int) mouseDrag.getY());
+            if (!isPointInsideNode(point)) {
+                leftStartNode = true;
+            }
             pathTmp.getElements().add(new LineTo(point.getX(), point.getY()));
             if (pathCollides(pathTmp)){
                 path.getElements().clear();
                 pathTmp.getElements().clear();
                 isCollided = true;
                 System.out.println("collision at " + point.getX() + ", " + point.getY());
+            } else if (leftStartNode && isPointInsideNode(point)) {
+                throw new PathForcedToEnd("Path forcefully ended at: " + point.getX() + ", " + point.getY());
             } else {
                 path.getElements().add(new LineTo(point.getX(), point.getY()));
                 pathTmp.getElements().clear();

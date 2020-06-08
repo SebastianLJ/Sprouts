@@ -193,7 +193,7 @@ public class GameController extends SproutController implements Initializable {
      * Calls the model's method that draws path to mousevent's coordinates and the method that checks for intersections/collisions
      * @param mouseDragged the mouse drag the user performs. This MouseEvent contains coordinates.
      */
-    public void mouseDraggedHandler(MouseEvent mouseDragged) {
+    public void mouseDraggedHandler(MouseEvent mouseDragged) throws PointNotInNode {
         //left bottom corner (-17,232)
         //upper left corner (-17, -17)
         //bottom right corner (472,232)
@@ -213,7 +213,11 @@ public class GameController extends SproutController implements Initializable {
             }
 
             if (gameType == DRAG_TO_DRAW_MODE) {
-                beginDrawing(mouseDragged);
+                try {
+                    beginDrawing(mouseDragged);
+                } catch (PathForcedToEnd pathForcedToEnd) {
+                    finishPathHelper(mouseDragged);
+                }
                 if (isCollided()) {
                     view.setUpCollisionSettings(mouseDragged);
                     isPathInit = false;
@@ -232,18 +236,22 @@ public class GameController extends SproutController implements Initializable {
     public void mouseReleasedHandler(MouseEvent mouseReleased) {
         if (gameType == DRAG_TO_DRAW_MODE && !getSproutModel().getIsCollided() && dragged && isPathInit) {
             try {
-                completeDrawing(mouseReleased);
-                addNodeOnValidLineDrag();
-                updateCanvasDrag();
-                dragged = false;
-                isPathInit = false;
+                finishPathHelper(mouseReleased);
             } catch (PointNotInNode pointNotInNode) {
                 dragged = false;
                 isPathInit = false;
             }
 
         }
-        view.setUpSuccessfulPathSettings(mouseReleased);
+    }
+
+    private void finishPathHelper(MouseEvent mouseEvent) throws PointNotInNode {
+        completeDrawing(mouseEvent);
+        addNodeOnValidLineDrag();
+        updateCanvasDrag();
+        dragged = false;
+        isPathInit = false;
+        view.setUpSuccessfulPathSettings(mouseEvent);
     }
 
     void setNumberOfInitialNodes(int numberOfInitialNodes) {
