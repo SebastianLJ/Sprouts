@@ -279,7 +279,6 @@ public class SproutModel {
         point = new Point((int) mouseClick.getX(), (int) mouseClick.getY());
         pathStartNode = findNodeFromPoint(point);
         if (pathStartNode != null && pathStartNode.getNumberOfConnectingEdges() < 3) {
-            pathStartNode.incNumberOfConnectingEdges(1);
             path = new Path();
             path.getElements().add(new MoveTo(point.getX(), point.getY()));
 
@@ -312,7 +311,6 @@ public class SproutModel {
                 path.getElements().clear();
                 pathTmp.getElements().clear();
                 isCollided = true;
-                pathStartNode.decNumberOfConnectingEdges(1);
                 System.out.println("collision at " + point.getX() + ", " + point.getY());
             } else if (leftStartNode && isPointInsideNode(point)) {
                 throw new PathForcedToEnd("Path forcefully ended at: " + point.getX() + ", " + point.getY());
@@ -327,15 +325,16 @@ public class SproutModel {
      * If turn was ended successfully then the drawn line is added to list of valid lines
      */
     public void finishPath(MouseEvent mouseEvent) throws InvalidPath {
-        System.out.println("finish path");
         Point point = new Point((int) mouseEvent.getX(), (int) mouseEvent.getY());
         Node endNode = findNodeFromPoint(point);
-        if (endNode != null && endNode.getNumberOfConnectingEdges() < 3) {
+        pathStartNode.incNumberOfConnectingEdges(1);
+        if (leftStartNode && endNode != null && endNode.getNumberOfConnectingEdges() < 3) {
             endNode.incNumberOfConnectingEdges(1);
             edges.add(path);
         } else {
             //removes path from model
             pathStartNode.decNumberOfConnectingEdges(1);
+            System.out.println("start node decremented");
             path.getElements().clear();
             throw new InvalidPath("The end node has too many connecting edges, or the path does not end in node");
         }
