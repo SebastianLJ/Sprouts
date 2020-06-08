@@ -1,27 +1,20 @@
 package Controller;
 
-import Exceptions.CollisionException;
-import Exceptions.GameOverException;
-import Exceptions.IllegalNodesChosenException;
-import Exceptions.NumberOfInitialNodesException;
+import Exceptions.*;
 import View.View;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
+
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.Label;
+
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Circle;
-import javafx.stage.Stage;
+
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class GameController extends SproutController implements Initializable {
@@ -36,6 +29,7 @@ public class GameController extends SproutController implements Initializable {
     private boolean theUserHasSelectedANode;
     private Circle selectedNode;
     private boolean dragged;
+    private boolean isPathInit = false;
 
     public GameController () {
         super();
@@ -92,7 +86,7 @@ public class GameController extends SproutController implements Initializable {
             if (gameType == CLICK_TO_DRAW_MODE) {
                 node.getShape().setOnMouseClicked(this::clickToDraw);
             } else {
-                // Another method for drag to draw game mode
+                //todo highlight selected node in drag to draw
             }
         }
     }
@@ -126,6 +120,7 @@ public class GameController extends SproutController implements Initializable {
         }
     }
 
+
     /**
      * @param mouseClick The mouse click the user performs.
      * @author Emil Sommer Desler
@@ -151,11 +146,7 @@ public class GameController extends SproutController implements Initializable {
      * If the user had no collisions and drew a valid line this method will call upon the view to display the newly generated node.
      */
     private void updateCanvasDrag() {
-        Circle newNode = view.updateCanvasDrag(gamePane);
-/*
-        newNode.setOnMouseClicked();
-*/
-
+        view.updateCanvasDrag(gamePane);
     }
 
     public void attemptDrawEdgeBetweenNodes(Circle startNode, Circle endNode) throws IllegalNodesChosenException, GameOverException, CollisionException {
@@ -175,74 +166,95 @@ public class GameController extends SproutController implements Initializable {
         theUserHasSelectedANode = true;
     }
 
-    @SuppressWarnings("unused")
     /**
-     * @author Noah Bastian Christiansen
-     * Constantly called when the user is dragging his mouse in order to draw.
-     * Calls the model's method that draws path to mousevent's coordinates and the method that checks for intersections/collisions
-     * @param mouseDragged the mouse drag the user performs. This MouseEvent contains coordinates.
+     * @param mousePressed The mouse press the user performs.
+     * @author Noah Bastian Christiansen & Sebastian Lund Jensen
+     * This method is called when the user presses on a node in the gamemode drag to draw.
+     * It takes a mouseEvent and sets up the model and the view
+     * A path is initialized only if it starts from a node
      */
-    public void mouseDraggedHandler(MouseEvent mouseDragged) {
-        //left bottom corner (-17,232)
-        //upper left corner (-17, -17)
-        //bottom right corner (472,232)
-        //top right corner (472,-17)
-//        System.out.println("width: " + gamePane.getWidth());
-//        System.out.println("height: " + gamePane.getHeight());
-//        System.out.println("boundsInLocal: " + gamePane.getBoundsInLocal());
-        dragged = true;
-//        System.out.println("x: " + mouseDragged.getX());
-//        System.out.println("y: " + mouseDragged.getY());
-//
-
-        if (!gamePane.contains(mouseDragged.getX(), mouseDragged.getY())) {
-            System.out.println("not in pane 1!");
-            return;
-        }
-
-
-   /*     if(mouseDragged.getY()>235 || mouseDragged.getX() > 472 || mouseDragged.getX() < -17 || mouseDragged.getY()<-17){
-            System.out.println("not in pane 2 !" );
-            return;
-        }*/
-
+    @SuppressWarnings("unused")
+    public void mousePressedHandler(MouseEvent mousePressed) {
+        isPathInit = false;
         if (gameType == DRAG_TO_DRAW_MODE) {
-            beginDrawing(mouseDragged);
-            if (isCollided()) {
-                view.setUpCollisionSettings(mouseDragged);
+            try {
+                setupDrawing(mousePressed);
+                view.setUpDrawingSettings(mousePressed, gamePane);
+                isPathInit = true;
+            } catch (InvalidPath invalidPath) {
+                System.out.println(invalidPath.getMessage());
             }
         }
     }
 
-    /**
-     * @param mousePressed The mouse press the user performs.
-     * @author Noah Bastian Christiansen
-     * This method is called when the user presses on a node in the gamemode drag to draw.
-     * It takes a mouseEvent and sets up the model and the view
-     */
     @SuppressWarnings("unused")
-    public void mousePressedHandler(MouseEvent mousePressed) {
-        if (gameType == DRAG_TO_DRAW_MODE) {
-            setupDrawing(mousePressed);
-            view.setUpDrawingSettings(mousePressed, gamePane);
+    /**
+     * @author Noah Bastian Christiansen & Sebastian Lund Jensen
+     * Repeatedly called when the user is dragging his mouse in order to draw.
+     * Calls the model's method that draws path to mousevent's coordinates and the method that checks for intersections/collisions
+     * @param mouseDragged the mouse drag the user performs. This MouseEvent contains coordinates.
+     */
+    public void mouseDraggedHandler(MouseEvent mouseDragged) throws InvalidPath {
+        //left bottom corner (-17,232)
+        //upper left corner (-17, -17)
+        //bottom right corner (472,232)
+        //top right corner (472,-17)
+        if (isPathInit) {
+            /*System.out.println("width: " + gamePane.getWidth());
+            System.out.println("height: " + gamePane.getHeight());
+            System.out.println("boundsInLocal: " + gamePane.getBoundsInLocal());
+            System.out.println("x: " + mouseDragged.getX());
+            System.out.println("y: " + mouseDragged.getY());*/
+            dragged = true;
+
+
+            if (!gamePane.contains(mouseDragged.getX(), mouseDragged.getY())) {
+                System.out.println("not in pane 1!");
+                return;
+            }
+
+            if (gameType == DRAG_TO_DRAW_MODE) {
+                try {
+                    beginDrawing(mouseDragged);
+                } catch (PathForcedToEnd pathForcedToEnd) {
+                    finishPathHelper(mouseDragged);
+                }
+                if (isCollided()) {
+                    view.setUpCollisionSettings(mouseDragged);
+                    isPathInit = false;
+                }
+            }
         }
     }
 
     @SuppressWarnings("unused")
     /**
-     * @author Noah Bastian Christiansen
-     * This method is called when the user finishes a drawing in drag to draw.
+     * @author Noah Bastian Christiansen & Sebastian Lund Jensen
+     * This method is called when the user finishes a drawing in drag to draw. A path is finished, only if it ends in a node.
      * If the user had no collisions the path can be added to list of valid lines and a new node can be generated on the path.
      * @param mouseReleased The mouse release the user performs.
      */
     public void mouseReleasedHandler(MouseEvent mouseReleased) {
-        if (gameType == DRAG_TO_DRAW_MODE && !getSproutModel().getIsCollided() && dragged) {
-            completeDrawing();
+        if (gameType == DRAG_TO_DRAW_MODE && !getSproutModel().getIsCollided() && dragged && isPathInit) {
+            finishPathHelper(mouseReleased);
+
+        }
+        view.setUpSuccessfulPathSettings(mouseReleased);
+    }
+
+    private void finishPathHelper(MouseEvent mouseEvent) {
+        try {
+            completeDrawing(mouseEvent);
             addNodeOnValidLineDrag();
             updateCanvasDrag();
             dragged = false;
+            isPathInit = false;
+            view.setUpSuccessfulPathSettings(mouseEvent);
+        } catch (InvalidPath e) {
+            dragged = false;
+            isPathInit = false;
+            System.out.println(e.getMessage());
         }
-        view.setUpSuccessfulPathSettings(mouseReleased);
     }
 
     void setNumberOfInitialNodes(int numberOfInitialNodes) {

@@ -1,9 +1,6 @@
 package Controller;
 
-import Exceptions.CollisionException;
-import Exceptions.GameOverException;
-import Exceptions.IllegalNodesChosenException;
-import Exceptions.NumberOfInitialNodesException;
+import Exceptions.*;
 import Model.SproutModel;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Circle;
@@ -54,22 +51,37 @@ public class SproutController extends Controller {
         }
     }
 
-    public void setupDrawing(MouseEvent mousePressed){
+    /**
+     * @author Noah Bastian Christiansen
+     * @param mousePressed
+     */
+    public void setupDrawing(MouseEvent mousePressed) throws InvalidPath {
         sproutModel.initializePath(mousePressed);
+
     }
 
-    public void beginDrawing(MouseEvent mouseDragged){
+    /**
+     * @author Noah Bastian Christiansen
+     * @param mouseDragged
+     */
+    public void beginDrawing(MouseEvent mouseDragged) throws PathForcedToEnd {
         sproutModel.drawPath(mouseDragged);
     }
-
-    public void completeDrawing(){
-        sproutModel.finishPath();
+    /**
+     * @author Noah Bastian Christiansen
+     */
+    public void completeDrawing(MouseEvent mouseEvent) throws InvalidPath {
+        sproutModel.finishPath(mouseEvent);
     }
-
+    /**
+     * @author Noah Bastian Christiansen
+     */
     public void addNodeOnValidLineDrag(){
         sproutModel.addNodeOnLineDrag();
     }
-
+    /**
+     * @author Noah Bastian Christiansen
+     */
     public boolean isCollided(){
         return sproutModel.getIsCollided();
     }

@@ -1,6 +1,5 @@
 package Controller;
 
-import Exceptions.InvalidFileSyntax;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -10,13 +9,12 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.input.MouseEvent;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-import javax.swing.*;
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class EnterFileNameController extends Controller implements Initializable {
@@ -46,7 +44,7 @@ public class EnterFileNameController extends Controller implements Initializable
 
         Scene fileSimulationScene = new Scene(fileSimulationParent);
 
-        String filename = filenameInputField.getText() + ".txt";
+        String filename = filenameInputField.getText();
 
         FileSimulationController fileSimulationController =
                 loader.getController();
@@ -72,6 +70,26 @@ public class EnterFileNameController extends Controller implements Initializable
             } else {
                 fileResponseLabel.setText("File not found");
             }
+        }
+    }
+
+    /**
+     * @author Noah Bastian Christiansen
+     * Let's user choose a file to simulate by clicking the button choose file.
+     * Sets textfield to be the path of the chosen file.
+     * @param event The mouse click on the button
+     */
+
+    public void chooseFile(ActionEvent event){
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Open Resource File");
+        Stage window = (Stage)((Node) event.getSource()).getScene().getWindow();
+        File chosenFile = fileChooser.showOpenDialog(window);
+        try {
+            filenameInputField.setText(chosenFile.getAbsolutePath());
+        }
+        catch (NullPointerException e){
+            System.out.println("No file chosen");
         }
     }
 
