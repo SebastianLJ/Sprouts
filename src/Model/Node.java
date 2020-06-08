@@ -55,4 +55,14 @@ public class Node {
     public double getDistanceToNode(Node node) {
         return Math.sqrt(Math.pow(node.getX()-x, 2) + Math.pow(node.getY()-y, 2));
     }
+
+    /**
+     * @author Sebastian Lund Jensen
+     * @param point
+     * @return true if the point is inside the node
+     */
+    public boolean isPointInsideNode(Point point) {
+        double distance = Math.sqrt(Math.pow(point.getX() - x,2) + Math.pow(point.getY() - y, 2));
+        return distance <= nodeRadius;
+    }
 }

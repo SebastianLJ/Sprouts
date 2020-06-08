@@ -1,9 +1,6 @@
 package Controller;
 
-import Exceptions.CollisionException;
-import Exceptions.GameOverException;
-import Exceptions.IllegalNodesChosenException;
-import Exceptions.NumberOfInitialNodesException;
+import Exceptions.*;
 import Model.SproutModel;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Circle;
@@ -58,8 +55,9 @@ public class SproutController extends Controller {
      * @author Noah Bastian Christiansen
      * @param mousePressed
      */
-    public void setupDrawing(MouseEvent mousePressed){
+    public void setupDrawing(MouseEvent mousePressed) throws PointNotInNode {
         sproutModel.initializePath(mousePressed);
+
     }
 
     /**
@@ -72,8 +70,8 @@ public class SproutController extends Controller {
     /**
      * @author Noah Bastian Christiansen
      */
-    public void completeDrawing(){
-        sproutModel.finishPath();
+    public void completeDrawing(MouseEvent mouseEvent) throws PointNotInNode {
+        sproutModel.finishPath(mouseEvent);
     }
     /**
      * @author Noah Bastian Christiansen

@@ -2,6 +2,7 @@ package Model;
 
 import Exceptions.CollisionException;
 import Exceptions.IllegalNodesChosenException;
+import Exceptions.PointNotInNode;
 import javafx.geometry.Bounds;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
@@ -155,7 +156,7 @@ public class SproutModel {
 
         System.out.println(newLine.intersects(startNode.getShape().getLayoutBounds()));
 
-        double c1 = startNode.getShape().getCenterX();
+        /*double c1 = startNode.getShape().getCenterX();
         double c2 = startNode.getShape().getCenterX();
         double hyp = startNode.getNodeRadius();
         double b = Math.abs(startNode.getY()-newLine.getStartY());
@@ -179,7 +180,7 @@ public class SproutModel {
 
         System.out.println("startCoor: (" + newLine.getStartX() + "," + newLine.getStartY() + ")");
         System.out.println("EndCoor: (" + newLine.getEndX() + "," + newLine.getEndY() + ")");
-
+        */
         return newLine;
     }
 
@@ -266,15 +267,21 @@ public class SproutModel {
 
     /**
      * @param mouseClick A mouse click
-     * @author Noah Bastian Christiansen
+     * @author Noah Bastian Christiansen & Sebastian Lund Jensen
      * Sets up path object and sets coordinates for starting point of drawing (the position on the pane where the click occured)
      */
-    public void initializePath(MouseEvent mouseClick) {
+    public void initializePath(MouseEvent mouseClick) throws PointNotInNode {
         isCollided = false;
         point = new Point((int) mouseClick.getX(), (int) mouseClick.getY());
-        path = new Path();
-        path.getElements().add(new MoveTo(point.getX(), point.getY()));
+        if (isPointInsideNode(point)) {
+            path = new Path();
+            path.getElements().add(new MoveTo(point.getX(), point.getY()));
+
+        } else {
+            throw new PointNotInNode("");
+        }
     }
+
     /**
      * @param mouseDrag A mouse drag
      * @author Noah Bastian Christiansen
@@ -307,8 +314,15 @@ public class SproutModel {
      * @author Noah Bastian Christiansen
      * If turn was ended successfully then the drawn line is added to list of valid lines
      */
-    public void finishPath(){
-        edges.add(path);
+    public void finishPath(MouseEvent mouseEvent) throws PointNotInNode {
+        Point point = new Point((int) mouseEvent.getX(), (int) mouseEvent.getY());
+        if (isPointInsideNode(point)) {
+            edges.add(path);
+        } else {
+            //removes path from model
+            path.getElements().clear();
+            throw new PointNotInNode("");
+        }
     }
 
     public Node getCoordinates(PathElement pe) {
@@ -429,7 +443,7 @@ public class SproutModel {
     /**
      * @param nodeToFind The circle whose name we want
      * @author Noah Bastian Christiansen
-     * @return Returns the name/number of the node whose shape is the given circle object.
+     * @return the name/number of the node whose shape is the given circle object.
      */
     public int findNameOfNode(Circle nodeToFind) {
         int nameOfNode = 0;
@@ -441,6 +455,29 @@ public class SproutModel {
             i++;
         }
         return nameOfNode;
+    }
+
+    /**
+     * @author Sebastian Lund Jensen
+     * @param point user mouseEvent
+     * @return null if the point is not inside any node, else the node surrounding the point
+     */
+    public Node findNodeFromPoint(Point point) {
+        for (Node node : nodes) {
+            if (node.isPointInsideNode(point)) {
+                return node;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * @author Sebastian Lund Jensen
+     * @param point user mouseEvent
+     * @return true if point is inside node
+     */
+    public boolean isPointInsideNode(Point point) {
+        return findNodeFromPoint(point) != null;
     }
 
     public void drawEdgeBetweenNodes(Circle startNode, Circle endNode) throws CollisionException {
