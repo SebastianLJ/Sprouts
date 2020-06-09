@@ -8,6 +8,7 @@ import javafx.fxml.FXML;
 
 import javafx.fxml.Initializable;
 
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Circle;
@@ -175,14 +176,16 @@ public class GameController extends SproutController implements Initializable {
      */
     @SuppressWarnings("unused")
     public void mousePressedHandler(MouseEvent mousePressed) {
-        isPathInit = false;
-        if (gameType == DRAG_TO_DRAW_MODE) {
-            try {
-                setupDrawing(mousePressed);
-                view.setUpDrawingSettings(mousePressed, gamePane);
-                isPathInit = true;
-            } catch (InvalidPath invalidPath) {
-                System.out.println(invalidPath.getMessage());
+        if (mousePressed.getButton() == MouseButton.PRIMARY) {
+            isPathInit = false;
+            if (gameType == DRAG_TO_DRAW_MODE) {
+                try {
+                    setupDrawing(mousePressed);
+                    view.setUpDrawingSettings(mousePressed, gamePane);
+                    isPathInit = true;
+                } catch (InvalidPath invalidPath) {
+                    System.out.println(invalidPath.getMessage());
+                }
             }
         }
     }
@@ -195,33 +198,35 @@ public class GameController extends SproutController implements Initializable {
      * @param mouseDragged the mouse drag the user performs. This MouseEvent contains coordinates.
      */
     public void mouseDraggedHandler(MouseEvent mouseDragged) throws InvalidPath {
-        //left bottom corner (-17,232)
-        //upper left corner (-17, -17)
-        //bottom right corner (472,232)
-        //top right corner (472,-17)
-        if (isPathInit) {
+        if (mouseDragged.getButton() == MouseButton.PRIMARY) {
+            //left bottom corner (-17,232)
+            //upper left corner (-17, -17)
+            //bottom right corner (472,232)
+            //top right corner (472,-17)
+            if (isPathInit) {
             /*System.out.println("width: " + gamePane.getWidth());
             System.out.println("height: " + gamePane.getHeight());
             System.out.println("boundsInLocal: " + gamePane.getBoundsInLocal());
             System.out.println("x: " + mouseDragged.getX());
             System.out.println("y: " + mouseDragged.getY());*/
-            dragged = true;
+                dragged = true;
 
 
-            if (!gamePane.contains(mouseDragged.getX(), mouseDragged.getY())) {
-                System.out.println("not in pane 1!");
-                return;
-            }
-
-            if (gameType == DRAG_TO_DRAW_MODE) {
-                try {
-                    beginDrawing(mouseDragged);
-                } catch (PathForcedToEnd pathForcedToEnd) {
-                    finishPathHelper(mouseDragged);
+                if (!gamePane.contains(mouseDragged.getX(), mouseDragged.getY())) {
+                    System.out.println("not in pane 1!");
+                    return;
                 }
-                if (isCollided()) {
-                    view.setUpCollisionSettings(mouseDragged);
-                    isPathInit = false;
+
+                if (gameType == DRAG_TO_DRAW_MODE) {
+                    try {
+                        beginDrawing(mouseDragged);
+                    } catch (PathForcedToEnd pathForcedToEnd) {
+                        finishPathHelper(mouseDragged);
+                    }
+                    if (isCollided()) {
+                        view.setUpCollisionSettings(mouseDragged);
+                        isPathInit = false;
+                    }
                 }
             }
         }
@@ -235,11 +240,13 @@ public class GameController extends SproutController implements Initializable {
      * @param mouseReleased The mouse release the user performs.
      */
     public void mouseReleasedHandler(MouseEvent mouseReleased) {
-        if (gameType == DRAG_TO_DRAW_MODE && !getSproutModel().getIsCollided() && dragged && isPathInit) {
-            finishPathHelper(mouseReleased);
+        if (mouseReleased.getButton() == MouseButton.PRIMARY) {
+            if (gameType == DRAG_TO_DRAW_MODE && !getSproutModel().getIsCollided() && dragged && isPathInit) {
+                finishPathHelper(mouseReleased);
 
+            }
+            view.setUpSuccessfulPathSettings(mouseReleased);
         }
-        view.setUpSuccessfulPathSettings(mouseReleased);
     }
 
     private void finishPathHelper(MouseEvent mouseEvent) {
