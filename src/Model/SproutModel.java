@@ -148,7 +148,7 @@ public class SproutModel {
     public void drawLineBetweenNodes(int startNodeName, int endNodeName) throws CollisionException {
         Node startNode = nodes.get(startNodeName);
         Node endNode = nodes.get(endNodeName);
-        Line newLine = getLineBetweenNodes(startNode, endNode);
+        Line newLine = getLineBetweenNodeContours(startNode, endNode);
 
         if (edgesCollides(newLine)) {
             throw new CollisionException("Line collided with an exisiting line");
@@ -190,12 +190,32 @@ public class SproutModel {
 
     /**
      * @author Thea Birk Berger
-     * Creates a straight line between two given nodes
+     * Creates a straight line between the centers of two given nodes
      * @param startNode
      * @param endNode
      * @return a Line object
      */
     private Line getLineBetweenNodes(Node startNode, Node endNode) {
+
+        Line newLine = new Line();
+
+        newLine.setStartX(startNode.getX());
+        newLine.setStartY(startNode.getY());
+        newLine.setEndX(endNode.getX());
+        newLine.setEndY(endNode.getY());
+
+        return newLine;
+    }
+
+    /**
+     * @author Thea Birk Berger
+     * Creates a straight line between the contour of two given nodes
+     * @param startNode
+     * @param endNode
+     * @return a Line object
+     */
+    private Line getLineBetweenNodeContours(Node startNode, Node endNode) {
+
         double x1 = startNode.getX();
         double x2 = endNode.getX();
         double y1 = startNode.getY();
@@ -206,10 +226,12 @@ public class SproutModel {
 
         // Set line end points as the node edge (cut off the radius)
         Line newLine = new Line();
+
         newLine.setStartX(x1 + (5/length) * (x2-x1));
         newLine.setStartY(y1 + (5/length) * (y2-y1));
         newLine.setEndX(x2 + (5/length) * (x1-x2));
         newLine.setEndY(y2 + (5/length) * (y1-y2));
+
         // TODO: make sure 5 is not hard coded and put node radius instead
 
         return newLine;
@@ -563,7 +585,7 @@ public class SproutModel {
         if (startNode == endNode) {
             return createCircleToDraw(findNode(startNode));
         } else {
-            return getLineBetweenNodes(startNode, endNode);
+            return getLineBetweenNodeContours(startNode, endNode);
         }
     }
 
@@ -575,8 +597,8 @@ public class SproutModel {
         return edges.get(edges.size()-1);
     }
 
-    public Line getLineBetweenNodes(Circle startNode, Circle endNode) {
-        return getLineBetweenNodes(findNode(startNode), findNode(endNode));
+    public Line getLineBetweenNodeContours(Circle startNode, Circle endNode) {
+        return getLineBetweenNodeContours(findNode(startNode), findNode(endNode));
     }
 
     public void changeTurns() {
