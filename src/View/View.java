@@ -12,14 +12,20 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Shape;
+import javafx.scene.shape.StrokeType;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
+import java.util.Stack;
 
 
 public class View {
@@ -32,7 +38,7 @@ public class View {
 
     public void initializeNodes(Pane gamePane) {
         for (Node node : model.getNodes()) {
-            gamePane.getChildren().add(node.getShape());
+            gamePane.getChildren().add(addNumberOnNode(node));
         }
     }
 
@@ -41,7 +47,7 @@ public class View {
         Shape newEdge = model.getNewestEdge();
 
         // Get node
-        Circle newNode = model.getNewestNode();
+        Circle newNode = model.getNewestNode().getShape();
 
         // Animate edge
         legalEdgeAnimation(gamePane, newEdge);
@@ -50,10 +56,9 @@ public class View {
         gamePane.getChildren().add(newNode);
         return newNode;
     }
-    public Circle updateCanvasDrag(Pane gamePane){
-        Circle newNode = model.getNewestNode();
-        gamePane.getChildren().add(newNode);
-        return newNode;
+    public void updateCanvasDrag(Pane gamePane){
+        Node newNode = model.getNewestNode();
+        gamePane.getChildren().add(addNumberOnNode(newNode));
     }
 
 
@@ -138,6 +143,16 @@ public class View {
         toolTip.setShowDelay(Duration.ZERO);
         toolTip.setShowDuration(Duration.INDEFINITE);
         toolTip.setHideDelay(Duration.ZERO);
+    }
+
+    private StackPane addNumberOnNode(Node node){
+        final Text text = new Text(""+node.getId());
+        text.setFill(Color.WHITE);
+        text.setStyle("-fx-font-weight: 900" + ";-fx-font-size:" + (1.4*node.getNodeRadius()));
+        final StackPane stack = new StackPane();
+        stack.getChildren().addAll(node.getShape(), text);
+        stack.relocate(node.getX()-node.getNodeRadius(),node.getY()-node.getNodeRadius());
+        return stack;
     }
 
     public void setGameResponseLabelText(Label gameResponseLabel, String s) {

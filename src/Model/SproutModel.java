@@ -57,7 +57,7 @@ public class SproutModel {
                 circle.setCenterX(x);
                 circle.setCenterY(y);
             } while (invalidPointLocation(circle));
-            nodes.add(new Node(x, y, 0));
+            nodes.add(new Node(x, y, 0,i));
         }
     }
 
@@ -273,7 +273,7 @@ public class SproutModel {
         double newNodeX = Math.min(edge.getStartX(), edge.getEndX()) + (edgeIntervalX / 2);
         double newNodeY = Math.min(edge.getStartY(), edge.getEndY()) + (edgeIntervalY / 2);
 
-        Node newNode = new Node(newNodeX, newNodeY, 2);
+        Node newNode = new Node(newNodeX, newNodeY, 2, nodes.size());
         nodes.add(newNode);
     }
     /**
@@ -283,7 +283,7 @@ public class SproutModel {
     public void addNodeOnLineDrag(){
         int size = path.getElements().size();
         LineTo test = (LineTo) (path.getElements().get(size/2));
-        Node newNode = new Node(test.getX(), test.getY(), 2);
+        Node newNode = new Node(test.getX(), test.getY(), 2, nodes.size());
         nodes.add(newNode);
     }
 
@@ -292,7 +292,7 @@ public class SproutModel {
         double newNodeX = originNodeX + (edge.getCenterX() - originNodeX) * 2;
         double newNodeY = originNodeY + (edge.getCenterY() - originNodeY) * 2;
 
-        Node newNode = new Node(newNodeX, newNodeY, 2);
+        Node newNode = new Node(newNodeX, newNodeY, 2, nodes.size());
         nodes.add(newNode);
     }
 
@@ -404,7 +404,7 @@ public class SproutModel {
         double x = Double.parseDouble(pathElemString.substring(pathElemString.indexOf("x")+2, pathElemString.indexOf(",")));
         double y = Double.parseDouble(pathElemString.substring(pathElemString.indexOf("y")+2, pathElemString.indexOf("]")));
 
-        Node node = new Node(x,y,0);
+        Node node = new Node(x,y,0, nodes.size());
 
         return node;
     }
@@ -588,8 +588,8 @@ public class SproutModel {
         }
     }
 
-    public Circle getNewestNode() {
-        return nodes.get(nodes.size()-1).getShape();
+    public Node getNewestNode() {
+        return nodes.get(nodes.size()-1);
     }
 
     public Shape getNewestEdge() {
