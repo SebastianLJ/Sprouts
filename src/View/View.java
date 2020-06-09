@@ -47,14 +47,14 @@ public class View {
         Shape newEdge = model.getNewestEdge();
 
         // Get node
-        Circle newNode = model.getNewestNode().getShape();
+        Node newNode = model.getNewestNode();
 
         // Animate edge
         legalEdgeAnimation(gamePane, newEdge);
 
         // Add new node to view
-        gamePane.getChildren().add(newNode);
-        return newNode;
+        gamePane.getChildren().add(addNumberOnNode(newNode));
+        return newNode.getShape();
     }
     public void updateCanvasDrag(Pane gamePane){
         Node newNode = model.getNewestNode();

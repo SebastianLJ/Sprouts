@@ -273,6 +273,7 @@ public class SproutModel {
         double newNodeX = Math.min(edge.getStartX(), edge.getEndX()) + (edgeIntervalX / 2);
         double newNodeY = Math.min(edge.getStartY(), edge.getEndY()) + (edgeIntervalY / 2);
 
+
         Node newNode = new Node(newNodeX, newNodeY, 2, nodes.size());
         nodes.add(newNode);
     }
