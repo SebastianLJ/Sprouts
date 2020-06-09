@@ -231,7 +231,6 @@ public class SproutModel {
         newLine.setStartY(y1 + (5/length) * (y2-y1));
         newLine.setEndX(x2 + (5/length) * (x1-x2));
         newLine.setEndY(y2 + (5/length) * (y1-y2));
-
         // TODO: make sure 5 is not hard coded and put node radius instead
 
         return newLine;
