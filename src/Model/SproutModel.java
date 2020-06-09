@@ -350,7 +350,7 @@ public class SproutModel {
      * The method performs subcalls to pathCollides() to ensure the drawn line is not intersecting with itself or other lines.
      * The current drawing is removed if it violates the rules.
      */
-    public void drawPath(MouseEvent mouseDrag) throws PathForcedToEnd {
+    public void drawPath(MouseEvent mouseDrag) throws PathForcedToEnd, InvalidPath {
         if(isCollided){
             System.out.println("you collided draw somewhere else");
         }
@@ -358,6 +358,9 @@ public class SproutModel {
             Path pathTmp = new Path();
             pathTmp.getElements().add(new MoveTo(point.getX(), point.getY()));
             point = new Point((int) mouseDrag.getX(), (int) mouseDrag.getY());
+            if (point.getX() < 0 || point.getX() > width || point.getY() < 0 || point.getY() > height) {
+                throw new InvalidPath("Line left the game pane");
+            }
             if (!isPointInsideNode(point)) {
                 leftStartNode = true;
             }
@@ -390,9 +393,8 @@ public class SproutModel {
         } else {
             //removes path from model
             pathStartNode.decNumberOfConnectingEdges(1);
-            System.out.println("start node decremented");
             path.getElements().clear();
-            throw new InvalidPath("The end node has too many connecting edges, or the path does not end in node");
+            throw new InvalidPath("Invalid path was drawn");
         }
     }
 

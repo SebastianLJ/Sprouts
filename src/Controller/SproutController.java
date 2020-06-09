@@ -64,7 +64,7 @@ public class SproutController extends Controller {
      * @author Noah Bastian Christiansen
      * @param mouseDragged
      */
-    public void beginDrawing(MouseEvent mouseDragged) throws PathForcedToEnd {
+    public void beginDrawing(MouseEvent mouseDragged) throws PathForcedToEnd, InvalidPath {
         sproutModel.drawPath(mouseDragged);
     }
     /**

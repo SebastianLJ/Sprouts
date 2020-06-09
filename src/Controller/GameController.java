@@ -211,16 +211,10 @@ public class GameController extends SproutController implements Initializable {
             System.out.println("y: " + mouseDragged.getY());*/
                 dragged = true;
 
-
-                if (!gamePane.contains(mouseDragged.getX(), mouseDragged.getY())) {
-                    System.out.println("not in pane 1!");
-                    return;
-                }
-
                 if (gameType == DRAG_TO_DRAW_MODE) {
                     try {
                         beginDrawing(mouseDragged);
-                    } catch (PathForcedToEnd pathForcedToEnd) {
+                    } catch (PathForcedToEnd | InvalidPath e) {
                         finishPathHelper(mouseDragged);
                     }
                     if (isCollided()) {
