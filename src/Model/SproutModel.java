@@ -1,7 +1,6 @@
 package Model;
 
 import Exceptions.CollisionException;
-import Exceptions.IllegalNodesChosenException;
 import Exceptions.PathForcedToEnd;
 import Exceptions.InvalidPath;
 import javafx.geometry.Bounds;
@@ -97,11 +96,17 @@ public class SproutModel {
         return edges;
     }
 
-    public boolean hasNodeWithName(int name) {
+    public boolean hasNode(int name) {
         return name < nodes.size();
     }
 
-    public boolean hasNodeWithName(Circle nodeToFind) {
+    /**
+     * @author Thea Birk Berger
+     * Checks if a node is on the gameboard
+     * @param nodeToFind
+     * @return boolean
+     */
+    public boolean hasNode(Circle nodeToFind) {
         for (Node node : nodes) {
             if (node.getShape() == nodeToFind) {
                 return true;
@@ -110,7 +115,7 @@ public class SproutModel {
         return false;
     }
 
-    public Circle getNodeWithName(int name) throws IllegalNodesChosenException {
+    public Circle getNodeWithName(int name) {
         return nodes.get(name).getShape();
     }
 
@@ -118,28 +123,41 @@ public class SproutModel {
         return nodes.get(name).getNumberOfConnectingEdges();
     }
 
+    /**
+     * @author Thea Birk Berger
+     * Identifies if a circle or line should be drawn between two chosen nodes and initializes the appropriate process
+     * @param startNode
+     * @param endNode
+     * @throws CollisionException If the line drawn collides with itself or existing lines
+     */
     public void drawEdgeBetweenNodes(int startNode, int endNode) throws CollisionException {
-
         if (startNode == endNode) {
-            drawLineFromNodeToItself(startNode);
+            drawCircleFromNodeToItself(startNode);
         } else {
             drawLineBetweenNodes(startNode, endNode);
         }
     }
 
+    /**
+     * @author Thea Birk Berger
+     * Adds a straight line between two nodes to the gameboard
+     * @param startNodeName
+     * @param endNodeName
+     * @throws CollisionException If the line drawn collides with itself or existing lines
+     */
     public void drawLineBetweenNodes(int startNodeName, int endNodeName) throws CollisionException {
-
         Node startNode = nodes.get(startNodeName);
         Node endNode = nodes.get(endNodeName);
         Line newLine = getLineBetweenNodes(startNode, endNode);
 
-        if (shapeCollides(newLine)) {
+        if (edgesCollides(newLine)) {
             throw new CollisionException("Line collided with an exisiting line");
         } else {
+            // Add edge to gameboard
             edges.add(newLine);
+            // Add new node mid edge
             addNodeOnLine(newLine);
-
-            // Update number of connecting edges
+            // Update number of connecting edges for the two nodes
             startNode.incNumberOfConnectingEdges(1);
             endNode.incNumberOfConnectingEdges(1);
             nodes.set(startNodeName, startNode);
@@ -147,82 +165,88 @@ public class SproutModel {
         }
     }
 
-    private Line getLineBetweenNodes(Node startNode, Node endNode) {
-        Line newLine = new Line();
-        newLine.setStartX(startNode.getX());
-        newLine.setStartY(startNode.getY());
-        newLine.setEndX(endNode.getX());
-        newLine.setEndY(endNode.getY());
-
-        /*System.out.println("startCoor: (" + newLine.getStartX() + "," + newLine.getStartY() + ")");
-        System.out.println("EndCoor: (" + newLine.getEndX() + "," + newLine.getEndY() + ")");
-
-        System.out.println(newLine.intersects(startNode.getShape().getLayoutBounds()));*/
-
-        /*double c1 = startNode.getShape().getCenterX();
-        double c2 = startNode.getShape().getCenterX();
-        double hyp = startNode.getNodeRadius();
-        double b = Math.abs(startNode.getY()-newLine.getStartY());
-        double a = Math.sqrt(Math.pow(hyp,2) - Math.pow(b,2));
-        double newStartX = a + c1;
-        double newStartY = b + c2;
-
-
-        c1 = endNode.getShape().getCenterX();
-        c2 = endNode.getShape().getCenterX();
-        hyp = endNode.getNodeRadius();
-        b = Math.abs(endNode.getY()-newLine.getEndY());
-        a = Math.sqrt(Math.pow(hyp,2) - Math.pow(b,2));
-        double newEndX = a + c1;
-        double newEndY = b + c2;
-
-        newLine.setStartX(newStartX);
-        newLine.setStartY(newStartY);
-        newLine.setEndX(newEndX);
-        newLine.setEndY(newEndY);
-
-        System.out.println("startCoor: (" + newLine.getStartX() + "," + newLine.getStartY() + ")");
-        System.out.println("EndCoor: (" + newLine.getEndX() + "," + newLine.getEndY() + ")");
-        */
-        return newLine;
-    }
-
-    public void drawLineFromNodeToItself(int nodeName) throws CollisionException {
-
+    /**
+     * @author Thea Birk Berger
+     * Adds a cicular edge to the gameboard - connecting a node to itself
+     * @param nodeName
+     */
+    public void drawCircleFromNodeToItself(int nodeName) throws CollisionException {
         Node node = nodes.get(nodeName);
         Circle newCircle = createCircleToDraw(node);
 
-        if (shapeCollides(newCircle)) {
+        if (edgesCollides(newCircle)) {
             throw new CollisionException("Line collided with an exisiting line");
         } else {
+            // Add edge to gameboard
             edges.add(newCircle);
+            // Add new node mid edge
             addNodeOnCircle(newCircle, node.getX(), node.getY());
-
-            // Update number of connecting edges
+            // Update number of connecting edges for the node
             node.incNumberOfConnectingEdges(2);
             nodes.set(nodeName, node);
         }
+
     }
 
+    /**
+     * @author Thea Birk Berger
+     * Creates a straight line between two given nodes
+     * @param startNode
+     * @param endNode
+     * @return a Line object
+     */
+    private Line getLineBetweenNodes(Node startNode, Node endNode) {
+        double x1 = startNode.getX();
+        double x2 = endNode.getX();
+        double y1 = startNode.getY();
+        double y2 = endNode.getY();
+
+        // Compute distance between node centers
+        double length = getLineLength(x1,y1,x2,y2);
+
+        // Set line end points as the node edge (cut off the radius)
+        Line newLine = new Line();
+        newLine.setStartX(x1 + (5/length) * (x2-x1));
+        newLine.setStartY(y1 + (5/length) * (y2-y1));
+        newLine.setEndX(x2 + (5/length) * (x1-x2));
+        newLine.setEndY(y2 + (5/length) * (y1-y2));
+        // TODO: make sure 5 is not hard coded and put node radius instead
+
+        return newLine;
+    }
+
+    private double getLineLength(double x1, double y1, double x2, double y2) {
+        return Math.sqrt(Math.pow(Math.abs(x1-x2),2) + Math.pow(y1-y2,2));
+    }
+
+    /**
+     * @author Thea Birk Berger
+     * Creates a circular edge from a node to itself
+     * @param node
+     * @return a Circle object
+     */
     private Circle createCircleToDraw(Node node) {
         Circle newCircle = new Circle();
 
-        double radius = width / 50.;                                  // TODO: adjust to various window sizes
+        double radius = width / 50.;    // TODO: adjust to various window sizes
         double nodeX = node.getX();
         double nodeY = node.getY();
 
+        // Get edge center coordinates so that it does not exceed the game frame
         Double[] center = getCircleCenterCoordinates(nodeX, nodeY, radius);
+        // Set edge properties
         newCircle.setCenterX(center[0]);
         newCircle.setCenterY(center[1]);
         newCircle.setRadius(radius);
         newCircle.setFill(Color.TRANSPARENT);
         newCircle.setStroke(Color.BLACK);
 
+        // TODO: Remove part of edge that is held within the node
+
         return newCircle;
     }
 
     public void addNodeOnLine(Line edge) {
-
         double edgeIntervalX = Math.abs(edge.getEndX() - edge.getStartX());
         double edgeIntervalY = Math.abs(edge.getEndY() - edge.getStartY());
         double newNodeX = Math.min(edge.getStartX(), edge.getEndX()) + (edgeIntervalX / 2);
@@ -251,6 +275,16 @@ public class SproutModel {
         nodes.add(newNode);
     }
 
+    /**
+     * @author Thea Birk Berger
+     * Get circlar edge position given node coordinates.
+     * The edge is valid as long as the node is positioned on it.
+     * The position of the edge is chosen so that is does not exceed the game frame.
+     * @param originNodeX
+     * @param originNodeY
+     * @param radius
+     * @return the edge center coordinates
+     */
     public Double[] getCircleCenterCoordinates(double originNodeX, double originNodeY, double radius) {
 
         Double[] center = {originNodeX, originNodeY};
@@ -294,7 +328,6 @@ public class SproutModel {
      * The method performs subcalls to pathCollides() to ensure the drawn line is not intersecting with itself or other lines.
      * The current drawing is removed if it violates the rules.
      */
-
     public void drawPath(MouseEvent mouseDrag) throws PathForcedToEnd {
         if(isCollided){
             System.out.println("you collided draw somewhere else");
@@ -320,6 +353,7 @@ public class SproutModel {
             }
         }
     }
+
     /**
      * @author Noah Bastian Christiansen & Sebastian Lund Jensen
      * If turn was ended successfully then the drawn line is added to list of valid lines
@@ -342,6 +376,8 @@ public class SproutModel {
 
     public Node getCoordinates(PathElement pe) {
 
+        // TODO: Wasn't there a non-string way to do this?
+
         String pathElemString = pe.toString();
 
         double x = Double.parseDouble(pathElemString.substring(pathElemString.indexOf("x")+2, pathElemString.indexOf(",")));
@@ -353,7 +389,6 @@ public class SproutModel {
     }
 
     public Line getLineBetweenPathElements(List<PathElement> pathElements) {
-
         PathElement pe1 = pathElements.get(0);
         PathElement pe2 = pathElements.get(1);
 
@@ -362,16 +397,43 @@ public class SproutModel {
         return getLineBetweenNodes(pathCoor1, pathCoor2);
     }
 
+    public double[] getLineCoefficients(Line line) {
+        double x1 = line.getStartX();
+        double x2 = line.getEndX();
+        double y1 = line.getStartY();
+        double y2 = line.getEndY();
+        double a = (y2-y1)/(x2-x1);
+        double b = y2 - a * x2;
 
-    public boolean shapeCollides(Shape attemptedLine) {
+        double[] coefficients = {a,b};
+        return coefficients;
+    }
 
+    /**
+     * @author Thea Birk Berger
+     * Checks for collision between an newly drawn edge and all exisiting edges on the gameboard
+     * @param attemptedEdge
+     * @return true if there is collision false otherwise
+     */
+    public boolean edgesCollides(Shape attemptedEdge) {
         boolean collision = false;
-        Bounds lineBounds = attemptedLine.getBoundsInLocal();
 
+        // Traverse all existing lines
         for (Shape edge : edges) {
-            collision = edge.intersects(lineBounds) || collision;
+            // If the attempted and existing edge is a line
+            if (attemptedEdge instanceof Line && edge instanceof Line) {
+                // Get linear equation coefficients extending the attempted and existing edge
+                double[] attemptCoeffs = getLineCoefficients((Line) attemptedEdge);
+                double[] edgeCoeffs = getLineCoefficients((Line) edge);
+                // Find intersection point between attempted and existing edge
+                double x = (edgeCoeffs[1]-attemptCoeffs[1])/(attemptCoeffs[0]-edgeCoeffs[0]);
+                double y = attemptCoeffs[0] * x + attemptCoeffs[1];
+                collision = collision || attemptedEdge.getBoundsInLocal().contains(x,y) && edge.getBoundsInLocal().contains(x,y);
+            // If either attempted or existing edge is a circle
+            } else {
+                collision = collision || edge.intersects(attemptedEdge.getLayoutBounds());
+            }
         }
-
         return collision;
     }
 
@@ -388,7 +450,7 @@ public class SproutModel {
             // Create line between every two path elements
             Line pathLine = getLineBetweenPathElements(path.getElements().subList(i-1,i+1));
             // Add line length to summed path length
-            pathLength += Math.max(pathLine.getBoundsInLocal().getWidth(), pathLine.getBoundsInLocal().getHeight());
+            pathLength += getLineLength(pathLine.getStartX(), pathLine.getStartY(), pathLine.getEndX(), pathLine.getEndY());
             // While the path length remains short => ignore a path head element for collision
             numberOfPathElementsToIgnore += pathLength < 70 ? 1 : 0;
         }
@@ -400,10 +462,6 @@ public class SproutModel {
             Bounds pathLineBounds = pathLine.getBoundsInLocal();
 
             // Check collision between most recently drawn and previously drawn path segments
-//            if (Shape.intersect(tmpPathLine, pathLine).getBoundsInLocal().getWidth() != -1) {
-//                return true;
-//            }
-
             if (tmpPathLine.intersects(pathLineBounds)) {
                 return true;
             }
