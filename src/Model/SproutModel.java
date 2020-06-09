@@ -196,7 +196,7 @@ public class SproutModel {
      * @return a Line object
      */
     private Line getLineBetweenNodes(Node startNode, Node endNode) {
-        double x1 = startNode.getX();
+    /*    double x1 = startNode.getX();
         double x2 = endNode.getX();
         double y1 = startNode.getY();
         double y2 = endNode.getY();
@@ -210,7 +210,15 @@ public class SproutModel {
         newLine.setStartY(y1 + (5/length) * (y2-y1));
         newLine.setEndX(x2 + (5/length) * (x1-x2));
         newLine.setEndY(y2 + (5/length) * (y1-y2));
-        // TODO: make sure 5 is not hard coded and put node radius instead
+        // TODO: make sure 5 is not hard coded and put node radius instead*/
+
+
+        Line newLine = new Line();
+        newLine.setStartX(startNode.getX());
+        newLine.setStartY(startNode.getY());
+        newLine.setEndX(endNode.getX());
+        newLine.setEndY(endNode.getY());
+
 
         return newLine;
     }
