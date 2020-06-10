@@ -336,8 +336,6 @@ public class SproutModel {
         pathStartNode = findNodeFromPoint(point);
         if (pathStartNode != null && pathStartNode.getNumberOfConnectingEdges() < 3) {
             path = new Path();
-            path.getElements().add(new MoveTo(point.getX(), point.getY()));
-
         } else {
             throw new InvalidPath("The start node has too many connecting edges, or the path does not end in node");
         }
@@ -358,12 +356,18 @@ public class SproutModel {
             Path pathTmp = new Path();
             pathTmp.getElements().add(new MoveTo(point.getX(), point.getY()));
             point = new Point((int) mouseDrag.getX(), (int) mouseDrag.getY());
+            boolean isPointInsideNodeTemp = isPointInsideNode(point);
+
             //checks if point is inside the boundaries
             if (point.getX() < 0 || point.getX() > width || point.getY() < 0 || point.getY() > height) {
                 throw new InvalidPath("Line left the game pane");
             }
-            if (!isPointInsideNode(point)) {
+
+            if (!isPointInsideNodeTemp && !leftStartNode) {
                 leftStartNode = true;
+                path.getElements().add(new MoveTo(point.getX(), point.getY()));
+            } else if (isPointInsideNodeTemp && leftStartNode) {
+                throw new PathForcedToEnd("Path forcefully ended at: " + point.getX() + ", " + point.getY());
             }
             pathTmp.getElements().add(new LineTo(point.getX(), point.getY()));
             if (pathCollides(pathTmp)){
@@ -371,9 +375,7 @@ public class SproutModel {
                 pathTmp.getElements().clear();
                 isCollided = true;
                 System.out.println("collision at " + point.getX() + ", " + point.getY());
-            } else if (leftStartNode && isPointInsideNode(point)) {
-                throw new PathForcedToEnd("Path forcefully ended at: " + point.getX() + ", " + point.getY());
-            } else {
+            } else if (leftStartNode) {
                 path.getElements().add(new LineTo(point.getX(), point.getY()));
                 pathTmp.getElements().clear();
             }
