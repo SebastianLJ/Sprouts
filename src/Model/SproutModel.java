@@ -358,6 +358,7 @@ public class SproutModel {
             Path pathTmp = new Path();
             pathTmp.getElements().add(new MoveTo(point.getX(), point.getY()));
             point = new Point((int) mouseDrag.getX(), (int) mouseDrag.getY());
+            //checks if point is inside the boundaries
             if (point.getX() < 0 || point.getX() > width || point.getY() < 0 || point.getY() > height) {
                 throw new InvalidPath("Line left the game pane");
             }

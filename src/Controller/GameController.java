@@ -99,6 +99,7 @@ public class GameController extends SproutController implements Initializable {
      * By clicking a node the user primes that node for drawing and when clicking another node a line is drawn between the nodes (if the line is legal).
      */
     private void clickToDraw(MouseEvent mouseEvent) {
+        System.out.println("select");
         if (!theUserHasSelectedANode) {
             primeNodeToDrawEdgeFrom((Circle) mouseEvent.getSource());
         } else {
@@ -131,6 +132,7 @@ public class GameController extends SproutController implements Initializable {
     @SuppressWarnings("unused")
     public void onMouseClicked(MouseEvent mouseClick) {
         if (!(mouseClick.getTarget() instanceof Circle) && selectedNode != null) {
+            System.out.println("deselect");
             view.deselectNode(selectedNode);
             theUserHasSelectedANode = false;
         }
