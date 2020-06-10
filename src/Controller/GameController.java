@@ -212,7 +212,7 @@ public class GameController extends SproutController implements Initializable {
      * Calls the model's method that draws path to mousevent's coordinates and the method that checks for intersections/collisions
      * @param mouseDragged the mouse drag the user performs. This MouseEvent contains coordinates.
      */
-    public void mouseDraggedHandler(MouseEvent mouseDragged) throws InvalidPath {
+    public void mouseDraggedHandler(MouseEvent mouseDragged) {
         if (mouseDragged.getButton() == MouseButton.PRIMARY) {
             //left bottom corner (-17,232)
             //upper left corner (-17, -17)

@@ -150,10 +150,11 @@ public class View {
         circle.setStrokeWidth(2.0);
         circle.setStrokeType(StrokeType.INSIDE);
         circle.setStroke(Color.RED);
-        FadeTransition fadeTransition = new FadeTransition(Duration.seconds(0.5), circle);
+        FadeTransition fadeTransition = new FadeTransition(Duration.seconds(0.2), circle);
         fadeTransition.setFromValue(1.0);
         fadeTransition.setToValue(0.4);
-        fadeTransition.setCycleCount(2);
+        fadeTransition.setCycleCount(4);
+        fadeTransition.setAutoReverse(true);
         fadeTransition.setOnFinished(e -> { circle.setStrokeWidth(0.0);
                                             circle.setStroke(Color.BLACK);
                                             circle.setOpacity(1.0);
@@ -164,10 +165,12 @@ public class View {
     public void illegalPath(Pane gamePane, Path path) {
         path.setStroke(Color.RED);
         gamePane.getChildren().add(path);
-        FadeTransition fadeTransition = new FadeTransition(Duration.seconds(0.5), path);
+        FadeTransition fadeTransition = new FadeTransition(Duration.seconds(0.2), path);
         fadeTransition.setFromValue(1.0);
         fadeTransition.setToValue(0.4);
-        fadeTransition.setCycleCount(2);
+        fadeTransition.setCycleCount(4);
+        fadeTransition.setAutoReverse(true);
+
         fadeTransition.setOnFinished(e -> gamePane.getChildren().remove(path));
         fadeTransition.play();
     }
