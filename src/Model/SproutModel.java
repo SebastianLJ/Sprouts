@@ -36,10 +36,10 @@ public class SproutModel {
     }
 
     /**
-     * @author Emil Sommer Desler
      * Creates a certain amount of nodes with a random placement on the map.
      * The method wil ensure the created nodes will have a certain edge from the border of the map
      * and a certain distance from each other.
+     * @author Emil Sommer Desler
      * @param amount
      */
     public void addRandomNodes(int amount) {
@@ -101,8 +101,8 @@ public class SproutModel {
     }
 
     /**
-     * @author Thea Birk Berger
      * Checks if a node is on the gameboard
+     * @author Thea Birk Berger
      * @param nodeToFind
      * @return boolean
      */
@@ -124,8 +124,8 @@ public class SproutModel {
     }
 
     /**
-     * @author Thea Birk Berger
      * Identifies if a circle or line should be drawn between two chosen nodes and initializes the appropriate process
+     * @author Thea Birk Berger
      * @param startNode
      * @param endNode
      * @throws CollisionException If the line drawn collides with itself or existing lines
@@ -139,8 +139,8 @@ public class SproutModel {
     }
 
     /**
-     * @author Thea Birk Berger
      * Adds a straight line between two nodes to the gameboard
+     * @author Thea Birk Berger
      * @param startNodeName
      * @param endNodeName
      * @throws CollisionException If the line drawn collides with itself or existing lines
@@ -151,12 +151,14 @@ public class SproutModel {
         Line newLine = getLineBetweenNodeContours(startNode, endNode);
 
         if (edgesCollides(newLine)) {
-            throw new CollisionException("Line collided with an exisiting line");
+            throw new CollisionException("Line collided with an existing line");
+        } else if (edgeAndNodeCollides(newLine, startNodeName, endNodeName)) {
+            throw new CollisionException("Line collided with an existing node");
         } else {
             // Add edge to gameboard
             edges.add(newLine);
             // Add new node mid edge
-            addNodeOnLine(newLine);
+            addNodeOnLine(startNode, endNode);
             // Update number of connecting edges for the two nodes
             startNode.incNumberOfConnectingEdges(1);
             endNode.incNumberOfConnectingEdges(1);
@@ -166,8 +168,8 @@ public class SproutModel {
     }
 
     /**
+     * Adds a circular edge to the gameboard - connecting a node to itself
      * @author Thea Birk Berger
-     * Adds a cicular edge to the gameboard - connecting a node to itself
      * @param nodeName
      */
     public void drawCircleFromNodeToItself(int nodeName) throws CollisionException {
@@ -189,8 +191,8 @@ public class SproutModel {
     }
 
     /**
-     * @author Thea Birk Berger
      * Creates a straight line between the centers of two given nodes
+     * @author Thea Birk Berger
      * @param startNode
      * @param endNode
      * @return a Line object
@@ -208,8 +210,8 @@ public class SproutModel {
     }
 
     /**
-     * @author Thea Birk Berger
      * Creates a straight line between the contour of two given nodes
+     * @author Thea Birk Berger
      * @param startNode
      * @param endNode
      * @return a Line object
@@ -241,8 +243,8 @@ public class SproutModel {
     }
 
     /**
-     * @author Thea Birk Berger
      * Creates a circular edge from a node to itself
+     * @author Thea Birk Berger
      * @param node
      * @return a Circle object
      */
@@ -267,15 +269,27 @@ public class SproutModel {
         return newCircle;
     }
 
-    public void addNodeOnLine(Line edge) {
-        double edgeIntervalX = Math.abs(edge.getEndX() - edge.getStartX());
-        double edgeIntervalY = Math.abs(edge.getEndY() - edge.getStartY());
-        double newNodeX = Math.min(edge.getStartX(), edge.getEndX()) + (edgeIntervalX / 2);
-        double newNodeY = Math.min(edge.getStartY(), edge.getEndY()) + (edgeIntervalY / 2);
+    private double getPointOnLine(double startCoor, double endCoor, double distance, double lineLength) {
+        return startCoor + (distance/lineLength) * (endCoor-startCoor);
+    }
+
+
+    /**
+     * Adds a new node on the midpoint of the input line
+     * @author Thea Birk Berger
+     * @param startNode
+     * @param endNode
+     */
+    public void addNodeOnLine(Node startNode, Node endNode) {
+
+        double edgeLength = getLineLength(startNode.getX(), startNode.getY(), endNode.getX(), endNode.getY());
+        double newNodeX = getPointOnLine(startNode.getX(), endNode.getX(), edgeLength/2, edgeLength);
+        double newNodeY = getPointOnLine(startNode.getY(), endNode.getY(), edgeLength/2, edgeLength);
 
         Node newNode = new Node(newNodeX, newNodeY, 2);
         nodes.add(newNode);
     }
+
     /**
      * @author Noah Bastian Christiansen
      * Adds a new node close to the midpoint of a valid line
@@ -288,7 +302,6 @@ public class SproutModel {
     }
 
     public void addNodeOnCircle(Circle edge, double originNodeX, double originNodeY) {
-
         double newNodeX = originNodeX + (edge.getCenterX() - originNodeX) * 2;
         double newNodeY = originNodeY + (edge.getCenterY() - originNodeY) * 2;
 
@@ -297,10 +310,10 @@ public class SproutModel {
     }
 
     /**
-     * @author Thea Birk Berger
-     * Get circlar edge position given node coordinates.
+     * Get circular edge position given node coordinates.
      * The edge is valid as long as the node is positioned on it.
      * The position of the edge is chosen so that is does not exceed the game frame.
+     * @author Thea Birk Berger
      * @param originNodeX
      * @param originNodeY
      * @param radius
@@ -431,25 +444,20 @@ public class SproutModel {
     }
 
     /**
+     * Checks for collision between an newly drawn edge and all existing edges on the gameboard
      * @author Thea Birk Berger
-     * Checks for collision between an newly drawn edge and all exisiting edges on the gameboard
      * @param attemptedEdge
      * @return true if there is collision false otherwise
      */
     public boolean edgesCollides(Shape attemptedEdge) {
+
         boolean collision = false;
 
         // Traverse all existing lines
         for (Shape edge : edges) {
             // If the attempted and existing edge is a line
             if (attemptedEdge instanceof Line && edge instanceof Line) {
-                // Get linear equation coefficients extending the attempted and existing edge
-                double[] attemptCoeffs = getLineCoefficients((Line) attemptedEdge);
-                double[] edgeCoeffs = getLineCoefficients((Line) edge);
-                // Find intersection point between attempted and existing edge
-                double x = (edgeCoeffs[1]-attemptCoeffs[1])/(attemptCoeffs[0]-edgeCoeffs[0]);
-                double y = attemptCoeffs[0] * x + attemptCoeffs[1];
-                collision = collision || attemptedEdge.getBoundsInLocal().contains(x,y) && edge.getBoundsInLocal().contains(x,y);
+                collision = collision || Shape.intersect(attemptedEdge, edge).getBoundsInLocal().getWidth() != -1;
             // If either attempted or existing edge is a circle
             } else {
                 collision = collision || edge.intersects(attemptedEdge.getLayoutBounds());
@@ -457,6 +465,21 @@ public class SproutModel {
         }
         return collision;
     }
+
+
+    private boolean edgeAndNodeCollides(Line newLine, int startNodeName, int endNodeName) {
+
+        boolean collision = false;
+
+        for (int i = 0; i < nodes.size(); i++) {
+            if (i != startNodeName && i != endNodeName) {
+                collision = collision || nodes.get(i).getShape().intersects(newLine.getBoundsInLocal());
+            }
+        }
+        return collision;
+    }
+
+
 
     public boolean pathCollides(Path tmpPath) {
 
@@ -524,7 +547,7 @@ public class SproutModel {
     /**
      * @param nodeToFind The circle whose node object needs to be found
      * @author Noah Bastian Christiansen
-     *  @return The node that whose shape is the given circle object
+     * @return The node that whose shape is the given circle object
      */
     public Node findNode(Circle nodeToFind) {
         for (Node n : nodes) {
