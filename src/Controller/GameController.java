@@ -8,9 +8,11 @@ import javafx.fxml.FXML;
 
 import javafx.fxml.Initializable;
 
+import javafx.scene.Node;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Circle;
 
 
@@ -22,7 +24,7 @@ public class GameController extends SproutController implements Initializable {
     @FXML
     public Pane gamePane;
 
-    private int gameType; // 0 is clickToDraw and 1 is dragToDraw
+    private int gameMode; // 0 is clickToDraw and 1 is dragToDraw
     private int numberOfInitialNodes;
     private final int CLICK_TO_DRAW_MODE = 0;
     private final int DRAG_TO_DRAW_MODE = 1;
@@ -36,8 +38,8 @@ public class GameController extends SproutController implements Initializable {
         super();
     }
 
-    void setGameType(int whichGameType) {
-        gameType = whichGameType;
+    void setGameMode(int whichGameType) {
+        gameMode = whichGameType;
     }
 
     @SuppressWarnings("unused")
@@ -73,47 +75,58 @@ public class GameController extends SproutController implements Initializable {
             }
 
             view.initializeNodes(gamePane);
-            initializeListenerForStartingNodes();
+            initializeListenerForStackPane();
         });
     }
 
     /**
-     * @author Emil Sommer Desler
-     * Listeners makes us able to tell which nodes the user selects and
-     * that way update the model accordingly to the moves the player does.
+     * @author Noah Bastian Christiansen
+     *
+     *
      */
-    private void initializeListenerForStartingNodes() {
-        for (Model.Node node : getNodes()) {
-            if (gameType == CLICK_TO_DRAW_MODE) {
-                node.getShape().setOnMouseClicked(this::clickToDraw);
-            } else {
-                //todo highlight selected node in drag to draw
+    private void initializeListenerForStackPane(){
+        if(gameMode==CLICK_TO_DRAW_MODE) {
+            for (Node stackPane : gamePane.getChildren()) {
+                if (stackPane instanceof StackPane) {
+                    stackPane.setOnMouseClicked(this::clickToDraw);
+                }
             }
         }
     }
 
     /**
      * @param mouseEvent The mouse click the user performs.
-     * @author Emil Sommer Desler
+     * @author Emil Sommer Desler & Noah Bastian Christiansen
      * This method handles the game where the user clicks nodes in order to draw edges between them.
      * By clicking a node the user primes that node for drawing and when clicking another node a line is drawn between the nodes (if the line is legal).
      */
     private void clickToDraw(MouseEvent mouseEvent) {
+        StackPane test;
+        Circle cirkel = new Circle();
+        if(mouseEvent.getSource() instanceof StackPane){
+        test = (StackPane) mouseEvent.getSource();
+        cirkel = (Circle) test.getChildren().get(0);
+        }
+        else{
+            onMouseClicked(mouseEvent);
+        }
+
         if (!theUserHasSelectedANode) {
-            primeNodeToDrawEdgeFrom((Circle) mouseEvent.getSource());
+            primeNodeToDrawEdgeFrom(cirkel);
         } else {
             try {
-                attemptDrawEdgeBetweenNodes(selectedNode, (Circle) mouseEvent.getSource());
+                attemptDrawEdgeBetweenNodes(selectedNode, cirkel);
                 updateCanvasClick();
             } catch (IllegalNodesChosenException e) {
-                view.illegalEdgeAnimation(gamePane, createEdge(selectedNode, (Circle) mouseEvent.getSource()));
+                view.illegalEdgeAnimation(gamePane, createEdge(selectedNode, cirkel));
                 view.deselectNode(selectedNode);
                 theUserHasSelectedANode = false;
             } catch (GameOverException e) {
                 updateCanvasClick();
                 System.out.println("Game Over!");
             } catch (CollisionException e) {
-                view.illegalEdgeAnimation(gamePane, createEdge(selectedNode, (Circle) mouseEvent.getSource()));
+               // view.illegalEdgeAnimation(gamePane, createEdge(selectedNode, (Circle) mouseEvent.getSource()));
+                view.illegalEdgeAnimation(gamePane, createEdge(selectedNode, cirkel));
                 view.deselectNode(selectedNode);
                 theUserHasSelectedANode = false;
                 System.out.println("Collision!");
@@ -124,20 +137,20 @@ public class GameController extends SproutController implements Initializable {
 
     /**
      * @param mouseClick The mouse click the user performs.
-     * @author Emil Sommer Desler
+     * @author Emil Sommer Desler & Noah Bastian Christiansen
      * If the user has selected a node and clicks on something else than a node the selected node is deselected
      * and the user is free to select a new node.
      */
     @SuppressWarnings("unused")
     public void onMouseClicked(MouseEvent mouseClick) {
-        if (!(mouseClick.getTarget() instanceof Circle) && selectedNode != null) {
+        if (!(mouseClick.getSource() instanceof StackPane) && selectedNode != null) {
             view.deselectNode(selectedNode);
             theUserHasSelectedANode = false;
         }
     }
 
     private void updateCanvasClick() {
-        Circle newNode = view.updateCanvasClick(gamePane); // update canvas and get newNode created
+        StackPane newNode = view.updateCanvasClick(gamePane); // update canvas and get newNode created
         newNode.setOnMouseClicked(this::clickToDraw); // Add listener to the new node
     }
 
@@ -178,7 +191,7 @@ public class GameController extends SproutController implements Initializable {
     public void mousePressedHandler(MouseEvent mousePressed) {
         if (mousePressed.getButton() == MouseButton.PRIMARY) {
             isPathInit = false;
-            if (gameType == DRAG_TO_DRAW_MODE) {
+            if (gameMode == DRAG_TO_DRAW_MODE) {
                 try {
                     setupDrawing(mousePressed);
                     view.setUpDrawingSettings(mousePressed, gamePane);
@@ -199,28 +212,13 @@ public class GameController extends SproutController implements Initializable {
      */
     public void mouseDraggedHandler(MouseEvent mouseDragged) throws InvalidPath {
         if (mouseDragged.getButton() == MouseButton.PRIMARY) {
-            //left bottom corner (-17,232)
-            //upper left corner (-17, -17)
-            //bottom right corner (472,232)
-            //top right corner (472,-17)
             if (isPathInit) {
-            /*System.out.println("width: " + gamePane.getWidth());
-            System.out.println("height: " + gamePane.getHeight());
-            System.out.println("boundsInLocal: " + gamePane.getBoundsInLocal());
-            System.out.println("x: " + mouseDragged.getX());
-            System.out.println("y: " + mouseDragged.getY());*/
                 dragged = true;
 
-
-                if (!gamePane.contains(mouseDragged.getX(), mouseDragged.getY())) {
-                    System.out.println("not in pane 1!");
-                    return;
-                }
-
-                if (gameType == DRAG_TO_DRAW_MODE) {
+                if (gameMode == DRAG_TO_DRAW_MODE) {
                     try {
                         beginDrawing(mouseDragged);
-                    } catch (PathForcedToEnd pathForcedToEnd) {
+                    } catch (PathForcedToEnd | InvalidPath e) {
                         finishPathHelper(mouseDragged);
                     }
                     if (isCollided()) {
@@ -241,7 +239,7 @@ public class GameController extends SproutController implements Initializable {
      */
     public void mouseReleasedHandler(MouseEvent mouseReleased) {
         if (mouseReleased.getButton() == MouseButton.PRIMARY) {
-            if (gameType == DRAG_TO_DRAW_MODE && !getSproutModel().getIsCollided() && dragged && isPathInit) {
+            if (gameMode == DRAG_TO_DRAW_MODE && !getSproutModel().getIsCollided() && dragged && isPathInit) {
                 finishPathHelper(mouseReleased);
 
             }

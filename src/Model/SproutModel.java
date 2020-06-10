@@ -21,7 +21,6 @@ public class SproutModel {
     private double height;
     private double width;
     private Path path;
-    private final static double COLLISION_WIDTH = 1.5;
     private boolean isCollided;
     private Point point;
     private GameFlow gameFlow;
@@ -48,7 +47,7 @@ public class SproutModel {
         int x;
         int y;
         Circle circle = new Circle();
-        circle.setRadius(5); // TODO make scalable
+        circle.setRadius(Node.radius); // TODO make scalable
 
         for (int i = 0; i < amount; i++) {
             do {
@@ -57,7 +56,7 @@ public class SproutModel {
                 circle.setCenterX(x);
                 circle.setCenterY(y);
             } while (invalidPointLocation(circle));
-            nodes.add(new Node(x, y, 0));
+            nodes.add(new Node(x, y, 0,i));
         }
     }
 
@@ -251,7 +250,7 @@ public class SproutModel {
     private Circle createCircleToDraw(Node node) {
         Circle newCircle = new Circle();
 
-        double radius = width / 50.;    // TODO: adjust to various window sizes
+        double radius = Node.radius*2;
         double nodeX = node.getX();
         double nodeY = node.getY();
 
@@ -286,7 +285,8 @@ public class SproutModel {
         double newNodeX = getPointOnLine(startNode.getX(), endNode.getX(), edgeLength/2, edgeLength);
         double newNodeY = getPointOnLine(startNode.getY(), endNode.getY(), edgeLength/2, edgeLength);
 
-        Node newNode = new Node(newNodeX, newNodeY, 2);
+
+        Node newNode = new Node(newNodeX, newNodeY, 2, nodes.size());
         nodes.add(newNode);
     }
 
@@ -297,7 +297,7 @@ public class SproutModel {
     public void addNodeOnLineDrag(){
         int size = path.getElements().size();
         LineTo test = (LineTo) (path.getElements().get(size/2));
-        Node newNode = new Node(test.getX(), test.getY(), 2);
+        Node newNode = new Node(test.getX(), test.getY(), 2, nodes.size());
         nodes.add(newNode);
     }
 
@@ -305,7 +305,7 @@ public class SproutModel {
         double newNodeX = originNodeX + (edge.getCenterX() - originNodeX) * 2;
         double newNodeY = originNodeY + (edge.getCenterY() - originNodeY) * 2;
 
-        Node newNode = new Node(newNodeX, newNodeY, 2);
+        Node newNode = new Node(newNodeX, newNodeY, 2, nodes.size());
         nodes.add(newNode);
     }
 
@@ -362,7 +362,7 @@ public class SproutModel {
      * The method performs subcalls to pathCollides() to ensure the drawn line is not intersecting with itself or other lines.
      * The current drawing is removed if it violates the rules.
      */
-    public void drawPath(MouseEvent mouseDrag) throws PathForcedToEnd {
+    public void drawPath(MouseEvent mouseDrag) throws PathForcedToEnd, InvalidPath {
         if(isCollided){
             System.out.println("you collided draw somewhere else");
         }
@@ -370,6 +370,9 @@ public class SproutModel {
             Path pathTmp = new Path();
             pathTmp.getElements().add(new MoveTo(point.getX(), point.getY()));
             point = new Point((int) mouseDrag.getX(), (int) mouseDrag.getY());
+            if (point.getX() < 0 || point.getX() > width || point.getY() < 0 || point.getY() > height) {
+                throw new InvalidPath("Line left the game pane");
+            }
             if (!isPointInsideNode(point)) {
                 leftStartNode = true;
             }
@@ -402,9 +405,8 @@ public class SproutModel {
         } else {
             //removes path from model
             pathStartNode.decNumberOfConnectingEdges(1);
-            System.out.println("start node decremented");
             path.getElements().clear();
-            throw new InvalidPath("The end node has too many connecting edges, or the path does not end in node");
+            throw new InvalidPath("Invalid path was drawn");
         }
     }
 
@@ -417,7 +419,7 @@ public class SproutModel {
         double x = Double.parseDouble(pathElemString.substring(pathElemString.indexOf("x")+2, pathElemString.indexOf(",")));
         double y = Double.parseDouble(pathElemString.substring(pathElemString.indexOf("y")+2, pathElemString.indexOf("]")));
 
-        Node node = new Node(x,y,0);
+        Node node = new Node(x,y,0, nodes.size());
 
         return node;
     }
@@ -611,8 +613,8 @@ public class SproutModel {
         }
     }
 
-    public Circle getNewestNode() {
-        return nodes.get(nodes.size()-1).getShape();
+    public Node getNewestNode() {
+        return nodes.get(nodes.size()-1);
     }
 
     public Shape getNewestEdge() {
