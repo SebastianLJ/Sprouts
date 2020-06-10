@@ -35,14 +35,24 @@ public class View {
     public View(SproutModel model) {
         this.model = model;
     }
-
+    /**
+     * @author Noah Bastian Christiansen & Sebastian Lund Jensen
+     *
+     *
+     *
+     */
     public void initializeNodes(Pane gamePane) {
         for (Node node : model.getNodes()) {
             gamePane.getChildren().add(addNumberOnNode(node));
         }
     }
-
-    public Circle updateCanvasClick(Pane gamePane) {
+    /**
+     * @author Noah Bastian Christiansen
+     *
+     *
+     *
+     */
+    public StackPane updateCanvasClick(Pane gamePane) {
         // Get edge
         Shape newEdge = model.getNewestEdge();
 
@@ -53,26 +63,49 @@ public class View {
         legalEdgeAnimation(gamePane, newEdge);
 
         // Add new node to view
-        gamePane.getChildren().add(addNumberOnNode(newNode));
-        return newNode.getShape();
+        StackPane newStackPane = addNumberOnNode(newNode);
+        gamePane.getChildren().add(newStackPane);
+        return newStackPane;
     }
+    /**
+     * @author Noah Bastian Christiansen & Sebastian Lund Jensen
+     *
+     *
+     *
+     */
     public void updateCanvasDrag(Pane gamePane){
         Node newNode = model.getNewestNode();
         gamePane.getChildren().add(addNumberOnNode(newNode));
     }
 
-
+    /**
+     * @author Noah Bastian Christiansen
+     *
+     *
+     *
+     */
     public void setUpDrawingSettings(MouseEvent mousePressed, Pane gamePane) {
         Scene scene = ((javafx.scene.Node) mousePressed.getSource()).getScene();
         scene.setCursor(Cursor.CROSSHAIR);
         gamePane.getChildren().add(model.getPath());
     }
 
+    /**
+     * @author Noah Bastian Christiansen
+     *
+     *
+     *
+     */
     public void setUpCollisionSettings(MouseEvent mouseDragged) {
         Scene scene = ((javafx.scene.Node) mouseDragged.getSource()).getScene(); //perhaps set scene somewhere in here.
         scene.setCursor(Cursor.DEFAULT);
     }
-
+    /**
+     * @author Noah Bastian Christiansen
+     *
+     *
+     *
+     */
     public void setUpSuccessfulPathSettings(MouseEvent mouseReleased) {
         Scene scene = ((javafx.scene.Node) mouseReleased.getSource()).getScene(); //perhaps set scene somewhere in here.
         scene.setCursor(Cursor.DEFAULT);
@@ -144,7 +177,12 @@ public class View {
         toolTip.setShowDuration(Duration.INDEFINITE);
         toolTip.setHideDelay(Duration.ZERO);
     }
-
+    /**
+     * @author Noah Bastian Christiansen & Sebastian Lund Jensen
+     *
+     *
+     *
+     */
     private StackPane addNumberOnNode(Node node){
         final Text text = new Text(""+node.getId());
         text.setFill(Color.WHITE);

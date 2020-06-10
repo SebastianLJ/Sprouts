@@ -21,7 +21,7 @@
          <BorderPane.margin>
             <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
          </BorderPane.margin>
-         <Pane fx:id="gamePane" layoutX="40.0" layoutY="40.0" onMouseClicked="#onMouseClicked" onMouseDragged="#mouseDraggedHandler" onMousePressed="#mousePressedHandler" onMouseReleased="#mouseReleasedHandler" prefHeight="242.0" prefWidth="496.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+         <Pane fx:id="gamePane" layoutX="40.0" layoutY="40.0" onMouseDragged="#mouseDraggedHandler" onMousePressed="#mousePressedHandler" onMouseReleased="#mouseReleasedHandler" prefHeight="242.0" prefWidth="496.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
       </AnchorPane>
    </top>
 </BorderPane>
