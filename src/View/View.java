@@ -14,11 +14,8 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
+import javafx.scene.shape.*;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.shape.Line;
-import javafx.scene.shape.Shape;
-import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
@@ -147,6 +144,32 @@ public class View {
         } else {
             gamePane.getChildren().add(shape);
         }
+    }
+
+    public void illegalNode(Circle circle) {
+        circle.setStrokeWidth(2.0);
+        circle.setStrokeType(StrokeType.INSIDE);
+        circle.setStroke(Color.RED);
+        FadeTransition fadeTransition = new FadeTransition(Duration.seconds(0.5), circle);
+        fadeTransition.setFromValue(1.0);
+        fadeTransition.setToValue(0.4);
+        fadeTransition.setCycleCount(2);
+        fadeTransition.setOnFinished(e -> { circle.setStrokeWidth(0.0);
+                                            circle.setStroke(Color.BLACK);
+                                            circle.setOpacity(1.0);
+        });
+        fadeTransition.play();
+    }
+
+    public void illegalPath(Pane gamePane, Path path) {
+        path.setStroke(Color.RED);
+        gamePane.getChildren().add(path);
+        FadeTransition fadeTransition = new FadeTransition(Duration.seconds(0.5), path);
+        fadeTransition.setFromValue(1.0);
+        fadeTransition.setToValue(0.4);
+        fadeTransition.setCycleCount(2);
+        fadeTransition.setOnFinished(e -> gamePane.getChildren().remove(path));
+        fadeTransition.play();
     }
 
     public void resetGameView(Pane gamePane) {

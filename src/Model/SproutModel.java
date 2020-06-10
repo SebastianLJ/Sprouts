@@ -1,6 +1,7 @@
 package Model;
 
 import Exceptions.CollisionException;
+import Exceptions.InvalidNode;
 import Exceptions.PathForcedToEnd;
 import Exceptions.InvalidPath;
 import javafx.geometry.Bounds;
@@ -328,7 +329,7 @@ public class SproutModel {
      * @author Noah Bastian Christiansen & Sebastian Lund Jensen
      * Sets up path object and sets coordinates for starting point of drawing (the position on the pane where the click occured)
      */
-    public void initializePath(MouseEvent mouseClick) throws InvalidPath {
+    public void initializePath(MouseEvent mouseClick) throws InvalidNode {
         isCollided = false;
         leftStartNode = false;
         point = new Point((int) mouseClick.getX(), (int) mouseClick.getY());
@@ -336,7 +337,7 @@ public class SproutModel {
         if (pathStartNode != null && pathStartNode.getNumberOfConnectingEdges() < 3) {
             path = new Path();
         } else {
-            throw new InvalidPath("The start node has too many connecting edges, or the path does not end in node");
+            throw new InvalidNode(pathStartNode);
         }
     }
 
@@ -347,7 +348,7 @@ public class SproutModel {
      * The method performs subcalls to pathCollides() to ensure the drawn line is not intersecting with itself or other lines.
      * The current drawing is removed if it violates the rules.
      */
-    public void drawPath(MouseEvent mouseDrag) throws PathForcedToEnd, InvalidPath {
+    public void drawPath(MouseEvent mouseDrag) throws PathForcedToEnd, InvalidPath, CollisionException {
         if(isCollided){
             System.out.println("you collided draw somewhere else");
         }
@@ -359,7 +360,7 @@ public class SproutModel {
 
             //checks if point is inside the boundaries
             if (point.getX() < 0 || point.getX() > width || point.getY() < 0 || point.getY() > height) {
-                throw new InvalidPath("Line left the game pane");
+                throw new InvalidPath(path);
             }
 
             if (!isPointInsideNodeTemp && !leftStartNode) {
@@ -370,11 +371,13 @@ public class SproutModel {
             }
             pathTmp.getElements().add(new LineTo(point.getX(), point.getY()));
             if (pathCollides(pathTmp)){
+                Path exceptionPath = new Path(List.copyOf(path.getElements()));
                 path.getElements().clear();
                 pathTmp.getElements().clear();
                 isCollided = true;
                 System.out.println("collision at " + point.getX() + ", " + point.getY());
-            } else if (leftStartNode) {
+                throw new CollisionException(exceptionPath);
+            } else if (leftStartNode && !isPointInsideNodeTemp) {
                 path.getElements().add(new LineTo(point.getX(), point.getY()));
                 pathTmp.getElements().clear();
             }
@@ -385,18 +388,23 @@ public class SproutModel {
      * @author Noah Bastian Christiansen & Sebastian Lund Jensen
      * If turn was ended successfully then the drawn line is added to list of valid lines
      */
-    public void finishPath(MouseEvent mouseEvent) throws InvalidPath {
+    public void finishPath(MouseEvent mouseEvent) throws InvalidPath, InvalidNode {
         Point point = new Point((int) mouseEvent.getX(), (int) mouseEvent.getY());
         Node endNode = findNodeFromPoint(point);
         pathStartNode.incNumberOfConnectingEdges(1);
         if (leftStartNode && endNode != null && endNode.getNumberOfConnectingEdges() < 3) {
             endNode.incNumberOfConnectingEdges(1);
             edges.add(path);
+        } else if (endNode == null) {
+            pathStartNode.decNumberOfConnectingEdges(1);
+            Path tempPath = new Path(List.copyOf(path.getElements()));
+            path.getElements().clear();
+            throw new InvalidPath(tempPath);
         } else {
             //removes path from model
             pathStartNode.decNumberOfConnectingEdges(1);
             path.getElements().clear();
-            throw new InvalidPath("Invalid path was drawn");
+            throw new InvalidNode(endNode);
         }
     }
 

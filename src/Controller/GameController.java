@@ -196,8 +196,10 @@ public class GameController extends SproutController implements Initializable {
                     setupDrawing(mousePressed);
                     view.setUpDrawingSettings(mousePressed, gamePane);
                     isPathInit = true;
-                } catch (InvalidPath invalidPath) {
-                    System.out.println(invalidPath.getMessage());
+                } catch (InvalidNode invalidNode) {
+                    if (invalidNode.getNode() != null) {
+                        view.illegalNode(invalidNode.getNode().getShape());
+                    }
                 }
             }
         }
@@ -229,6 +231,8 @@ public class GameController extends SproutController implements Initializable {
                         beginDrawing(mouseDragged);
                     } catch (PathForcedToEnd | InvalidPath e) {
                         finishPathHelper(mouseDragged);
+                    } catch (CollisionException e) {
+                        view.illegalPath(gamePane, e.getPath());
                     }
                     if (isCollided()) {
                         view.setUpCollisionSettings(mouseDragged);
@@ -250,7 +254,6 @@ public class GameController extends SproutController implements Initializable {
         if (mouseReleased.getButton() == MouseButton.PRIMARY) {
             if (gameMode == DRAG_TO_DRAW_MODE && !getSproutModel().getIsCollided() && dragged && isPathInit) {
                 finishPathHelper(mouseReleased);
-
             }
             view.setUpSuccessfulPathSettings(mouseReleased);
         }
@@ -267,7 +270,11 @@ public class GameController extends SproutController implements Initializable {
         } catch (InvalidPath e) {
             dragged = false;
             isPathInit = false;
-            System.out.println(e.getMessage());
+            view.illegalPath(gamePane, e.getPath());
+        } catch (InvalidNode invalidNode) {
+            dragged = false;
+            isPathInit = false;
+            view.illegalNode(invalidNode.getNode().getShape());
         }
     }
 
