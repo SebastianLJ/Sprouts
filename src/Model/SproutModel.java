@@ -349,38 +349,36 @@ public class SproutModel {
      * The current drawing is removed if it violates the rules.
      */
     public void drawPath(MouseEvent mouseDrag) throws PathForcedToEnd, InvalidPath, CollisionException {
-        if(isCollided){
-            System.out.println("you collided draw somewhere else");
+        Path pathTmp = new Path();
+        pathTmp.getElements().add(new MoveTo(point.getX(), point.getY()));
+
+        point = new Point((int) mouseDrag.getX(), (int) mouseDrag.getY());
+        boolean isPointInsideNodeTemp = isPointInsideNode(point);
+
+        //checks if point is inside the boundaries
+        if (point.getX() < 0 || point.getX() > width || point.getY() < 0 || point.getY() > height) {
+            throw new InvalidPath(path);
         }
-        else {
-            Path pathTmp = new Path();
-            pathTmp.getElements().add(new MoveTo(point.getX(), point.getY()));
-            point = new Point((int) mouseDrag.getX(), (int) mouseDrag.getY());
-            boolean isPointInsideNodeTemp = isPointInsideNode(point);
 
-            //checks if point is inside the boundaries
-            if (point.getX() < 0 || point.getX() > width || point.getY() < 0 || point.getY() > height) {
-                throw new InvalidPath(path);
-            }
+        if (!isPointInsideNodeTemp && !leftStartNode) {
+            leftStartNode = true;
+            path.getElements().add(new MoveTo(point.getX(), point.getY()));
+        } else if (isPointInsideNodeTemp && leftStartNode) {
+            throw new PathForcedToEnd("Path forcefully ended at: " + point.getX() + ", " + point.getY());
+        }
 
-            if (!isPointInsideNodeTemp && !leftStartNode) {
-                leftStartNode = true;
-                path.getElements().add(new MoveTo(point.getX(), point.getY()));
-            } else if (isPointInsideNodeTemp && leftStartNode) {
-                throw new PathForcedToEnd("Path forcefully ended at: " + point.getX() + ", " + point.getY());
-            }
-            pathTmp.getElements().add(new LineTo(point.getX(), point.getY()));
-            if (pathCollides(pathTmp)){
-                Path exceptionPath = new Path(List.copyOf(path.getElements()));
-                path.getElements().clear();
-                pathTmp.getElements().clear();
-                isCollided = true;
-                System.out.println("collision at " + point.getX() + ", " + point.getY());
-                throw new CollisionException(exceptionPath);
-            } else if (leftStartNode && !isPointInsideNodeTemp) {
-                path.getElements().add(new LineTo(point.getX(), point.getY()));
-                pathTmp.getElements().clear();
-            }
+        pathTmp.getElements().add(new LineTo(point.getX(), point.getY()));
+
+        if (pathCollides(pathTmp)){
+            Path exceptionPath = new Path(List.copyOf(path.getElements()));
+            path.getElements().clear();
+            pathTmp.getElements().clear();
+            isCollided = true;
+            System.out.println("collision at " + point.getX() + ", " + point.getY());
+            throw new CollisionException(exceptionPath);
+        } else if (leftStartNode && !isPointInsideNodeTemp) {
+            path.getElements().add(new LineTo(point.getX(), point.getY()));
+            pathTmp.getElements().clear();
         }
     }
 
