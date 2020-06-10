@@ -22,6 +22,7 @@ public class SproutLauncher extends Application {
 
     static SproutController controller = new SproutController();
     private DoubleProperty fontSize = new SimpleDoubleProperty(10);
+    static Stage stage;
 
     /**
      * @author Emil Sommer Desler
@@ -49,7 +50,12 @@ public class SproutLauncher extends Application {
         mainMenu.styleProperty().bind(Bindings.concat("-fx-font-size: ", fontSize.asString()));
 
         stage.setScene(scene);
+        stage.setWidth(640);
+        stage.setHeight(480);
+        stage.setMinWidth(640);
+        stage.setMinHeight(480);
         stage.show();
+        this.stage=stage;
     }
 
     public static void main(String[] args) {
@@ -94,5 +100,9 @@ public class SproutLauncher extends Application {
 
     public SproutController getController() {
         return controller;
+    }
+
+    public Stage getStage(){
+        return stage;
     }
 }

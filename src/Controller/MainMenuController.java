@@ -149,6 +149,10 @@ public class MainMenuController extends Controller implements Initializable {
         }
     }
 
+    public void changeSettings(ActionEvent event) throws IOException {
+        changeScene(event, "GameSettings.fxml");
+    }
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
     }
