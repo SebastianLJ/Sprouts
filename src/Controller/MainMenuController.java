@@ -50,7 +50,7 @@ public class MainMenuController extends Controller implements Initializable {
         );
 
         GameController controller = new GameController();
-        controller.setGameType(whichGameType);
+        controller.setGameMode(whichGameType);
         controller.setNumberOfInitialNodes(numberOfInitialNodes);
 
         loader.setController(controller);

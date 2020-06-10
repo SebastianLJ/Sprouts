@@ -21,7 +21,6 @@ public class SproutModel {
     private double height;
     private double width;
     private Path path;
-    private final static double COLLISION_WIDTH = 1.5;
     private boolean isCollided;
     private Point point;
     private GameFlow gameFlow;
@@ -249,7 +248,7 @@ public class SproutModel {
     private Circle createCircleToDraw(Node node) {
         Circle newCircle = new Circle();
 
-        double radius = width / 50.;    // TODO: adjust to various window sizes
+        double radius = Node.radius*2;
         double nodeX = node.getX();
         double nodeY = node.getY();
 
