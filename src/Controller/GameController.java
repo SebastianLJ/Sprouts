@@ -8,10 +8,13 @@ import javafx.fxml.FXML;
 
 import javafx.fxml.Initializable;
 
+import javafx.scene.Node;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Circle;
+import javafx.scene.text.Text;
 
 
 import java.io.IOException;
@@ -73,47 +76,56 @@ public class GameController extends SproutController implements Initializable {
             }
 
             view.initializeNodes(gamePane);
-            initializeListenerForStartingNodes();
+            initializeListenerForStackPane();
         });
     }
 
     /**
-     * @author Emil Sommer Desler
-     * Listeners makes us able to tell which nodes the user selects and
-     * that way update the model accordingly to the moves the player does.
+     * @author Noah Bastian Christiansen
+     *
+     *
      */
-    private void initializeListenerForStartingNodes() {
-        for (Model.Node node : getNodes()) {
-            if (gameType == CLICK_TO_DRAW_MODE) {
-                node.getShape().setOnMouseClicked(this::clickToDraw);
-            } else {
-                //todo highlight selected node in drag to draw
+    private void initializeListenerForStackPane(){
+        for(Node stackPane : gamePane.getChildren()){
+            if(stackPane instanceof StackPane){
+                stackPane.setOnMouseClicked(this::clickToDraw);
             }
         }
     }
 
     /**
      * @param mouseEvent The mouse click the user performs.
-     * @author Emil Sommer Desler
+     * @author Emil Sommer Desler & Noah Bastian Christiansen
      * This method handles the game where the user clicks nodes in order to draw edges between them.
      * By clicking a node the user primes that node for drawing and when clicking another node a line is drawn between the nodes (if the line is legal).
      */
     private void clickToDraw(MouseEvent mouseEvent) {
+        StackPane test;
+        Circle cirkel = new Circle();
+        if(mouseEvent.getSource() instanceof StackPane){
+        test = (StackPane) mouseEvent.getSource();
+        cirkel = (Circle) test.getChildren().get(0);
+        }
+        else{
+            onMouseClicked(mouseEvent);
+        }
+
         if (!theUserHasSelectedANode) {
-            primeNodeToDrawEdgeFrom((Circle) mouseEvent.getSource());
+            primeNodeToDrawEdgeFrom(cirkel);
         } else {
             try {
-                attemptDrawEdgeBetweenNodes(selectedNode, (Circle) mouseEvent.getSource());
+                attemptDrawEdgeBetweenNodes(selectedNode, cirkel);
                 updateCanvasClick();
             } catch (IllegalNodesChosenException e) {
-                view.illegalEdgeAnimation(gamePane, createEdge(selectedNode, (Circle) mouseEvent.getSource()));
+                view.illegalEdgeAnimation(gamePane, createEdge(selectedNode, cirkel));
                 view.deselectNode(selectedNode);
                 theUserHasSelectedANode = false;
             } catch (GameOverException e) {
                 updateCanvasClick();
                 System.out.println("Game Over!");
             } catch (CollisionException e) {
-                view.illegalEdgeAnimation(gamePane, createEdge(selectedNode, (Circle) mouseEvent.getSource()));
+               // view.illegalEdgeAnimation(gamePane, createEdge(selectedNode, (Circle) mouseEvent.getSource()));
+                view.illegalEdgeAnimation(gamePane, createEdge(selectedNode, cirkel));
                 view.deselectNode(selectedNode);
                 theUserHasSelectedANode = false;
                 System.out.println("Collision!");
@@ -124,20 +136,20 @@ public class GameController extends SproutController implements Initializable {
 
     /**
      * @param mouseClick The mouse click the user performs.
-     * @author Emil Sommer Desler
+     * @author Emil Sommer Desler & Noah Bastian Christiansen
      * If the user has selected a node and clicks on something else than a node the selected node is deselected
      * and the user is free to select a new node.
      */
     @SuppressWarnings("unused")
     public void onMouseClicked(MouseEvent mouseClick) {
-        if (!(mouseClick.getTarget() instanceof Circle) && selectedNode != null) {
+        if (!(mouseClick.getSource() instanceof StackPane) && selectedNode != null) {
             view.deselectNode(selectedNode);
             theUserHasSelectedANode = false;
         }
     }
 
     private void updateCanvasClick() {
-        Circle newNode = view.updateCanvasClick(gamePane); // update canvas and get newNode created
+        StackPane newNode = view.updateCanvasClick(gamePane); // update canvas and get newNode created
         newNode.setOnMouseClicked(this::clickToDraw); // Add listener to the new node
     }
 

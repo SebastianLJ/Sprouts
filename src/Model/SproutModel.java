@@ -48,7 +48,7 @@ public class SproutModel {
         int x;
         int y;
         Circle circle = new Circle();
-        circle.setRadius(5); // TODO make scalable
+        circle.setRadius(Node.radius); // TODO make scalable
 
         for (int i = 0; i < amount; i++) {
             do {

@@ -4,7 +4,7 @@ import javafx.scene.shape.Circle;
 
 public class Node {
 
-    private int nodeRadius = 10;
+    public static int radius = 10;
     private double x;
     private double y;
     private int id;
@@ -15,7 +15,7 @@ public class Node {
         this.x = x;
         this.y = y;
         this.numberOfConnectingEdges = numberOfConnectingEdges;
-        this.shape = new Circle(x, y, nodeRadius);
+        this.shape = new Circle(x, y, radius);
         this.id=id;
         // TODO: Make radius fit window size
     }
@@ -41,7 +41,7 @@ public class Node {
     }
 
     public int getNodeRadius() {
-        return nodeRadius;
+        return radius;
     }
 
     public Circle getShape() {
@@ -69,7 +69,7 @@ public class Node {
      */
     public boolean isPointInsideNode(Point point) {
         double distance = Math.sqrt(Math.pow(point.getX() - x,2) + Math.pow(point.getY() - y, 2));
-        return distance <= nodeRadius;
+        return distance <= radius;
     }
 
     public int getId() {
