@@ -14,7 +14,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Circle;
-import javafx.scene.text.Text;
 
 
 import java.io.IOException;
@@ -25,7 +24,7 @@ public class GameController extends SproutController implements Initializable {
     @FXML
     public Pane gamePane;
 
-    private int gameType; // 0 is clickToDraw and 1 is dragToDraw
+    private int gameMode; // 0 is clickToDraw and 1 is dragToDraw
     private int numberOfInitialNodes;
     private final int CLICK_TO_DRAW_MODE = 0;
     private final int DRAG_TO_DRAW_MODE = 1;
@@ -39,8 +38,8 @@ public class GameController extends SproutController implements Initializable {
         super();
     }
 
-    void setGameType(int whichGameType) {
-        gameType = whichGameType;
+    void setGameMode(int whichGameType) {
+        gameMode = whichGameType;
     }
 
     @SuppressWarnings("unused")
@@ -86,9 +85,11 @@ public class GameController extends SproutController implements Initializable {
      *
      */
     private void initializeListenerForStackPane(){
-        for(Node stackPane : gamePane.getChildren()){
-            if(stackPane instanceof StackPane){
-                stackPane.setOnMouseClicked(this::clickToDraw);
+        if(gameMode==CLICK_TO_DRAW_MODE) {
+            for (Node stackPane : gamePane.getChildren()) {
+                if (stackPane instanceof StackPane) {
+                    stackPane.setOnMouseClicked(this::clickToDraw);
+                }
             }
         }
     }
@@ -190,7 +191,7 @@ public class GameController extends SproutController implements Initializable {
     public void mousePressedHandler(MouseEvent mousePressed) {
         if (mousePressed.getButton() == MouseButton.PRIMARY) {
             isPathInit = false;
-            if (gameType == DRAG_TO_DRAW_MODE) {
+            if (gameMode == DRAG_TO_DRAW_MODE) {
                 try {
                     setupDrawing(mousePressed);
                     view.setUpDrawingSettings(mousePressed, gamePane);
@@ -223,7 +224,7 @@ public class GameController extends SproutController implements Initializable {
             System.out.println("y: " + mouseDragged.getY());*/
                 dragged = true;
 
-                if (gameType == DRAG_TO_DRAW_MODE) {
+                if (gameMode == DRAG_TO_DRAW_MODE) {
                     try {
                         beginDrawing(mouseDragged);
                     } catch (PathForcedToEnd | InvalidPath e) {
@@ -247,7 +248,7 @@ public class GameController extends SproutController implements Initializable {
      */
     public void mouseReleasedHandler(MouseEvent mouseReleased) {
         if (mouseReleased.getButton() == MouseButton.PRIMARY) {
-            if (gameType == DRAG_TO_DRAW_MODE && !getSproutModel().getIsCollided() && dragged && isPathInit) {
+            if (gameMode == DRAG_TO_DRAW_MODE && !getSproutModel().getIsCollided() && dragged && isPathInit) {
                 finishPathHelper(mouseReleased);
 
             }
