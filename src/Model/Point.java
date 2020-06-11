@@ -2,7 +2,7 @@ package Model;
 
 import java.util.Objects;
 
-public class Point {
+public class Point implements Comparable {
 
     private int x;
     private int y;
@@ -40,5 +40,10 @@ public class Point {
 
     public Model.Point copyOf() {
         return new Model.Point(x,y);
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        return 0;
     }
 }

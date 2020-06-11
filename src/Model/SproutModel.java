@@ -152,9 +152,9 @@ public class SproutModel {
     public void drawLineBetweenNodes(int startNodeName, int endNodeName) throws CollisionException {
         Node startNode = nodes.get(startNodeName);
         Node endNode = nodes.get(endNodeName);
-        Line newLine = getLineBetweenNodeContours(startNode, endNode);
+        Path path = pf.getPath(startNode, endNode);
 
-        if (edgesCollides(newLine)) {
+        /*if (edgesCollides(newLine)) {
             throw new CollisionException("Line collided with an exisiting line");
         } else {
             // Add edge to gameboard
@@ -166,7 +166,12 @@ public class SproutModel {
             endNode.incNumberOfConnectingEdges(1);
             nodes.set(startNodeName, startNode);
             nodes.set(endNodeName, endNode);
-        }
+        }*/
+        edges.add(path);
+        startNode.incNumberOfConnectingEdges(1);
+        endNode.incNumberOfConnectingEdges(1);
+        nodes.set(startNodeName, startNode);
+        nodes.set(endNodeName, endNode);
     }
 
     /**
