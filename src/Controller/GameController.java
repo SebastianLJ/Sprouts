@@ -34,7 +34,7 @@ public class GameController extends SproutController implements Initializable {
     private boolean dragged;
     private boolean isPathInit = false;
 
-    public GameController () {
+    public GameController() {
         super();
     }
 
@@ -61,7 +61,7 @@ public class GameController extends SproutController implements Initializable {
 
         Platform.runLater(() -> {
             // Tell the model how big the game is
-            updateSize(0.0,0.0);
+            updateSize(0.0, 0.0);
             updateSize(gamePane.getWidth(), gamePane.getHeight());
 
             try {
@@ -81,11 +81,9 @@ public class GameController extends SproutController implements Initializable {
 
     /**
      * @author Noah Bastian Christiansen
-     *
-     *
      */
-    private void initializeListenerForStackPane(){
-        if(gameMode==CLICK_TO_DRAW_MODE) {
+    private void initializeListenerForStackPane() {
+        if (gameMode == CLICK_TO_DRAW_MODE) {
             for (Node stackPane : gamePane.getChildren()) {
                 if (stackPane instanceof StackPane) {
                     stackPane.setOnMouseClicked(this::clickToDraw);
@@ -102,31 +100,30 @@ public class GameController extends SproutController implements Initializable {
      */
     private void clickToDraw(MouseEvent mouseEvent) {
         StackPane test;
-        Circle cirkel = new Circle();
-        if(mouseEvent.getSource() instanceof StackPane){
-        test = (StackPane) mouseEvent.getSource();
-        cirkel = (Circle) test.getChildren().get(0);
-        }
-        else{
+        Circle circle = new Circle();
+        if (mouseEvent.getSource() instanceof StackPane) {
+            test = (StackPane) mouseEvent.getSource();
+            circle = (Circle) test.getChildren().get(0);
+        } else {
             onMouseClicked(mouseEvent);
         }
 
         if (!theUserHasSelectedANode) {
-            primeNodeToDrawEdgeFrom(cirkel);
+            primeNodeToDrawEdgeFrom(circle);
         } else {
             try {
-                attemptDrawEdgeBetweenNodes(selectedNode, cirkel);
+                attemptDrawEdgeBetweenNodes(selectedNode, circle);
                 updateCanvasClick();
             } catch (IllegalNodesChosenException e) {
-                view.illegalEdgeAnimation(gamePane, createEdge(selectedNode, cirkel));
+                view.illegalEdgeAnimation(gamePane, createEdge(selectedNode, circle));
                 view.deselectNode(selectedNode);
                 theUserHasSelectedANode = false;
             } catch (GameOverException e) {
                 updateCanvasClick();
                 System.out.println("Game Over!");
             } catch (CollisionException e) {
-               // view.illegalEdgeAnimation(gamePane, createEdge(selectedNode, (Circle) mouseEvent.getSource()));
-                view.illegalEdgeAnimation(gamePane, createEdge(selectedNode, cirkel));
+                // view.illegalEdgeAnimation(gamePane, createEdge(selectedNode, (Circle) mouseEvent.getSource()));
+                view.illegalEdgeAnimation(gamePane, createEdge(selectedNode, circle));
                 view.deselectNode(selectedNode);
                 theUserHasSelectedANode = false;
                 System.out.println("Collision!");

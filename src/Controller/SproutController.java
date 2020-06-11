@@ -107,7 +107,6 @@ public class SproutController extends Controller {
     }
 
     public void attemptDrawEdgeBetweenNodes(Circle startNode, Circle endNode) throws IllegalNodesChosenException, GameOverException, CollisionException {
-
         if (!(sproutModel.hasNode(startNode) && sproutModel.hasNode(endNode))) {
             outputExceptionMessage = "One or both nodes does not exist";
             throw new IllegalNodesChosenException(outputExceptionMessage);
@@ -116,7 +115,8 @@ public class SproutController extends Controller {
             outputExceptionMessage = "Nodes cannot have more than 3 connecting edges";
             throw new IllegalNodesChosenException(outputExceptionMessage);
         } else {
-            sproutModel.drawEdgeBetweenNodes(startNode, endNode);
+            sproutModel.drawSmartLine(startNode, endNode);
+            //sproutModel.drawEdgeBetweenNodes(startNode, endNode);
 
             if (sproutModel.hasNoRemainingLegalMoves()) {
                 outputExceptionMessage = "There are no more legal moves. The winner is player " + sproutModel.getCurrentPlayer();

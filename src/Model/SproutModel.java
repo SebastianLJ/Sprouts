@@ -661,5 +661,16 @@ public class SproutModel {
     public void setNodes(List<Node> nodes) {
         this.nodes = nodes;
     }
+
+    public void drawSmartLine(Circle startNode, Circle endNode) {
+        int nameOfStartNode = findNameOfNode(startNode);
+        int nameOfEndNode = findNameOfNode(endNode);
+
+        Node n1 = nodes.get(nameOfStartNode);
+        Node n2 = nodes.get(nameOfEndNode);
+
+        pf.initGrid();
+        edges.add(pf.getPath(n1, n2));
+    }
 }
 
