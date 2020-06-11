@@ -29,11 +29,14 @@ public class SproutModel {
     private Node pathStartNode;
     private boolean leftStartNode = false;
 
+    private PathFinder pf;
+
 
     public SproutModel() {
         edges = new ArrayList<>();
         nodes = new ArrayList<>();
         gameFlow = new GameFlow();
+        pf = new PathFinder(this);
     }
 
     /**
@@ -405,6 +408,9 @@ public class SproutModel {
             path.getElements().clear();
             throw new InvalidNode(endNode);
         }
+        pf.initGrid();
+        System.out.println(pf);
+
     }
 
     public Node getCoordinates(PathElement pe) {
@@ -645,6 +651,14 @@ public class SproutModel {
     public int getCurrentPlayer() {
         return gameFlow.getCurrentPlayer();
 
+    }
+
+    public double getHeight() {
+        return height;
+    }
+
+    public double getWidth() {
+        return width;
     }
 
     public void setNodes(List<Node> nodes) {
