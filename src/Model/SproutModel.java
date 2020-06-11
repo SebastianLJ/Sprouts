@@ -408,9 +408,6 @@ public class SproutModel {
             path.getElements().clear();
             throw new InvalidNode(endNode);
         }
-        pf.initGrid();
-        System.out.println(pf);
-
     }
 
     public Node getCoordinates(PathElement pe) {
