@@ -4,6 +4,7 @@ import Exceptions.CollisionException;
 import Exceptions.InvalidNode;
 import Exceptions.PathForcedToEnd;
 import Exceptions.InvalidPath;
+import javafx.beans.property.BooleanProperty;
 import javafx.geometry.Bounds;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
@@ -502,6 +503,28 @@ public class SproutModel {
         // Check collision between existing canvas edges and most recently drawn path segment
         for (Shape edge : edges) {
             if (Shape.intersect(path, edge).getBoundsInLocal().getWidth() != -1) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Check is generated node collides with any preexisting nodes/paths
+     * @param node generated node
+     * @return true if collision is detected else false
+     * @author Sebastian Lund Jensen
+     */
+    public boolean nodeCollides(Node node) {
+        //check collision with all paths except the path it is generated on
+        for (int i = 0; i < edges.size()-1; i++) {
+            if (Shape.intersect(node.getShape(), edges.get(i)).getBoundsInLocal().getWidth() != -1) {
+                return true;
+            }
+        }
+        //check collision with other nodes
+        for (int i = 0; i < nodes.size(); i++) {
+            if (Shape.intersect(node.getShape(),nodes.get(0).getShape()).getBoundsInLocal().getWidth() != -1) {
                 return true;
             }
         }
