@@ -9,11 +9,15 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Circle;
+import javafx.stage.Stage;
 
 
 import java.io.IOException;
@@ -33,6 +37,8 @@ public class GameController extends SproutController implements Initializable {
     private Circle selectedNode;
     private boolean dragged;
     private boolean isPathInit = false;
+    private Parent mainMenuParent;
+    @FXML public BorderPane borderPane;
 
     public GameController () {
         super();
@@ -59,10 +65,22 @@ public class GameController extends SproutController implements Initializable {
         // Create connection to view that updates view with information from the model
         view = new View(getSproutModel());
 
+
         Platform.runLater(() -> {
+            Stage stage= (Stage) gamePane.getScene().getWindow();
+            stage.setWidth(SettingsController.width);
+            stage.setHeight(SettingsController.height);
+
             // Tell the model how big the game is
-            updateSize(0.0,0.0);
+            //borderPane.setPrefWidth(SettingsController.width);
+            //borderPane.setPrefHeight(SettingsController.height);
+
+            System.out.println("stage height, width: " + stage.getHeight() + ", " + stage.getWidth());
+           // System.out.println("widthGameController: " + width);
+           // System.out.println("heightGameController: " + height);
+            stage.setResizable(false);
             updateSize(gamePane.getWidth(), gamePane.getHeight());
+
 
             try {
                 attemptInitializeGame(numberOfInitialNodes);
@@ -268,4 +286,6 @@ public class GameController extends SproutController implements Initializable {
     void setNumberOfInitialNodes(int numberOfInitialNodes) {
         this.numberOfInitialNodes = numberOfInitialNodes;
     }
+
+
 }

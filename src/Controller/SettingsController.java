@@ -1,8 +1,13 @@
 package Controller;
+import io.cucumber.java.it.Ma;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
@@ -17,15 +22,14 @@ public class SettingsController extends Controller implements Initializable {
 
     @FXML
     private ChoiceBox<String> resolutions = new ChoiceBox<>();
-    private double width;
-    private double height;
-    //@FXML private BorderPane borderPane;
-    private Stage stage;
+    private Parent mainMenuParent;
+    public static int width;
+    public static int height;
+
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
-        resolutions.getItems().add("640x480");
         resolutions.getItems().add("800x600");
         resolutions.getItems().add("1024x768");
         resolutions.getItems().add("1280x960");
@@ -33,35 +37,28 @@ public class SettingsController extends Controller implements Initializable {
         resolutions.getItems().add("1440x1080");
         resolutions.getItems().add("1600x900");
         resolutions.getItems().add("1920x1080");
-        stage=(Stage) resolutions.getScene().getWindow();
 
     }
 
-
-    public void applyResolutionChange(){
+    public void applyResolutionChange() throws IOException {
+        FXMLLoader loader = new FXMLLoader(
+                SproutLauncher.class.getClassLoader().getResource(
+                        "MainMenu.fxml")
+        );
+        mainMenuParent = loader.load();
+        MainMenuController mainMenuController = loader.<MainMenuController> getController();
         String chosenResolution = resolutions.getValue();
         String resArr[] = chosenResolution.split("x");
-        width = Double.parseDouble(resArr[0]);
-        height = Double.parseDouble(resArr[1]);
-        stage.setWidth(width);
-        stage.setHeight(height);
-/*
-Are we allowed to communicate with SproutLauncher or do we have to go through SproutController? (read report)
-        SproutLauncher.stage.setWidth(width);
-        SproutLauncher.stage.setHeight(height);
-*/
+        width=Integer.parseInt(resArr[0]);
+        height=Integer.parseInt(resArr[1]);
 
     }
     public void goToMainMenu(ActionEvent event) throws IOException {
-        changeScene(event, "MainMenu.fxml");
+        Scene mainMenu = new Scene(mainMenuParent);
+        Stage window = (Stage) resolutions.getScene().getWindow();
+        window.setScene(mainMenu);
+        window.show();
     }
 
-    public double getWidth() {
-        return width;
-    }
-
-    public double getHeight() {
-        return height;
-    }
 
 }

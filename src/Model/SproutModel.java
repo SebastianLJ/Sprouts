@@ -48,6 +48,8 @@ public class SproutModel {
         int y;
         Circle circle = new Circle();
         circle.setRadius(Node.radius); // TODO make scalable
+        System.out.println("width: " + width);
+        System.out.println("height: "+ height);
 
         for (int i = 0; i < amount; i++) {
             do {

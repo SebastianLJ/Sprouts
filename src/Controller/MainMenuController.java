@@ -34,6 +34,8 @@ public class MainMenuController extends Controller implements Initializable {
     private boolean promptedForDragGame;
     private boolean promptedForClickGame;
 
+
+
     private DoubleProperty fontSize = new SimpleDoubleProperty(10);
 
     /**
@@ -52,6 +54,7 @@ public class MainMenuController extends Controller implements Initializable {
         GameController controller = new GameController();
         controller.setGameMode(whichGameType);
         controller.setNumberOfInitialNodes(numberOfInitialNodes);
+
 
         loader.setController(controller);
 
@@ -156,4 +159,5 @@ public class MainMenuController extends Controller implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
     }
+
 }
