@@ -124,7 +124,7 @@ public class View {
         FadeTransition fadeTransition = new FadeTransition(Duration.seconds(0.2), edge);
         fadeTransition.setFromValue(1.0);
         fadeTransition.setToValue(0.4);
-        fadeTransition.setCycleCount(2);
+        fadeTransition.setCycleCount(4);
         fadeTransition.setOnFinished(e -> gamePane.getChildren().remove(edge));
         fadeTransition.play();
     }
