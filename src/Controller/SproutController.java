@@ -39,7 +39,6 @@ public class SproutController extends Controller {
     }
 
     public void attemptDrawEdgeBetweenNodes(int startNodeName, int endNodeName) throws IllegalNodesChosenException, GameOverException, CollisionException {
-
         if (!(sproutModel.hasNode(startNodeName) && sproutModel.hasNode(endNodeName))) {
             outputExceptionMessage = "One or both nodes does not exist";
             throw new IllegalNodesChosenException(outputExceptionMessage);
@@ -135,5 +134,9 @@ public class SproutController extends Controller {
 
     public boolean isGameOnGoing() {
         return gameOnGoing;
+    }
+
+    public void setGameOnGoing(boolean value) {
+        gameOnGoing = value;
     }
 }
