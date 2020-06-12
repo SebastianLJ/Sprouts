@@ -66,16 +66,25 @@ public class PathFinder {
     }
 
     public void initGridCircle(Node startNode, Node endNode) {
-        grid = new boolean[gridSize][gridSize];
+        grid = new boolean[(int) model.getHeight()][(int) model.getWidth()];
         Circle shape = new Circle();
-        shape.setRadius(1);
-        for (int i = 0; i < gridSize; i++) {
-            for (int j = 0; j < gridSize; j++) {
-                shape.setCenterX(upScaleX(j));
-                shape.setCenterY(upScaleY(i));
-                grid[i][j] = model.shapeCollides(shape, startNode, endNode);
+        shape.setRadius(4);
+        for (int i = 0; i < grid.length; i++) {
+            //System.out.println("i: " + i +"/" + grid.length);
+            for (int j = 0; j < grid[i].length; j++) {
+                Node node = model.findNodeFromPoint(new Point(j,i));
+                if (node != null && !(node.equals(startNode) || node.equals(endNode))) {
+                    shape.setCenterX(upScaleX(j));
+                    shape.setCenterY(upScaleY(i));
+                    grid[i][j] = model.shapeCollides(shape, startNode, endNode);
+                } else if (node == null) {
+                    shape.setCenterX(upScaleX(j));
+                    shape.setCenterY(upScaleY(i));
+                    grid[i][j] = model.shapeCollides(shape, startNode, endNode);
+                }
             }
         }
+        //System.out.println(this);
     }
 
     /**
@@ -108,19 +117,11 @@ public class PathFinder {
      * @author Noah Bastian Christiansen
      * @author Sebastian Lund Jensen
      */
-    public ArrayList<Point> BFS(Node startNode, Node endNode, int gridSize) {
-        if (gridSize > 100) {
-            return null;
-        }
-        System.out.println(gridSize);
-        this.gridSize = gridSize;
+    public ArrayList<Point> BFS(Node startNode, Node endNode) {
         initGridCircle(startNode, endNode);
-        Point[][] parent = new Point[gridSize][gridSize];
-        boolean[][] visited = new boolean[gridSize][gridSize];
+        Point[][] parent = new Point[(int) model.getHeight()][(int) model.getWidth()];
+        boolean[][] visited = new boolean[(int) model.getHeight()][(int) model.getWidth()];
         Queue<Point> queue = new LinkedList<>();
-
-        //mark end node as false
-        grid[downScaleY(endNode.getY())][downScaleX(endNode.getX())] = false;
 
         visited[downScaleY(startNode.getY())][downScaleX(startNode.getX())] = true;
         queue.add(new Point(downScaleX(startNode.getX()), downScaleY(startNode.getY())));
@@ -166,7 +167,7 @@ public class PathFinder {
 
         }
 
-        return BFS(startNode, endNode, gridSize*2);
+        return null;
     }
 
     /**
@@ -181,7 +182,7 @@ public class PathFinder {
      * @author Sebastian Lund Jensen
      */
     public Path getPath(Node startNode, Node endNode) {
-        ArrayList<Point> pathListReversed = BFS(startNode, endNode, gridSizeStart);
+        ArrayList<Point> pathListReversed = BFS(startNode, endNode);
         if (pathListReversed == null) {
             return new Path();
         }
@@ -198,19 +199,23 @@ public class PathFinder {
     }
 
     private int downScaleX(Double coord) {
-        return (int) (coord / (model.getWidth() / grid.length));
+        //return (int) (coord / (model.getWidth() / grid.length));
+        return (int) (coord/1);
     }
 
     private int downScaleY(Double coord) {
-        return (int) (coord / (model.getHeight() / grid.length));
+        //return (int) (coord / (model.getHeight() / grid.length));
+        return (int) (coord/1);
     }
 
     private int upScaleX(int coord) {
-        return (int) (coord * (model.getWidth() / grid.length));
+        //return (int) (coord * (model.getWidth() / grid.length));
+        return (coord);
     }
 
     private int upScaleY(int coord) {
-        return (int) (coord * (model.getHeight() / grid.length));
+        //return (int) (coord * (model.getHeight() / grid.length));
+        return (coord);
     }
 
     public String toString() {

@@ -525,15 +525,16 @@ public class SproutModel {
      * @author Sebastian Lund Jensen
      */
     public boolean shapeCollides(Shape shape, Node startNode, Node endNode) {
-        //check collision with all paths
-        for (int i = 0; i < edges.size(); i++) {
-            if (shape.getBoundsInLocal().intersects(edges.get(i).getBoundsInLocal())) {
+        //check collision with other nodes
+        for (Node node : nodes) {
+            if (shape.getBoundsInLocal().intersects(node.getShape().getBoundsInLocal()) &&
+                    !(node.getId() == startNode.getId() || node.getId()==endNode.getId())) {
                 return true;
             }
         }
-        //check collision with other nodes
-        for (int i = 0; i < nodes.size(); i++) {
-            if (shape.getBoundsInLocal().intersects(nodes.get(i).getShape().getBoundsInLocal()) && !(i == startNode.getId() || i == endNode.getId())) {
+        //check collision with all paths
+        for (Shape edge : edges) {
+            if (shape.getBoundsInLocal().intersects(edge.getBoundsInLocal())) {
                 return true;
             }
         }
