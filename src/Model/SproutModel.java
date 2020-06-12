@@ -152,16 +152,19 @@ public class SproutModel {
         Node startNode = nodes.get(startNodeName);
         Node endNode = nodes.get(endNodeName);
         Line newLine = getLineBetweenNodeContours(startNode, endNode);
+        Node newNode = newNodeOnLineCollides(startNode, endNode);
 
         if (newEdgeCollidesWithExistingEdges(newLine)) {
             throw new CollisionException("Line collided with an existing line");
         } else if (newEdgeCollidesWithExistingNodes(newLine, startNodeName, endNodeName)) {
             throw new CollisionException("Line collided with an existing node");
+        } else if (newNode == null) {
+            throw new CollisionException("There is nowhere on the line where a new node can be drawn");
         } else {
             // Add edge to gameboard
             edges.add(newLine);
-            // Add new node mid edge
-            addNodeOnLine(startNode, endNode);
+            // Add new node on edge
+            nodes.add(newNode);
             // Update number of connecting edges for the two nodes
             startNode.incNumberOfConnectingEdges(1);
             endNode.incNumberOfConnectingEdges(1);
@@ -278,31 +281,84 @@ public class SproutModel {
     }
 
 
-    /**
-     * Adds a new node on the midpoint of the input line
-     * @author Thea Birk Berger
-     * @param startNode
-     * @param endNode
-     */
-    public void addNodeOnLine(Node startNode, Node endNode) {
+
+    private Node newNodeOnLineCollides(Node startNode, Node endNode) {
 
         double edgeLength = getDistanceBetweenTwoPoints(startNode.getX(), startNode.getY(), endNode.getX(), endNode.getY());
-        double newNodeX = getPointOnLine(startNode.getX(), endNode.getX(), edgeLength/2, edgeLength);
-        double newNodeY = getPointOnLine(startNode.getY(), endNode.getY(), edgeLength/2, edgeLength);
+        double r = startNode.getNodeRadius();
+        double d = edgeLength/2; // Initial node position - line midpoint
+        Node newNode;
 
+        boolean nodeCollision;
 
-        Node newNode = new Node(newNodeX, newNodeY, 2, nodes.size());
-        nodes.add(newNode);
+        do {
+            // Define new node with distance d from the line start point
+            double newNodeX = getPointOnLine(startNode.getX(), endNode.getX(), d, edgeLength);
+            double newNodeY = getPointOnLine(startNode.getY(), endNode.getY(), d, edgeLength);
+            newNode = new Node(newNodeX, newNodeY, 2, nodes.size());
+
+            nodeCollision = false;
+
+            // Traverse through all existing nodes on the gameboard
+            for (Node node : nodes) {
+                // If new node collides with existing node
+                if (twoCirclesCollide(node.getShape(), newNode.getShape())) {
+                    nodeCollision = true;
+
+                    // If collision is with the line end point
+                    if (node.getId() == endNode.getId()) {
+                        // Move new node to beginning of line
+                        d = r + (r/10);
+                    } else {
+                        // Move new node further towards line end point
+                        d += 2 * r + (r/10);
+                    }
+                    break;
+                }
+            }
+
+            // If the new node is back at the line midpoint
+            if (nodeCollision && d >= edgeLength/2 - (r * 2) && d <= edgeLength/2 + (r * 2)) {
+                System.out.println("There is nowhere on the line where a new node can be drawn");
+                return null;
+            }
+
+        } while (nodeCollision);
+
+        return newNode;
     }
 
-    /**
-     * @author Noah Bastian Christiansen
-     * Adds a new node close to the midpoint of a valid line
-     */
-    public void addNodeOnLineDrag(){
-        int size = path.getElements().size();
-        LineTo test = (LineTo) (path.getElements().get(size/2));
-        Node newNode = new Node(test.getX(), test.getY(), 2, nodes.size());
+
+    public void newNodeOnDrawnLineCollides() throws CollisionException {
+
+        int pathSize = path.getElements().size();
+        int d = pathSize/2;
+        Node newNode;
+        boolean collision;
+
+        do {
+            LineTo pathElem = (LineTo) (path.getElements().get(d));
+            newNode = new Node(pathElem.getX(), pathElem.getY(), 2, nodes.size());
+            collision = false;
+
+            // Traverse through all existing nodes on the gameboard
+            for (Node node : nodes) {
+                // If new node collides with existing node
+                if (twoCirclesCollide(node.getShape(), newNode.getShape())) {
+                    collision = true;
+
+                    // Change the position of the new node
+                    d = d+1 < pathSize ? d+1 : 1;
+                    // If the new node is back on the middle of the line
+                    if (d == path.getElements().size()/2) {
+                        throw new CollisionException("There is nowhere on the line where a new node can be drawn");
+                    }
+                    break;
+                }
+            }
+
+        } while (collision);
+
         nodes.add(newNode);
     }
 

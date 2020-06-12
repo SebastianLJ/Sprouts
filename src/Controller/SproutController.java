@@ -75,8 +75,8 @@ public class SproutController extends Controller {
     /**
      * @author Noah Bastian Christiansen
      */
-    public void addNodeOnValidLineDrag(){
-        sproutModel.addNodeOnLineDrag();
+    public void addNodeOnValidLineDrag() throws CollisionException {
+        sproutModel.newNodeOnDrawnLineCollides();
     }
     /**
      * @author Noah Bastian Christiansen

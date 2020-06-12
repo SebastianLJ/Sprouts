@@ -266,6 +266,10 @@ public class GameController extends SproutController implements Initializable {
             dragged = false;
             isPathInit = false;
             view.illegalNode(invalidNode.getNode().getShape());
+        } catch (CollisionException e) {
+            dragged = false;
+            isPathInit = false;
+            System.out.println(e.getMessage());
         }
     }
 
