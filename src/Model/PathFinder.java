@@ -52,20 +52,14 @@ public class PathFinder {
         }
     }
 
-    public void initGridRec(Node startNode, Node endNode) {
-        grid = new boolean[gridSize][gridSize];
-        Rectangle shape = new Rectangle();
-        shape.setWidth(model.getWidth()/gridSize);
-        shape.setHeight(model.getHeight()/gridSize);
-        for (int i = 0; i < gridSize; i++) {
-            for (int j = 0; j < gridSize; j++) {
-                shape.setX(upScaleX(j));
-                shape.setY(upScaleY(i));
-                grid[i][j] = model.shapeCollides(shape, startNode, endNode);
-            }
-        }
-    }
-
+    /**
+     * Grid i build iterating each point in the scaled grid, and checking if there is a point or edge
+     * on or very near to that point. This is done by creating a Circle object with a radius of 0.5 and
+     * checking for collision between the circle and any edges/nodes.
+     * @param startNode user selected start node
+     * @param endNode user selected end node
+     * @author Sebastian Lund Jensen
+     */
     public void initGridCircle(Node startNode, Node endNode) {
         grid = new boolean[gridSize][gridSize];
         Circle shape = new Circle();
@@ -73,6 +67,9 @@ public class PathFinder {
         for (int i = 0; i < grid.length; i++) {
             for (int j = 0; j < grid[i].length; j++) {
                 Node node = model.findNodeFromPoint(new Point(upScaleX(j),upScaleY(i)));
+
+                //if node is inside a node that is not the start node or the end node
+                // else if the node is not inside any point
                 if (node != null && !(node.equals(startNode) || node.equals(endNode))) {
                     shape.setCenterX(upScaleX(j));
                     shape.setCenterY(upScaleY(i));
@@ -117,11 +114,14 @@ public class PathFinder {
      * @author Sebastian Lund Jensen
      */
     public ArrayList<Point> BFS(Node startNode, Node endNode, int gridSize) throws NoValidEdgeException {
+        //any grid size larger than game pane size will not increase precision of grid
         if (gridSize > model.getHeight()) {
             throw new NoValidEdgeException("no valid edge from " + startNode.getId() + " to " + endNode.getId());
         }
+
         this.gridSize = gridSize;
         initGridCircle(startNode, endNode);
+
         Point[][] parent = new Point[gridSize][gridSize];
         boolean[][] visited = new boolean[gridSize][gridSize];
         Queue<Point> queue = new LinkedList<>();
@@ -132,9 +132,12 @@ public class PathFinder {
         while (queue.size() != 0) {
             Point p0 = queue.poll();
 
+            //check if we have reached end node
             if (p0.equals(new Point(downScaleX(endNode.getX()), downScaleY(endNode.getY())))) {
                 return backtrace(parent, startNode, endNode);
             }
+
+            //visits all available points around p0 in a cross shape
             try {
                 if (!grid[p0.getY() - 1][p0.getX()] && !visited[p0.getY() - 1][p0.getX()]) {
                     visited[p0.getY() - 1][p0.getX()] = true;
@@ -170,6 +173,7 @@ public class PathFinder {
 
         }
 
+        //no path is found, so grid size is increased
         return BFS(startNode, endNode, gridSize*2);
     }
 
