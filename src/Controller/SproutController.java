@@ -78,6 +78,10 @@ public class SproutController extends Controller {
     public void addNodeOnValidLineDrag(){
         sproutModel.addNodeOnLineDrag();
     }
+
+    public void addNodeOnValidSmartALine() {
+        sproutModel.addNodeOnSmartClick();
+    }
     /**
      * @author Noah Bastian Christiansen
      */

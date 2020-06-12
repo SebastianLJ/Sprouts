@@ -113,6 +113,7 @@ public class GameController extends SproutController implements Initializable {
         } else {
             try {
                 attemptDrawEdgeBetweenNodes(selectedNode, circle);
+                addNodeOnValidSmartALine();
                 updateCanvasClick();
             } catch (IllegalNodesChosenException e) {
                 view.illegalEdgeAnimation(gamePane, createEdge(selectedNode, circle));

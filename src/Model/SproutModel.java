@@ -10,7 +10,6 @@ import javafx.scene.input.MouseEvent;
 
 import java.util.*;
 
-
 public class SproutModel {
     private static final int DISTANCE_BETWEEN_POINTS = 20;
     private static final int DISTANCE_FROM_BORDER = 20;
@@ -171,6 +170,20 @@ public class SproutModel {
         nodes.set(endNodeName, endNode);
     }
 
+    public void drawSmartLine(Circle startNodeCircle, Circle endNodeCircle) throws NoValidEdgeException {
+        int nameOfStartNode = findNameOfNode(startNodeCircle);
+        int nameOfEndNode = findNameOfNode(endNodeCircle);
+
+        Node startNode = nodes.get(nameOfStartNode);
+        Node endNode = nodes.get(nameOfEndNode);
+
+
+        edges.add(pf.getPath(startNode, endNode));
+        startNode.incNumberOfConnectingEdges(1);
+        endNode.incNumberOfConnectingEdges(1);
+
+    }
+
     /**
      * @author Thea Birk Berger
      * Adds a cicular edge to the gameboard - connecting a node to itself
@@ -272,7 +285,6 @@ public class SproutModel {
 
         return newCircle;
     }
-
     public void addNodeOnLine(Line edge) {
         double edgeIntervalX = Math.abs(edge.getEndX() - edge.getStartX());
         double edgeIntervalY = Math.abs(edge.getEndY() - edge.getStartY());
@@ -283,11 +295,20 @@ public class SproutModel {
         Node newNode = new Node(newNodeX, newNodeY, 2, nodes.size());
         nodes.add(newNode);
     }
+
     /**
      * @author Noah Bastian Christiansen
      * Adds a new node close to the midpoint of a valid line
      */
     public void addNodeOnLineDrag(){
+        int size = path.getElements().size();
+        LineTo test = (LineTo) (path.getElements().get(size/2));
+        Node newNode = new Node(test.getX(), test.getY(), 2, nodes.size());
+        nodes.add(newNode);
+    }
+
+    public void addNodeOnSmartClick() {
+        path = (Path)(edges.get(edges.size()-1));
         int size = path.getElements().size();
         LineTo test = (LineTo) (path.getElements().get(size/2));
         Node newNode = new Node(test.getX(), test.getY(), 2, nodes.size());
@@ -467,7 +488,7 @@ public class SproutModel {
                 double x = (edgeCoeffs[1]-attemptCoeffs[1])/(attemptCoeffs[0]-edgeCoeffs[0]);
                 double y = attemptCoeffs[0] * x + attemptCoeffs[1];
                 collision = collision || attemptedEdge.getBoundsInLocal().contains(x,y) && edge.getBoundsInLocal().contains(x,y);
-            // If either attempted or existing edge is a circle
+                // If either attempted or existing edge is a circle
             } else {
                 collision = collision || edge.intersects(attemptedEdge.getLayoutBounds());
             }
@@ -552,7 +573,6 @@ public class SproutModel {
     public void setWidth(double width) {
         this.width = width;
     }
-
     public int getNumberOfEdges(Circle nodeToFind) {
         for (Node node : nodes) {
             if (node.getShape() == nodeToFind) {
@@ -574,6 +594,7 @@ public class SproutModel {
         }
         return null;
     }
+
     /**
      * @param nodeToFind The circle whose name we want
      * @author Noah Bastian Christiansen
@@ -664,17 +685,6 @@ public class SproutModel {
     public void setNodes(List<Node> nodes) {
         this.nodes = nodes;
     }
-
-    public void drawSmartLine(Circle startNode, Circle endNode) throws NoValidEdgeException {
-        int nameOfStartNode = findNameOfNode(startNode);
-        int nameOfEndNode = findNameOfNode(endNode);
-
-        Node n1 = nodes.get(nameOfStartNode);
-        Node n2 = nodes.get(nameOfEndNode);
-
-
-        edges.add(pf.getPath(n1, n2));
-
-    }
 }
+
 

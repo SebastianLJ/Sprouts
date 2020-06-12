@@ -69,7 +69,7 @@ public class PathFinder {
     public void initGridCircle(Node startNode, Node endNode) {
         grid = new boolean[gridSize][gridSize];
         Circle shape = new Circle();
-        shape.setRadius(1);
+        shape.setRadius(0.5);
         for (int i = 0; i < grid.length; i++) {
             for (int j = 0; j < grid[i].length; j++) {
                 Node node = model.findNodeFromPoint(new Point(upScaleX(j),upScaleY(i)));
@@ -84,7 +84,6 @@ public class PathFinder {
                 }
             }
         }
-        System.out.println(this);
     }
 
     /**
@@ -120,7 +119,7 @@ public class PathFinder {
     public ArrayList<Point> BFS(Node startNode, Node endNode, int gridSize) throws NoValidEdgeException {
         if (gridSize > model.getWidth()) {
             //throw new NoValidEdgeException("No valid edge");
-            System.out.println("no valid edge");
+            System.out.println("no valid edge at a grid size of " + gridSize/2);
             return null;
         }
         this.gridSize = gridSize;
@@ -195,7 +194,7 @@ public class PathFinder {
         System.out.println(pathListReversed + "\n");
         Path path = new Path();
         path.getElements().add(new MoveTo(startNode.getX(), startNode.getY()));
-        for (int i = pathListReversed.size() - 1; i >= 0; i--) {
+        for (int i = pathListReversed.size() - 2; i >= 1; i--) {
             Point p = pathListReversed.get(i);
             path.getElements().add(new LineTo(upScaleX(p.getX()), upScaleY(p.getY())));
         }
