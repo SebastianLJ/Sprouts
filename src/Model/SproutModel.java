@@ -520,20 +520,20 @@ public class SproutModel {
 
     /**
      * Check is generated node collides with any preexisting nodes/paths
-     * @param node generated node
+     * @param shape generated node
      * @return true if collision is detected else false
      * @author Sebastian Lund Jensen
      */
-    public boolean nodeCollides(Node node) {
-        //check collision with all paths except the path it is generated on
-        for (int i = 0; i < edges.size()-1; i++) {
-            if (Shape.intersect(node.getShape(), edges.get(i)).getBoundsInLocal().getWidth() != -1) {
+    public boolean shapeCollides(Shape shape, Node startNode, Node endNode) {
+        //check collision with all paths
+        for (int i = 0; i < edges.size(); i++) {
+            if (shape.getBoundsInLocal().intersects(edges.get(i).getBoundsInLocal())) {
                 return true;
             }
         }
         //check collision with other nodes
         for (int i = 0; i < nodes.size(); i++) {
-            if (Shape.intersect(node.getShape(),nodes.get(0).getShape()).getBoundsInLocal().getWidth() != -1) {
+            if (shape.getBoundsInLocal().intersects(nodes.get(i).getShape().getBoundsInLocal()) && !(i == startNode.getId() || i == endNode.getId())) {
                 return true;
             }
         }

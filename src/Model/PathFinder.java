@@ -7,8 +7,9 @@ import java.util.*;
 
 public class PathFinder {
     private SproutModel model;
-    private int gridSize = 50;
-    private boolean[][] grid = new boolean[gridSize][gridSize];
+    private int gridSizeStart = 30;
+    private int gridSize = gridSizeStart;
+    private boolean[][] grid;
 
     public PathFinder(SproutModel model) {
         this.model = model;
@@ -50,6 +51,33 @@ public class PathFinder {
         }
     }
 
+    public void initGridRec(Node startNode, Node endNode) {
+        grid = new boolean[gridSize][gridSize];
+        Rectangle shape = new Rectangle();
+        shape.setWidth(model.getWidth()/gridSize);
+        shape.setHeight(model.getHeight()/gridSize);
+        for (int i = 0; i < gridSize; i++) {
+            for (int j = 0; j < gridSize; j++) {
+                shape.setX(upScaleX(j));
+                shape.setY(upScaleY(i));
+                grid[i][j] = model.shapeCollides(shape, startNode, endNode);
+            }
+        }
+    }
+
+    public void initGridCircle(Node startNode, Node endNode) {
+        grid = new boolean[gridSize][gridSize];
+        Circle shape = new Circle();
+        shape.setRadius(1);
+        for (int i = 0; i < gridSize; i++) {
+            for (int j = 0; j < gridSize; j++) {
+                shape.setCenterX(upScaleX(j));
+                shape.setCenterY(upScaleY(i));
+                grid[i][j] = model.shapeCollides(shape, startNode, endNode);
+            }
+        }
+    }
+
     /**
      * Takes parent list from BFS to backtrack path from start point to end point
      *
@@ -81,12 +109,12 @@ public class PathFinder {
      * @author Sebastian Lund Jensen
      */
     public ArrayList<Point> BFS(Node startNode, Node endNode, int gridSize) {
-        if (gridSize > model.getWidth()) {
+        if (gridSize > 100) {
             return null;
         }
-        System.out.println("grid size: " + gridSize);
+        System.out.println(gridSize);
         this.gridSize = gridSize;
-        initGrid();
+        initGridCircle(startNode, endNode);
         Point[][] parent = new Point[gridSize][gridSize];
         boolean[][] visited = new boolean[gridSize][gridSize];
         Queue<Point> queue = new LinkedList<>();
@@ -138,8 +166,7 @@ public class PathFinder {
 
         }
 
-        //return BFS(startNode, endNode, gridSize*2);
-        return null;
+        return BFS(startNode, endNode, gridSize*2);
     }
 
     /**
@@ -154,8 +181,7 @@ public class PathFinder {
      * @author Sebastian Lund Jensen
      */
     public Path getPath(Node startNode, Node endNode) {
-        initGrid();
-        ArrayList<Point> pathListReversed = BFS(startNode, endNode, gridSize);
+        ArrayList<Point> pathListReversed = BFS(startNode, endNode, gridSizeStart);
         if (pathListReversed == null) {
             return new Path();
         }
@@ -165,7 +191,6 @@ public class PathFinder {
         for (int i = pathListReversed.size() - 1; i >= 0; i--) {
             Point p = pathListReversed.get(i);
             path.getElements().add(new LineTo(upScaleX(p.getX()), upScaleY(p.getY())));
-            grid[p.getY()][p.getX()] = true;
         }
         path.getElements().add(new LineTo(endNode.getX(), endNode.getY()));
         return path;
