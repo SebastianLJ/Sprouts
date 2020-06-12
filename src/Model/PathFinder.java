@@ -118,9 +118,7 @@ public class PathFinder {
      */
     public ArrayList<Point> BFS(Node startNode, Node endNode, int gridSize) throws NoValidEdgeException {
         if (gridSize > model.getWidth()) {
-            //throw new NoValidEdgeException("No valid edge");
-            System.out.println("no valid edge at a grid size of " + gridSize/2);
-            return null;
+            throw new NoValidEdgeException("no valid edge from " + startNode.getId() + " to " + endNode.getId());
         }
         this.gridSize = gridSize;
         initGridCircle(startNode, endNode);

@@ -38,7 +38,7 @@ public class SproutController extends Controller {
         }
     }
 
-    public void attemptDrawEdgeBetweenNodes(int startNodeName, int endNodeName) throws IllegalNodesChosenException, GameOverException, CollisionException {
+    public void attemptDrawEdgeBetweenNodes(int startNodeName, int endNodeName) throws IllegalNodesChosenException, GameOverException, CollisionException, NoValidEdgeException {
         if (!(sproutModel.hasNode(startNodeName) && sproutModel.hasNode(endNodeName))) {
             outputExceptionMessage = "One or both nodes does not exist";
             throw new IllegalNodesChosenException(outputExceptionMessage);
@@ -79,7 +79,7 @@ public class SproutController extends Controller {
         sproutModel.addNodeOnLineDrag();
     }
 
-    public void addNodeOnValidSmartALine() {
+    public void addNodeOnValidSmartALine() throws NoValidEdgeException {
         sproutModel.addNodeOnSmartClick();
     }
     /**
@@ -110,7 +110,7 @@ public class SproutController extends Controller {
         return sproutModel.getNodes();
     }
 
-    public void attemptDrawEdgeBetweenNodes(Circle startNode, Circle endNode) throws IllegalNodesChosenException, GameOverException, CollisionException {
+    public void attemptDrawEdgeBetweenNodes(Circle startNode, Circle endNode) throws IllegalNodesChosenException, GameOverException, CollisionException, NoValidEdgeException {
         if (!(sproutModel.hasNode(startNode) && sproutModel.hasNode(endNode))) {
             outputExceptionMessage = "One or both nodes does not exist";
             throw new IllegalNodesChosenException(outputExceptionMessage);
@@ -119,8 +119,8 @@ public class SproutController extends Controller {
             outputExceptionMessage = "Nodes cannot have more than 3 connecting edges";
             throw new IllegalNodesChosenException(outputExceptionMessage);
         } else {
-            try {
-                sproutModel.drawSmartLine(startNode, endNode);
+
+            sproutModel.drawSmartLine(startNode, endNode);
 
             //sproutModel.drawEdgeBetweenNodes(startNode, endNode);
             if (sproutModel.hasNoRemainingLegalMoves()) {
@@ -130,9 +130,7 @@ public class SproutController extends Controller {
             } else {
                 sproutModel.changeTurns();
             }
-            } catch (NoValidEdgeException e) {
-                System.out.println(e.getMessage());
-            }
+
         }
     }
 

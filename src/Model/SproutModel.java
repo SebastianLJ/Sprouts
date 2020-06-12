@@ -307,12 +307,30 @@ public class SproutModel {
         nodes.add(newNode);
     }
 
-    public void addNodeOnSmartClick() {
+    public void addNodeOnSmartClick() throws NoValidEdgeException {
         path = (Path)(edges.get(edges.size()-1));
         int size = path.getElements().size();
+
         LineTo test = (LineTo) (path.getElements().get(size/2));
         Node newNode = new Node(test.getX(), test.getY(), 2, nodes.size());
+
         nodes.add(newNode);
+    }
+
+    public void addNodeOnSmartClickWithCollision() throws NoValidEdgeException {
+        double[] nodePercentPriority = {0.50, 0.40, 0.60, 0.30, 0.70};
+        path = (Path)(edges.get(edges.size()-1));
+        int size = path.getElements().size();
+
+        for (double aNodePercentPriority : nodePercentPriority) {
+            LineTo test = (LineTo) (path.getElements().get((int) (size * aNodePercentPriority)));
+            Node newNode = new Node(test.getX(), test.getY(), 2, nodes.size());
+            if (!nodeCollides(newNode)) {
+                nodes.add(newNode);
+                return;
+            }
+        }
+        throw new NoValidEdgeException("no room for node to be generated");
     }
 
     public void addNodeOnCircle(Circle edge, double originNodeX, double originNodeY) {
@@ -536,8 +554,8 @@ public class SproutModel {
     }
 
     /**
-     * Check is generated node collides with any preexisting nodes/paths
-     * @param shape generated node
+     * Checks if shape collide with any edges or nodes
+     * @param shape object to collision check
      * @return true if collision is detected else false
      * @author Sebastian Lund Jensen
      */
@@ -552,6 +570,28 @@ public class SproutModel {
         //check collision with all paths
         for (Shape edge : edges) {
             if (shape.getBoundsInLocal().intersects(edge.getBoundsInLocal())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Checks if node collides with any edges or nodes expect the newest edge
+     * @param nNode generated node
+     * @return true if collision is detected else false
+     * @author Sebastian Lund Jensen
+     */
+    public boolean nodeCollides(Node nNode) {
+        //check collision with other nodes
+        for (Node node : nodes) {
+            if (nNode.getShape().getBoundsInLocal().intersects(node.getShape().getBoundsInLocal())) {
+                return true;
+            }
+        }
+        //check collision with all paths
+        for (int i = 0; i < edges.size() - 2; i++) {
+            if (nNode.getShape().getBoundsInLocal().intersects(edges.get(i).getBoundsInLocal())) {
                 return true;
             }
         }
