@@ -1,6 +1,13 @@
 package Exceptions;
 
-public class InvalidPath extends Exception {
+import javafx.scene.shape.Path;
 
-    public InvalidPath(String errMsg) {super(errMsg);}
+public class InvalidPath extends Exception {
+    Path path;
+
+    public InvalidPath(Path path) {this.path = path;}
+
+    public Path getPath() {
+        return path;
+    }
 }

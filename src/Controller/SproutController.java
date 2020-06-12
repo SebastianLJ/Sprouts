@@ -39,7 +39,6 @@ public class SproutController extends Controller {
     }
 
     public void attemptDrawEdgeBetweenNodes(int startNodeName, int endNodeName) throws IllegalNodesChosenException, GameOverException, CollisionException {
-
         if (!(sproutModel.hasNode(startNodeName) && sproutModel.hasNode(endNodeName))) {
             outputExceptionMessage = "One or both nodes does not exist";
             throw new IllegalNodesChosenException(outputExceptionMessage);
@@ -55,7 +54,7 @@ public class SproutController extends Controller {
      * @author Noah Bastian Christiansen
      * @param mousePressed
      */
-    public void setupDrawing(MouseEvent mousePressed) throws InvalidPath {
+    public void setupDrawing(MouseEvent mousePressed) throws InvalidNode {
         sproutModel.initializePath(mousePressed);
 
     }
@@ -64,13 +63,13 @@ public class SproutController extends Controller {
      * @author Noah Bastian Christiansen
      * @param mouseDragged
      */
-    public void beginDrawing(MouseEvent mouseDragged) throws PathForcedToEnd, InvalidPath {
+    public void beginDrawing(MouseEvent mouseDragged) throws PathForcedToEnd, InvalidPath, CollisionException {
         sproutModel.drawPath(mouseDragged);
     }
     /**
      * @author Noah Bastian Christiansen
      */
-    public void completeDrawing(MouseEvent mouseEvent) throws InvalidPath {
+    public void completeDrawing(MouseEvent mouseEvent) throws InvalidNode, InvalidPath {
         sproutModel.finishPath(mouseEvent);
     }
     /**
@@ -135,5 +134,9 @@ public class SproutController extends Controller {
 
     public boolean isGameOnGoing() {
         return gameOnGoing;
+    }
+
+    public void setGameOnGoing(boolean value) {
+        gameOnGoing = value;
     }
 }
