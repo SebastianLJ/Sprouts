@@ -150,6 +150,7 @@ public class SproutModel {
      * @throws CollisionException If the line drawn collides with itself or existing lines
      */
     public void drawLineBetweenNodes(int startNodeName, int endNodeName) throws CollisionException {
+        System.out.println("w: " + width + ", h:" + height);
         Node startNode = nodes.get(startNodeName);
         Node endNode = nodes.get(endNodeName);
         Path path = pf.getPath(startNode, endNode);
@@ -674,7 +675,6 @@ public class SproutModel {
         Node n1 = nodes.get(nameOfStartNode);
         Node n2 = nodes.get(nameOfEndNode);
 
-        pf.initGrid();
         edges.add(pf.getPath(n1, n2));
     }
 }

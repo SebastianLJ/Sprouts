@@ -67,7 +67,6 @@ public class PathFinder {
         while (!path.get(path.size() - 1).equals(new Point(downScaleX(startNode.getX()), downScaleY(startNode.getY())))) {
             path.add(parent[(path.get(path.size() - 1)).getY()][path.get(path.size() - 1).getX()]);
         }
-        //System.out.println("path: " + path.toString());
         return path;
     }
 
@@ -81,7 +80,13 @@ public class PathFinder {
      * @author Noah Bastian Christiansen
      * @author Sebastian Lund Jensen
      */
-    public ArrayList<Point> BFS(Node startNode, Node endNode) {
+    public ArrayList<Point> BFS(Node startNode, Node endNode, int gridSize) {
+        if (gridSize > model.getWidth()) {
+            return null;
+        }
+        System.out.println("grid size: " + gridSize);
+        this.gridSize = gridSize;
+        initGrid();
         Point[][] parent = new Point[gridSize][gridSize];
         boolean[][] visited = new boolean[gridSize][gridSize];
         Queue<Point> queue = new LinkedList<>();
@@ -133,8 +138,7 @@ public class PathFinder {
 
         }
 
-        //System.out.println("Visited \n" + print2dArr(visited));
-
+        //return BFS(startNode, endNode, gridSize*2);
         return null;
     }
 
@@ -151,13 +155,17 @@ public class PathFinder {
      */
     public Path getPath(Node startNode, Node endNode) {
         initGrid();
-        System.out.println(this);
-        ArrayList<Point> pathListReversed = BFS(startNode, endNode);
+        ArrayList<Point> pathListReversed = BFS(startNode, endNode, gridSize);
+        if (pathListReversed == null) {
+            return new Path();
+        }
+        System.out.println(pathListReversed + "\n");
         Path path = new Path();
         path.getElements().add(new MoveTo(startNode.getX(), startNode.getY()));
         for (int i = pathListReversed.size() - 1; i >= 0; i--) {
             Point p = pathListReversed.get(i);
             path.getElements().add(new LineTo(upScaleX(p.getX()), upScaleY(p.getY())));
+            grid[p.getY()][p.getX()] = true;
         }
         path.getElements().add(new LineTo(endNode.getX(), endNode.getY()));
         return path;
