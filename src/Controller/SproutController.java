@@ -115,15 +115,19 @@ public class SproutController extends Controller {
             outputExceptionMessage = "Nodes cannot have more than 3 connecting edges";
             throw new IllegalNodesChosenException(outputExceptionMessage);
         } else {
-            sproutModel.drawSmartLine(startNode, endNode);
-            //sproutModel.drawEdgeBetweenNodes(startNode, endNode);
+            try {
+                sproutModel.drawSmartLine(startNode, endNode);
 
+            //sproutModel.drawEdgeBetweenNodes(startNode, endNode);
             if (sproutModel.hasNoRemainingLegalMoves()) {
                 outputExceptionMessage = "There are no more legal moves. The winner is player " + sproutModel.getCurrentPlayer();
                 gameOnGoing = false;
                 throw new GameOverException(outputExceptionMessage);
             } else {
                 sproutModel.changeTurns();
+            }
+            } catch (NoValidEdgeException e) {
+                System.out.println(e.getMessage());
             }
         }
     }

@@ -1,9 +1,6 @@
 package Model;
 
-import Exceptions.CollisionException;
-import Exceptions.InvalidNode;
-import Exceptions.PathForcedToEnd;
-import Exceptions.InvalidPath;
+import Exceptions.*;
 import javafx.beans.property.BooleanProperty;
 import javafx.geometry.Bounds;
 import javafx.scene.paint.Color;
@@ -153,7 +150,6 @@ public class SproutModel {
         System.out.println("w: " + width + ", h:" + height);
         Node startNode = nodes.get(startNodeName);
         Node endNode = nodes.get(endNodeName);
-        Path path = pf.getPath(startNode, endNode);
 
         /*if (edgesCollides(newLine)) {
             throw new CollisionException("Line collided with an exisiting line");
@@ -669,14 +665,16 @@ public class SproutModel {
         this.nodes = nodes;
     }
 
-    public void drawSmartLine(Circle startNode, Circle endNode) {
+    public void drawSmartLine(Circle startNode, Circle endNode) throws NoValidEdgeException {
         int nameOfStartNode = findNameOfNode(startNode);
         int nameOfEndNode = findNameOfNode(endNode);
 
         Node n1 = nodes.get(nameOfStartNode);
         Node n2 = nodes.get(nameOfEndNode);
 
+
         edges.add(pf.getPath(n1, n2));
+
     }
 }
 
