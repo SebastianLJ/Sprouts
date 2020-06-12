@@ -123,6 +123,7 @@ public class FileSimulationController extends SproutController implements Initia
         // Reset simulator
         timeline.stop();
         legalGame = true;
+        setGameOnGoing(false);
         i = 0;
         timeline.setCycleCount(moves.size());
         timeline.play();

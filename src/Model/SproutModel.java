@@ -1,8 +1,10 @@
 package Model;
 
 import Exceptions.CollisionException;
+import Exceptions.InvalidNode;
 import Exceptions.PathForcedToEnd;
 import Exceptions.InvalidPath;
+import javafx.beans.property.BooleanProperty;
 import javafx.geometry.Bounds;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
@@ -27,11 +29,14 @@ public class SproutModel {
     private Node pathStartNode;
     private boolean leftStartNode = false;
 
+    private PathFinder pf;
+
 
     public SproutModel() {
         edges = new ArrayList<>();
         nodes = new ArrayList<>();
         gameFlow = new GameFlow();
+        pf = new PathFinder(this);
     }
 
     /**
@@ -342,17 +347,15 @@ public class SproutModel {
      * @author Noah Bastian Christiansen & Sebastian Lund Jensen
      * Sets up path object and sets coordinates for starting point of drawing (the position on the pane where the click occured)
      */
-    public void initializePath(MouseEvent mouseClick) throws InvalidPath {
+    public void initializePath(MouseEvent mouseClick) throws InvalidNode {
         isCollided = false;
         leftStartNode = false;
         point = new Point((int) mouseClick.getX(), (int) mouseClick.getY());
         pathStartNode = findNodeFromPoint(point);
         if (pathStartNode != null && pathStartNode.getNumberOfConnectingEdges() < 3) {
             path = new Path();
-            path.getElements().add(new MoveTo(point.getX(), point.getY()));
-
         } else {
-            throw new InvalidPath("The start node has too many connecting edges, or the path does not end in node");
+            throw new InvalidNode(pathStartNode);
         }
     }
 
@@ -363,32 +366,37 @@ public class SproutModel {
      * The method performs subcalls to pathCollides() to ensure the drawn line is not intersecting with itself or other lines.
      * The current drawing is removed if it violates the rules.
      */
-    public void drawPath(MouseEvent mouseDrag) throws PathForcedToEnd, InvalidPath {
-        if(isCollided){
-            System.out.println("you collided draw somewhere else");
+    public void drawPath(MouseEvent mouseDrag) throws PathForcedToEnd, InvalidPath, CollisionException {
+        Path pathTmp = new Path();
+        pathTmp.getElements().add(new MoveTo(point.getX(), point.getY()));
+
+        point = new Point((int) mouseDrag.getX(), (int) mouseDrag.getY());
+        boolean isPointInsideNodeTemp = isPointInsideNode(point);
+
+        //checks if point is inside the boundaries
+        if (point.getX() < 0 || point.getX() > width || point.getY() < 0 || point.getY() > height) {
+            throw new InvalidPath(path);
         }
-        else {
-            Path pathTmp = new Path();
-            pathTmp.getElements().add(new MoveTo(point.getX(), point.getY()));
-            point = new Point((int) mouseDrag.getX(), (int) mouseDrag.getY());
-            if (point.getX() < 0 || point.getX() > width || point.getY() < 0 || point.getY() > height) {
-                throw new InvalidPath("Line left the game pane");
-            }
-            if (!isPointInsideNode(point)) {
-                leftStartNode = true;
-            }
-            pathTmp.getElements().add(new LineTo(point.getX(), point.getY()));
-            if (pathCollides(pathTmp)){
-                path.getElements().clear();
-                pathTmp.getElements().clear();
-                isCollided = true;
-                System.out.println("collision at " + point.getX() + ", " + point.getY());
-            } else if (leftStartNode && isPointInsideNode(point)) {
-                throw new PathForcedToEnd("Path forcefully ended at: " + point.getX() + ", " + point.getY());
-            } else {
-                path.getElements().add(new LineTo(point.getX(), point.getY()));
-                pathTmp.getElements().clear();
-            }
+
+        if (!isPointInsideNodeTemp && !leftStartNode) {
+            leftStartNode = true;
+            path.getElements().add(new MoveTo(point.getX(), point.getY()));
+        } else if (isPointInsideNodeTemp && leftStartNode) {
+            throw new PathForcedToEnd("Path forcefully ended at: " + point.getX() + ", " + point.getY());
+        }
+
+        pathTmp.getElements().add(new LineTo(point.getX(), point.getY()));
+
+        if (pathCollides(pathTmp)){
+            Path exceptionPath = new Path(List.copyOf(path.getElements()));
+            path.getElements().clear();
+            pathTmp.getElements().clear();
+            isCollided = true;
+            System.out.println("collision at " + point.getX() + ", " + point.getY());
+            throw new CollisionException(exceptionPath);
+        } else if (leftStartNode && !isPointInsideNodeTemp) {
+            path.getElements().add(new LineTo(point.getX(), point.getY()));
+            pathTmp.getElements().clear();
         }
     }
 
@@ -396,19 +404,27 @@ public class SproutModel {
      * @author Noah Bastian Christiansen & Sebastian Lund Jensen
      * If turn was ended successfully then the drawn line is added to list of valid lines
      */
-    public void finishPath(MouseEvent mouseEvent) throws InvalidPath {
+    public void finishPath(MouseEvent mouseEvent) throws InvalidPath, InvalidNode {
         Point point = new Point((int) mouseEvent.getX(), (int) mouseEvent.getY());
         Node endNode = findNodeFromPoint(point);
         pathStartNode.incNumberOfConnectingEdges(1);
         if (leftStartNode && endNode != null && endNode.getNumberOfConnectingEdges() < 3) {
             endNode.incNumberOfConnectingEdges(1);
             edges.add(path);
+        } else if (endNode == null) {
+            pathStartNode.decNumberOfConnectingEdges(1);
+            Path tempPath = new Path(List.copyOf(path.getElements()));
+            path.getElements().clear();
+            throw new InvalidPath(tempPath);
         } else {
             //removes path from model
             pathStartNode.decNumberOfConnectingEdges(1);
             path.getElements().clear();
-            throw new InvalidPath("Invalid path was drawn");
+            throw new InvalidNode(endNode);
         }
+        pf.initGrid();
+        System.out.println(pf);
+
     }
 
     /**
@@ -615,6 +631,28 @@ public class SproutModel {
         return false;
     }
 
+    /**
+     * Check is generated node collides with any preexisting nodes/paths
+     * @param node generated node
+     * @return true if collision is detected else false
+     * @author Sebastian Lund Jensen
+     */
+    public boolean nodeCollides(Node node) {
+        //check collision with all paths except the path it is generated on
+        for (int i = 0; i < edges.size()-1; i++) {
+            if (Shape.intersect(node.getShape(), edges.get(i)).getBoundsInLocal().getWidth() != -1) {
+                return true;
+            }
+        }
+        //check collision with other nodes
+        for (int i = 0; i < nodes.size(); i++) {
+            if (Shape.intersect(node.getShape(),nodes.get(0).getShape()).getBoundsInLocal().getWidth() != -1) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public Path getPath() {
         return path;
     }
@@ -737,6 +775,14 @@ public class SproutModel {
     public int getCurrentPlayer() {
         return gameFlow.getCurrentPlayer();
 
+    }
+
+    public double getHeight() {
+        return height;
+    }
+
+    public double getWidth() {
+        return width;
     }
 
     public void setNodes(List<Node> nodes) {
