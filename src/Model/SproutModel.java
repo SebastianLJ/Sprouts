@@ -4,7 +4,6 @@ import Exceptions.CollisionException;
 import Exceptions.InvalidNode;
 import Exceptions.PathForcedToEnd;
 import Exceptions.InvalidPath;
-import javafx.beans.property.BooleanProperty;
 import javafx.geometry.Bounds;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
