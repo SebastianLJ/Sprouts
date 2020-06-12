@@ -129,6 +129,8 @@ public class GameController extends SproutController implements Initializable {
                 theUserHasSelectedANode = false;
                 System.out.println("Collision!");
             } catch (NoValidEdgeException e) {
+                view.deselectNode(selectedNode);
+                theUserHasSelectedANode = false;
                 System.out.println(e.getMessage());
             }
         }

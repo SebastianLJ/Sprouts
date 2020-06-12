@@ -117,7 +117,7 @@ public class PathFinder {
      * @author Sebastian Lund Jensen
      */
     public ArrayList<Point> BFS(Node startNode, Node endNode, int gridSize) throws NoValidEdgeException {
-        if (gridSize > model.getWidth()) {
+        if (gridSize > model.getHeight()) {
             throw new NoValidEdgeException("no valid edge from " + startNode.getId() + " to " + endNode.getId());
         }
         this.gridSize = gridSize;
