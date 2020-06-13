@@ -1,6 +1,5 @@
 package Controller;
 
-import Exceptions.InvalidFileSyntax;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -10,15 +9,15 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.input.MouseEvent;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Objects;
 import java.util.ResourceBundle;
 
-public class EnterFileNameController implements Initializable {
+public class EnterFileNameController extends Controller implements Initializable {
     @FXML public TextField filenameInputField;
     @FXML public Label fileResponseLabel;
 
@@ -45,7 +44,7 @@ public class EnterFileNameController implements Initializable {
 
         Scene fileSimulationScene = new Scene(fileSimulationParent);
 
-        String filename = filenameInputField.getText() + ".txt";
+        String filename = filenameInputField.getText();
 
         FileSimulationController fileSimulationController =
                 loader.getController();
@@ -75,23 +74,32 @@ public class EnterFileNameController implements Initializable {
     }
 
     /**
+     * @author Noah Bastian Christiansen
+     * Let's user choose a file to simulate by clicking the button choose file.
+     * Sets textfield to be the path of the chosen file.
+     * @param event The mouse click on the button
+     */
+
+    public void chooseFile(ActionEvent event){
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Open Resource File");
+        Stage window = (Stage)((Node) event.getSource()).getScene().getWindow();
+        File chosenFile = fileChooser.showOpenDialog(window);
+        try {
+            filenameInputField.setText(chosenFile.getAbsolutePath());
+        }
+        catch (NullPointerException e){
+            System.out.println("No file chosen");
+        }
+    }
+
+    /**
      * @author Emil Sommer Desler
      * Return the user to the main menu when clicking the button "Main Menu" in the application.
      * @param event The mouse click on the button.
      * @throws IOException Thrown by the FXMLLoader if the fxml document is not present.
      */
-    public void goToMainMenu(MouseEvent event) throws IOException {
-        Parent mainMenuParent = FXMLLoader.load(
-                Objects.requireNonNull(SproutLauncher.class.getClassLoader().getResource(
-                        "MainMenu.fxml")
-                ));
-
-        Scene mainMenuScene = new Scene(mainMenuParent);
-
-        //This line gets the Stage information
-        Stage window = (Stage)((Node) event.getSource()).getScene().getWindow();
-
-        window.setScene(mainMenuScene);
-        window.show();
+    public void goToMainMenu(ActionEvent event) throws IOException {
+        changeScene(event, "MainMenu.fxml");
     }
 }

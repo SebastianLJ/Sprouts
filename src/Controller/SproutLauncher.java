@@ -1,7 +1,6 @@
 package Controller;
 
-import Exceptions.GameOverException;
-import Exceptions.IllegalNodesChosenException;
+
 import Exceptions.NumberOfInitialNodesException;
 import javafx.application.Application;
 import javafx.beans.binding.Bindings;
@@ -34,20 +33,20 @@ public class SproutLauncher extends Application {
     public void start(Stage stage) throws IOException {
         stage.setTitle("Sprouts");
 
+        // Gets the screen size of the users computer
+        Rectangle2D screenBounds = Screen.getPrimary().getBounds();
+
         FXMLLoader fxmlLoader = new FXMLLoader(Objects.requireNonNull(SproutLauncher.class.getClassLoader().getResource("MainMenu.fxml")));
 
         Parent root = fxmlLoader.load();
-
-        // Gets the screen size of the users computer
-        Rectangle2D screenBounds = Screen.getPrimary().getBounds();
 
         // Sets the scene to half of the width and height of the screen size
         Scene scene = new Scene(root, screenBounds.getWidth()/2, screenBounds.getHeight()/2);
 
         // TODO Make things scale-able
-        /*fontSize.bind(scene.widthProperty().add(scene.heightProperty()).divide(50));
+        fontSize.bind(scene.widthProperty().add(scene.heightProperty()).divide(100));
         VBox mainMenu = (VBox) fxmlLoader.getNamespace().get("mainMenu");
-        mainMenu.styleProperty().bind(Bindings.concat("-fx-font-size: ", fontSize.asString()));*/
+        mainMenu.styleProperty().bind(Bindings.concat("-fx-font-size: ", fontSize.asString()));
 
         stage.setScene(scene);
         stage.show();
@@ -57,7 +56,6 @@ public class SproutLauncher extends Application {
         launch(args);
 //        acceptUserInput(new Scanner(System.in));  // uncomment for console driven game
     }
-
 
     public static void acceptUserInput(Scanner scanner) {
         boolean successfulInput = false;

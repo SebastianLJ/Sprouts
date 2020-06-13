@@ -12,17 +12,17 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
+import javafx.scene.shape.*;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.shape.Line;
-import javafx.scene.shape.Path;
-import javafx.scene.shape.Shape;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import javafx.util.Duration;
 
-import java.security.Key;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Stack;
 
 
 public class View {
@@ -32,45 +32,77 @@ public class View {
     public View(SproutModel model) {
         this.model = model;
     }
-
+    /**
+     * @author Noah Bastian Christiansen & Sebastian Lund Jensen
+     *
+     *
+     *
+     */
     public void initializeNodes(Pane gamePane) {
         for (Node node : model.getNodes()) {
-            gamePane.getChildren().add(node.getShape());
+            gamePane.getChildren().add(addNumberOnNode(node));
         }
     }
-
-    public Circle updateCanvasClick(Pane gamePane) {
+    /**
+     * @author Noah Bastian Christiansen
+     *
+     *
+     *
+     */
+    public StackPane updateCanvasClick(Pane gamePane) {
         // Get edge
         Shape newEdge = model.getNewestEdge();
 
         // Get node
-        Circle newNode = model.getNewestNode();
+        Node newNode = model.getNewestNode();
 
         // Animate edge
         legalEdgeAnimation(gamePane, newEdge);
 
         // Add new node to view
-        gamePane.getChildren().add(newNode);
-        return newNode;
+        StackPane newStackPane = addNumberOnNode(newNode);
+        gamePane.getChildren().add(newStackPane);
+        return newStackPane;
     }
-    public Circle updateCanvasDrag(Pane gamePane){
-        Circle newNode = model.getNewestNode();
-        gamePane.getChildren().add(newNode);
-        return newNode;
+    /**
+     * @author Noah Bastian Christiansen & Sebastian Lund Jensen
+     *
+     *
+     *
+     */
+    public void updateCanvasDrag(Pane gamePane){
+        Node newNode = model.getNewestNode();
+        gamePane.getChildren().add(addNumberOnNode(newNode));
     }
 
-
+    /**
+     * @author Noah Bastian Christiansen
+     *
+     *
+     *
+     */
     public void setUpDrawingSettings(MouseEvent mousePressed, Pane gamePane) {
         Scene scene = ((javafx.scene.Node) mousePressed.getSource()).getScene();
         scene.setCursor(Cursor.CROSSHAIR);
         gamePane.getChildren().add(model.getPath());
     }
 
+    /**
+     * @author Noah Bastian Christiansen
+     *
+     *
+     *
+     */
     public void setUpCollisionSettings(MouseEvent mouseDragged) {
         Scene scene = ((javafx.scene.Node) mouseDragged.getSource()).getScene(); //perhaps set scene somewhere in here.
         scene.setCursor(Cursor.DEFAULT);
     }
-
+    /**
+     * @author Noah Bastian Christiansen
+     *
+     *
+     *
+     */
     public void setUpSuccessfulPathSettings(MouseEvent mouseReleased) {
         Scene scene = ((javafx.scene.Node) mouseReleased.getSource()).getScene(); //perhaps set scene somewhere in here.
         scene.setCursor(Cursor.DEFAULT);
@@ -92,7 +124,7 @@ public class View {
         FadeTransition fadeTransition = new FadeTransition(Duration.seconds(0.2), edge);
         fadeTransition.setFromValue(1.0);
         fadeTransition.setToValue(0.4);
-        fadeTransition.setCycleCount(2);
+        fadeTransition.setCycleCount(4);
         fadeTransition.setOnFinished(e -> gamePane.getChildren().remove(edge));
         fadeTransition.play();
     }
@@ -112,6 +144,35 @@ public class View {
         } else {
             gamePane.getChildren().add(shape);
         }
+    }
+
+    public void illegalNode(Circle circle) {
+        circle.setStrokeWidth(2.0);
+        circle.setStrokeType(StrokeType.INSIDE);
+        circle.setStroke(Color.RED);
+        FadeTransition fadeTransition = new FadeTransition(Duration.seconds(0.2), circle);
+        fadeTransition.setFromValue(1.0);
+        fadeTransition.setToValue(0.4);
+        fadeTransition.setCycleCount(4);
+        fadeTransition.setAutoReverse(true);
+        fadeTransition.setOnFinished(e -> { circle.setStrokeWidth(0.0);
+                                            circle.setStroke(Color.BLACK);
+                                            circle.setOpacity(1.0);
+        });
+        fadeTransition.play();
+    }
+
+    public void illegalPath(Pane gamePane, Path path) {
+        path.setStroke(Color.RED);
+        gamePane.getChildren().add(path);
+        FadeTransition fadeTransition = new FadeTransition(Duration.seconds(0.2), path);
+        fadeTransition.setFromValue(1.0);
+        fadeTransition.setToValue(0.4);
+        fadeTransition.setCycleCount(4);
+        fadeTransition.setAutoReverse(true);
+
+        fadeTransition.setOnFinished(e -> gamePane.getChildren().remove(path));
+        fadeTransition.play();
     }
 
     public void resetGameView(Pane gamePane) {
@@ -141,6 +202,21 @@ public class View {
         toolTip.setShowDelay(Duration.ZERO);
         toolTip.setShowDuration(Duration.INDEFINITE);
         toolTip.setHideDelay(Duration.ZERO);
+    }
+    /**
+     * @author Noah Bastian Christiansen & Sebastian Lund Jensen
+     *
+     *
+     *
+     */
+    private StackPane addNumberOnNode(Node node){
+        final Text text = new Text(""+node.getId());
+        text.setFill(Color.WHITE);
+        text.setStyle("-fx-font-weight: 900" + ";-fx-font-size:" + (1.4*node.getNodeRadius()));
+        final StackPane stack = new StackPane();
+        stack.getChildren().addAll(node.getShape(), text);
+        stack.relocate(node.getX()-node.getNodeRadius(),node.getY()-node.getNodeRadius());
+        return stack;
     }
 
     public void setGameResponseLabelText(Label gameResponseLabel, String s) {

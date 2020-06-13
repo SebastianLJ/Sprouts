@@ -7,12 +7,8 @@ import holders.ErrorMessageHolder;
 import io.cucumber.java.en.*;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Shape;
-import org.junit.After;
-import org.junit.Before;
 
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
 import java.util.List;
 import java.util.Scanner;
 
@@ -62,7 +58,7 @@ public class playGameSteps {
 
     @Given("nodes {int} and {int} exist")
     public void nodesAndExist(Integer int1, Integer int2) {
-        assertTrue(main.getController().getSproutModel().hasNodeWithName(int1) && main.getController().getSproutModel().hasNodeWithName(int2));
+        assertTrue(main.getController().getSproutModel().hasNode(int1) && main.getController().getSproutModel().hasNode(int2));
     }
 
     @Given("nodes {int} and {int} are valid")

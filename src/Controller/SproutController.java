@@ -1,8 +1,6 @@
 package Controller;
 
-import Exceptions.GameOverException;
-import Exceptions.IllegalNodesChosenException;
-import Exceptions.NumberOfInitialNodesException;
+import Exceptions.*;
 import Model.SproutModel;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Circle;
@@ -10,14 +8,13 @@ import javafx.scene.shape.Shape;
 
 import java.util.List;
 
-public class SproutController {
+public class SproutController extends Controller {
 
     // private SproutView sproutView;
     private SproutModel sproutModel;
     private boolean gameOnGoing;
     // For testing
     private String outputExceptionMessage;
-    private boolean drawingInit = false;
 
 
     public SproutController() {
@@ -41,9 +38,8 @@ public class SproutController {
         }
     }
 
-    public void attemptDrawEdgeBetweenNodes(int startNodeName, int endNodeName) throws IllegalNodesChosenException, GameOverException {
-
-        if (!(sproutModel.hasNodeWithName(startNodeName) && sproutModel.hasNodeWithName(endNodeName))) {
+    public void attemptDrawEdgeBetweenNodes(int startNodeName, int endNodeName) throws IllegalNodesChosenException, GameOverException, CollisionException {
+        if (!(sproutModel.hasNode(startNodeName) && sproutModel.hasNode(endNodeName))) {
             outputExceptionMessage = "One or both nodes does not exist";
             throw new IllegalNodesChosenException(outputExceptionMessage);
         } else {
@@ -54,29 +50,37 @@ public class SproutController {
         }
     }
 
-    public void setupDrawing(MouseEvent mousePressed){
-        if (sproutModel.isInNode(mousePressed.getX(), mousePressed.getY())) {
-            drawingInit = true;
-            sproutModel.initializePath(mousePressed);
-        }
+    /**
+     * @author Noah Bastian Christiansen
+     * @param mousePressed
+     */
+    public void setupDrawing(MouseEvent mousePressed) throws InvalidNode {
+        sproutModel.initializePath(mousePressed);
+
     }
 
-    public void beginDrawing(MouseEvent mouseDragged){
-        if (drawingInit) {
-            sproutModel.drawPath(mouseDragged);
-        }
+    /**
+     * @author Noah Bastian Christiansen
+     * @param mouseDragged
+     */
+    public void beginDrawing(MouseEvent mouseDragged) throws PathForcedToEnd, InvalidPath, CollisionException {
+        sproutModel.drawPath(mouseDragged);
     }
-
-    public void completeDrawing(MouseEvent mouseReleased){
-        if (drawingInit && sproutModel.isInNode(mouseReleased.getX(), mouseReleased.getY())) {
-            sproutModel.finishPath();
-        }
+    /**
+     * @author Noah Bastian Christiansen
+     */
+    public void completeDrawing(MouseEvent mouseEvent) throws InvalidNode, InvalidPath {
+        sproutModel.finishPath(mouseEvent);
     }
-
+    /**
+     * @author Noah Bastian Christiansen
+     */
     public void addNodeOnValidLineDrag(){
         sproutModel.addNodeOnLineDrag();
     }
-
+    /**
+     * @author Noah Bastian Christiansen
+     */
     public boolean isCollided(){
         return sproutModel.getIsCollided();
     }
@@ -102,9 +106,9 @@ public class SproutController {
         return sproutModel.getNodes();
     }
 
-    public void attemptDrawEdgeBetweenNodes(Circle startNode, Circle endNode) throws IllegalNodesChosenException, GameOverException {
+    public void attemptDrawEdgeBetweenNodes(Circle startNode, Circle endNode) throws IllegalNodesChosenException, GameOverException, CollisionException {
 
-        if (!(sproutModel.hasNodeWithName(startNode) && sproutModel.hasNodeWithName(endNode))) {
+        if (!(sproutModel.hasNode(startNode) && sproutModel.hasNode(endNode))) {
             outputExceptionMessage = "One or both nodes does not exist";
             throw new IllegalNodesChosenException(outputExceptionMessage);
         } else if ((startNode != endNode && (sproutModel.getNumberOfEdges(startNode) == 3 || sproutModel.getNumberOfEdges(endNode) == 3)) ||
@@ -130,5 +134,9 @@ public class SproutController {
 
     public boolean isGameOnGoing() {
         return gameOnGoing;
+    }
+
+    public void setGameOnGoing(boolean value) {
+        gameOnGoing = value;
     }
 }
