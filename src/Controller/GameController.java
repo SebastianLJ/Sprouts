@@ -253,7 +253,6 @@ public class GameController extends SproutController implements Initializable {
     private void finishPathHelper(MouseEvent mouseEvent) {
         try {
             completeDrawing(mouseEvent);
-            addNodeOnValidLineDrag();
             updateCanvasDrag();
             dragged = false;
             isPathInit = false;
@@ -266,10 +265,6 @@ public class GameController extends SproutController implements Initializable {
             dragged = false;
             isPathInit = false;
             view.illegalNode(invalidNode.getNode().getShape());
-        } catch (CollisionException e) {
-            dragged = false;
-            isPathInit = false;
-            System.out.println(e.getMessage());
         }
     }
 

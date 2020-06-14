@@ -34,7 +34,7 @@ public class PathFinder {
                 int nX = (int) (x/(model.getWidth()/grid.length));
                 int nY = (int) (y/(model.getHeight()/grid.length));
 
-                System.out.println("x: " + nX + ", y: " + nY);
+//                System.out.println("x: " + nX + ", y: " + nY);
 
                 grid[nY][nX] = true;
             }
