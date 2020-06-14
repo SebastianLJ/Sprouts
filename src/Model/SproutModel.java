@@ -59,7 +59,7 @@ public class SproutModel {
                 circle.setCenterX(x);
                 circle.setCenterY(y);
             } while (invalidPointLocation(circle));
-            nodes.add(new Node(x, y, 0,i));
+            nodes.add(new Node(x, y, 0,i+1));
         }
     }
 
@@ -342,7 +342,7 @@ public class SproutModel {
             // Define new node with distance d from the line start point
             double newNodeX = getPointOnLine(startNode.getX(), endNode.getX(), d, edgeLength);
             double newNodeY = getPointOnLine(startNode.getY(), endNode.getY(), d, edgeLength);
-            newNode = new Node(newNodeX, newNodeY, 2, nodes.size());
+            newNode = new Node(newNodeX, newNodeY, 2, nodes.size()+1);
 
             nodeCollision = false;
 
@@ -387,7 +387,7 @@ public class SproutModel {
         do {
             double newNodeX = edge.getCenterX() + edge.getRadius() * Math.sin(angle);
             double newNodeY = edge.getCenterY() + edge.getRadius() * Math.cos(angle);
-            newNode = new Node(newNodeX, newNodeY, 2, nodes.size());
+            newNode = new Node(newNodeX, newNodeY, 2, nodes.size()+1);
 
             nodeCollision = false;
 
@@ -425,7 +425,7 @@ public class SproutModel {
 
         do {
             LineTo pathElem = (LineTo) (path.getElements().get(d));
-            newNode = new Node(pathElem.getX(), pathElem.getY(), 2, nodes.size());
+            newNode = new Node(pathElem.getX(), pathElem.getY(), 2, nodes.size()+1);
             nodeCollision = false;
 
             // If there is collision => chose new path element for the node position
@@ -576,7 +576,7 @@ public class SproutModel {
 //        double x = Double.parseDouble(pathElemString.substring(pathElemString.indexOf("x")+2, pathElemString.indexOf(",")));
 //        double y = Double.parseDouble(pathElemString.substring(pathElemString.indexOf("y")+2, pathElemString.indexOf("]")));
 
-        Node node = new Node(x,y,0, nodes.size());
+        Node node = new Node(x,y,0, nodes.size()+1);
 
         return node;
     }
