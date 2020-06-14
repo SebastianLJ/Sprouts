@@ -9,11 +9,15 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Circle;
+import javafx.stage.Stage;
 
 
 import java.io.IOException;
@@ -22,7 +26,7 @@ import java.util.ResourceBundle;
 
 public class GameController extends SproutController implements Initializable {
     @FXML
-    public Pane gamePane;
+    Pane gamePane;
 
     private int gameMode; // 0 is clickToDraw and 1 is dragToDraw
     private int numberOfInitialNodes;
@@ -34,7 +38,7 @@ public class GameController extends SproutController implements Initializable {
     private boolean dragged;
     private boolean isPathInit = false;
 
-    public GameController () {
+    public GameController() {
         super();
     }
 
@@ -59,9 +63,10 @@ public class GameController extends SproutController implements Initializable {
         // Create connection to view that updates view with information from the model
         view = new View(getSproutModel());
 
+
         Platform.runLater(() -> {
-            // Tell the model how big the game is
-            updateSize(0.0,0.0);
+
+
             updateSize(gamePane.getWidth(), gamePane.getHeight());
 
             try {
@@ -77,15 +82,14 @@ public class GameController extends SproutController implements Initializable {
             view.initializeNodes(gamePane);
             initializeListenerForStackPane();
         });
+
     }
 
     /**
      * @author Noah Bastian Christiansen
-     *
-     *
      */
-    private void initializeListenerForStackPane(){
-        if(gameMode==CLICK_TO_DRAW_MODE) {
+    private void initializeListenerForStackPane() {
+        if (gameMode == CLICK_TO_DRAW_MODE) {
             for (Node stackPane : gamePane.getChildren()) {
                 if (stackPane instanceof StackPane) {
                     stackPane.setOnMouseClicked(this::clickToDraw);
@@ -103,11 +107,10 @@ public class GameController extends SproutController implements Initializable {
     private void clickToDraw(MouseEvent mouseEvent) {
         StackPane test;
         Circle cirkel = new Circle();
-        if(mouseEvent.getSource() instanceof StackPane){
-        test = (StackPane) mouseEvent.getSource();
-        cirkel = (Circle) test.getChildren().get(0);
-        }
-        else{
+        if (mouseEvent.getSource() instanceof StackPane) {
+            test = (StackPane) mouseEvent.getSource();
+            cirkel = (Circle) test.getChildren().get(0);
+        } else {
             onMouseClicked(mouseEvent);
         }
 
@@ -125,7 +128,7 @@ public class GameController extends SproutController implements Initializable {
                 updateCanvasClick();
                 System.out.println("Game Over!");
             } catch (CollisionException e) {
-               // view.illegalEdgeAnimation(gamePane, createEdge(selectedNode, (Circle) mouseEvent.getSource()));
+                // view.illegalEdgeAnimation(gamePane, createEdge(selectedNode, (Circle) mouseEvent.getSource()));
                 view.illegalEdgeAnimation(gamePane, createEdge(selectedNode, cirkel));
                 view.deselectNode(selectedNode);
                 theUserHasSelectedANode = false;
@@ -189,6 +192,9 @@ public class GameController extends SproutController implements Initializable {
      */
     @SuppressWarnings("unused")
     public void mousePressedHandler(MouseEvent mousePressed) {
+        System.out.println("width: " + gamePane.getWidth());
+        System.out.println("height: " + gamePane.getHeight());
+
         if (mousePressed.getButton() == MouseButton.PRIMARY) {
             isPathInit = false;
             if (gameMode == DRAG_TO_DRAW_MODE) {
@@ -271,4 +277,6 @@ public class GameController extends SproutController implements Initializable {
     void setNumberOfInitialNodes(int numberOfInitialNodes) {
         this.numberOfInitialNodes = numberOfInitialNodes;
     }
+
+
 }

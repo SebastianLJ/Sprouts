@@ -300,7 +300,6 @@ public class SproutModel {
         }
         return false;
     }
-
     /**
      * Checks if the input node collides with any existing edges on the gameboard
      * @author Thea Birk Berger

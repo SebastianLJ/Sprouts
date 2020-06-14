@@ -90,6 +90,7 @@ public class SproutController extends Controller {
     }
 
     public void updateSize(double width, double height) {
+        System.out.println("updateSize width, height: " + width + ", " + height);
         sproutModel.setWidth(width);
         sproutModel.setHeight(height);
     }
