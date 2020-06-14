@@ -22,6 +22,7 @@ public class Controller {
 
         //This line gets the Stage information
         Stage window = (Stage)((Node) event.getSource()).getScene().getWindow();
+        window.setResizable(true);
 
         window.setScene(enterFileNameScene);
         window.show();

@@ -26,7 +26,7 @@ import java.util.ResourceBundle;
 
 public class GameController extends SproutController implements Initializable {
     @FXML
-    public Pane gamePane;
+    Pane gamePane;
 
     private int gameMode; // 0 is clickToDraw and 1 is dragToDraw
     private int numberOfInitialNodes;
@@ -37,10 +37,8 @@ public class GameController extends SproutController implements Initializable {
     private Circle selectedNode;
     private boolean dragged;
     private boolean isPathInit = false;
-    private Parent mainMenuParent;
-    @FXML public BorderPane borderPane;
 
-    public GameController () {
+    public GameController() {
         super();
     }
 
@@ -67,20 +65,9 @@ public class GameController extends SproutController implements Initializable {
 
 
         Platform.runLater(() -> {
-            Stage stage= (Stage) gamePane.getScene().getWindow();
-            stage.setWidth(SettingsController.width);
-            stage.setHeight(SettingsController.height);
 
-            // Tell the model how big the game is
-            //borderPane.setPrefWidth(SettingsController.width);
-            //borderPane.setPrefHeight(SettingsController.height);
 
-            System.out.println("stage height, width: " + stage.getHeight() + ", " + stage.getWidth());
-           // System.out.println("widthGameController: " + width);
-           // System.out.println("heightGameController: " + height);
-            stage.setResizable(false);
             updateSize(gamePane.getWidth(), gamePane.getHeight());
-
 
             try {
                 attemptInitializeGame(numberOfInitialNodes);
@@ -95,15 +82,14 @@ public class GameController extends SproutController implements Initializable {
             view.initializeNodes(gamePane);
             initializeListenerForStackPane();
         });
+
     }
 
     /**
      * @author Noah Bastian Christiansen
-     *
-     *
      */
-    private void initializeListenerForStackPane(){
-        if(gameMode==CLICK_TO_DRAW_MODE) {
+    private void initializeListenerForStackPane() {
+        if (gameMode == CLICK_TO_DRAW_MODE) {
             for (Node stackPane : gamePane.getChildren()) {
                 if (stackPane instanceof StackPane) {
                     stackPane.setOnMouseClicked(this::clickToDraw);
@@ -121,11 +107,10 @@ public class GameController extends SproutController implements Initializable {
     private void clickToDraw(MouseEvent mouseEvent) {
         StackPane test;
         Circle cirkel = new Circle();
-        if(mouseEvent.getSource() instanceof StackPane){
-        test = (StackPane) mouseEvent.getSource();
-        cirkel = (Circle) test.getChildren().get(0);
-        }
-        else{
+        if (mouseEvent.getSource() instanceof StackPane) {
+            test = (StackPane) mouseEvent.getSource();
+            cirkel = (Circle) test.getChildren().get(0);
+        } else {
             onMouseClicked(mouseEvent);
         }
 
@@ -143,7 +128,7 @@ public class GameController extends SproutController implements Initializable {
                 updateCanvasClick();
                 System.out.println("Game Over!");
             } catch (CollisionException e) {
-               // view.illegalEdgeAnimation(gamePane, createEdge(selectedNode, (Circle) mouseEvent.getSource()));
+                // view.illegalEdgeAnimation(gamePane, createEdge(selectedNode, (Circle) mouseEvent.getSource()));
                 view.illegalEdgeAnimation(gamePane, createEdge(selectedNode, cirkel));
                 view.deselectNode(selectedNode);
                 theUserHasSelectedANode = false;
