@@ -152,7 +152,7 @@ public class SproutModel {
         Node startNode = nodes.get(startNodeName);
         Node endNode = nodes.get(endNodeName);
         Line newLine = getLineBetweenNodeContours(startNode, endNode);
-        Node newNode = newNodeOnLineCollides(startNode, endNode);
+        Node newNode = getOnEdgeNodeForNewLine(startNode, endNode);
 
         if (newEdgeCollidesWithExistingEdges(newLine)) {
             throw new CollisionException("Line collided with an existing line");
@@ -163,7 +163,7 @@ public class SproutModel {
         } else {
             // Add edge to gameboard
             edges.add(newLine);
-            // Add new node on edge
+            // Add new node to gameboard
             nodes.add(newNode);
             // Update number of connecting edges for the two nodes
             startNode.incNumberOfConnectingEdges(1);
@@ -181,16 +181,19 @@ public class SproutModel {
     public void drawCircleFromNodeToItself(int nodeName) throws CollisionException {
         Node node = nodes.get(nodeName);
         Circle newCircle = createCircleToDraw(node);
+        Node newNode = getOnEdgeNodeForNewCircle(newCircle);
 
         if (newEdgeCollidesWithExistingEdges(newCircle)) {
             throw new CollisionException("Line collided with an existing line");
         } else if (newEdgeCollidesWithExistingNodes(newCircle, nodeName, nodeName)) {
             throw new CollisionException("Line collided with an existing node");
-        }else {
+        } else if (newNode == null) {
+            throw new CollisionException("There is nowhere on the line where a new node can be drawn");
+        } else {
             // Add edge to gameboard
             edges.add(newCircle);
-            // Add new node mid edge
-            addNodeOnCircle(newCircle, node.getX(), node.getY());
+            // Add new node to gameboard
+            nodes.add(newNode);
             // Update number of connecting edges for the node
             node.incNumberOfConnectingEdges(2);
             nodes.set(nodeName, node);
@@ -281,8 +284,55 @@ public class SproutModel {
     }
 
 
+    /**
+     * Checks if the input node collides with any existing nodes on the gameboard
+     * @author Thea Birk Berger
+     * @param newNode : A suggested new node to appear on a new edge
+     * @return true for collision, false otherwise
+     */
+    private boolean newNodeCollidesWithExistingNodes(Node newNode) {
 
-    private Node newNodeOnLineCollides(Node startNode, Node endNode) {
+        // Traverse through all existing nodes on the gameboard
+        for (Node node : nodes) {
+            // If new node collides with existing node
+            if (twoCirclesCollide(node.getShape(), newNode.getShape())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Checks if the input node collides with any existing edges on the gameboard
+     * @author Thea Birk Berger
+     * @param newNode : A suggested new node to appear on a new edge
+     * @return true for collision, false otherwise
+     */
+    private boolean newNodeCollidesWithExistingEdges(Node newNode) {
+
+        // Traverse through all existing edges on the gameboard
+        for (Shape edge: edges) {
+            // If the new node collides with existing edge
+            if (edge instanceof Line && lineAndCircleCollide(edge, newNode.getShape())
+                    || edge instanceof Circle && twoCirclesCollide((Circle) edge, newNode.getShape())) {
+                return true;
+            }
+
+        }
+        return false;
+    }
+
+
+    /**
+     * Creates a new node to appear on new line
+     * and adjusts its position so that there is no collision with existing nodes or edges.
+     * Returns null if no such node can be found.
+     * @author Thea Birk Berger
+     * @param startNode : the new edge start point
+     * @param endNode : the new edge end point
+     * @return non-colliding node if one exists, null otherwise
+     */
+    private Node getOnEdgeNodeForNewLine(Node startNode, Node endNode) {
 
         double edgeLength = getDistanceBetweenTwoPoints(startNode.getX(), startNode.getY(), endNode.getX(), endNode.getY());
         double r = startNode.getNodeRadius();
@@ -299,27 +349,22 @@ public class SproutModel {
 
             nodeCollision = false;
 
-            // Traverse through all existing nodes on the gameboard
-            for (Node node : nodes) {
-                // If new node collides with existing node
-                if (twoCirclesCollide(node.getShape(), newNode.getShape())) {
-                    nodeCollision = true;
-
-                    // If collision is with the line end point
-                    if (node.getId() == endNode.getId()) {
-                        // Move new node to beginning of line
-                        d = r + (r/10);
-                    } else {
-                        // Move new node further towards line end point
-                        d += 2 * r + (r/10);
-                    }
-                    break;
+            // If there is collision => change position d of new node
+            if (newNodeCollidesWithExistingNodes(newNode) || newNodeCollidesWithExistingEdges(newNode)) {
+                // If the new node has reached the end of the line
+                if (twoCirclesCollide(newNode.getShape(), endNode.getShape())) {
+                    // Move new node to beginning of line
+                    d = r + (r/10);
+                } else {
+                    // Move new node further towards line end point
+                    d += 2 * r + (r/10);
                 }
+                nodeCollision = true;
             }
 
-            // If the new node is back at the line midpoint
+            // If the new node is back at the starting point
             if (nodeCollision && d >= edgeLength/2 - (r * 2) && d <= edgeLength/2 + (r * 2)) {
-                System.out.println("There is nowhere on the line where a new node can be drawn");
+                System.out.println("There is nowhere on the edge where a new node can be drawn");
                 return null;
             }
 
@@ -328,24 +373,58 @@ public class SproutModel {
         return newNode;
     }
 
+    /**
+     * Creates a new node to appear on new circular edge
+     * and adjusts its position so that there is no collision with existing nodes or edges.
+     * Returns null if no such node can be found.
+     * @author Thea Birk Berger
+     * @param edge : the new edge
+     * @return non-colliding node if one exists, null otherwise
+     */
+    public Node getOnEdgeNodeForNewCircle(Circle edge) {
+
+        int angle = 0;
+        Node newNode;
+        boolean nodeCollision;
+
+        do {
+            double newNodeX = edge.getCenterX() + edge.getRadius() * Math.sin(angle);
+            double newNodeY = edge.getCenterY() + edge.getRadius() * Math.cos(angle);
+            newNode = new Node(newNodeX, newNodeY, 2, nodes.size());
+
+            nodeCollision = false;
+
+            if (newNodeCollidesWithExistingNodes(newNode) || newNodeCollidesWithExistingEdges(newNode)) {
+                nodeCollision = true;
+                angle += newNode.getNodeRadius() + (newNode.getNodeRadius()/10);
+
+                if (angle >= 360) {
+                    System.out.println("There is nowhere on the edge where a new node can be drawn");
+                    return null;
+                }
+            }
+        } while (nodeCollision);
+
+        return newNode;
+    }
 
     public void newNodeOnDrawnLineCollides() throws CollisionException {
 
         int pathSize = path.getElements().size();
         int d = pathSize/2;
         Node newNode;
-        boolean collision;
+        boolean nodeCollision;
 
         do {
             LineTo pathElem = (LineTo) (path.getElements().get(d));
             newNode = new Node(pathElem.getX(), pathElem.getY(), 2, nodes.size());
-            collision = false;
+            nodeCollision = false;
 
             // Traverse through all existing nodes on the gameboard
             for (Node node : nodes) {
                 // If new node collides with existing node
                 if (twoCirclesCollide(node.getShape(), newNode.getShape())) {
-                    collision = true;
+                    nodeCollision = true;
 
                     // Change the position of the new node
                     d = d+1 < pathSize ? d+1 : 1;
@@ -357,18 +436,12 @@ public class SproutModel {
                 }
             }
 
-        } while (collision);
+        } while (nodeCollision);
 
         nodes.add(newNode);
     }
 
-    public void addNodeOnCircle(Circle edge, double originNodeX, double originNodeY) {
-        double newNodeX = originNodeX + (edge.getCenterX() - originNodeX) * 2;
-        double newNodeY = originNodeY + (edge.getCenterY() - originNodeY) * 2;
 
-        Node newNode = new Node(newNodeX, newNodeY, 2, nodes.size());
-        nodes.add(newNode);
-    }
 
     /**
      * Gets circular edge position given node coordinates.
@@ -541,28 +614,30 @@ public class SproutModel {
      */
     public boolean newEdgeCollidesWithExistingEdges(Shape attemptedEdge) {
 
-        boolean collision = false;
-
         // Traverse all existing lines
         for (Shape edge : edges) {
             // If both the attempted and existing edge is a line
-            if (attemptedEdge instanceof Line && edge instanceof Line) {
-                collision = collision || Shape.intersect(attemptedEdge, edge).getBoundsInLocal().getWidth() != -1;
+            if (attemptedEdge instanceof Line && edge instanceof Line
+                    && Shape.intersect(attemptedEdge, edge).getBoundsInLocal().getWidth() != -1) {
+                return true;
             }
             // If the attempted edge is a line and the existing edge is a circle
-            else if (attemptedEdge instanceof Line && edge instanceof Circle) {
-                collision = collision || lineAndCircleCollide(attemptedEdge,edge);
+            else if (attemptedEdge instanceof Line && edge instanceof Circle
+                    && lineAndCircleCollide(attemptedEdge,edge)) {
+                return true;
             }
             // If the attempted edge is a circle and the existing edge is a line
-            else if (attemptedEdge instanceof Circle && edge instanceof Line) {
-                collision = collision || lineAndCircleCollide(edge,attemptedEdge);
+            else if (attemptedEdge instanceof Circle && edge instanceof Line
+                    && lineAndCircleCollide(edge,attemptedEdge)) {
+                return true;
             }
             // If both the attempted and existing edge is a circle
-            else {
-                collision = collision ||twoCirclesCollide((Circle) attemptedEdge, (Circle) edge);
+            else if (attemptedEdge instanceof Circle && edge instanceof Circle
+                    && twoCirclesCollide((Circle) attemptedEdge, (Circle) edge)) {
+                return true;
             }
         }
-        return collision;
+        return false;
     }
 
     /**
@@ -575,21 +650,19 @@ public class SproutModel {
      */
     private boolean newEdgeCollidesWithExistingNodes(Shape edge, int startNodeName, int endNodeName) {
 
-        boolean collision = false;
-
         // Traverse all nodes that are not at the edge endpoints
         for (int i = 0; i < nodes.size(); i++) {
             if (i != startNodeName && i != endNodeName) {
                 // If the attempted edge is a line
-                if (edge instanceof Line ) {
-                    collision = collision || lineAndCircleCollide(edge, nodes.get(i).getShape());
+                if (edge instanceof Line && lineAndCircleCollide(edge, nodes.get(i).getShape())) {
+                    return true;
                 // If the attempted edge is a circle
-                } else {
-                    collision = collision || twoCirclesCollide((Circle) edge, nodes.get(i).getShape());
+                } else if (edge instanceof Circle && twoCirclesCollide((Circle) edge, nodes.get(i).getShape())) {
+                    return true;
                 }
             }
         }
-        return collision;
+        return false;
     }
 
     /**
