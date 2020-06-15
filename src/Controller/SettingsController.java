@@ -20,6 +20,12 @@ public class SettingsController extends Controller implements Initializable {
     public static int width = 800;
     public static int height = 600;
 
+    /**
+     * Sets up a choicebox with a list of resolutions that the user can choose from.
+     * @author Noah Bastian Christiansen
+     * @param url   Required - Not used.
+     * @param resourceBundle    Required - Not used.
+     */
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -34,6 +40,11 @@ public class SettingsController extends Controller implements Initializable {
 
     }
 
+    /**
+     * When the user presses apply this method is called.
+     * This method ensures that the width and height of the game gets set.
+     * @author Noah Bastian Christiansen
+     */
     public void applyResolutionChange() throws IOException {
 
         String chosenResolution = resolutions.getValue();
@@ -42,6 +53,12 @@ public class SettingsController extends Controller implements Initializable {
         height=Integer.parseInt(resArr[1]);
 
     }
+
+    /**
+     * When the user presses the back button this method is called.
+     * This method returns the user to the main menu.
+     * @author Noah Bastian Christiansen
+     */
     public void goToMainMenu() throws IOException {
         FXMLLoader loader = new FXMLLoader(
                 SproutLauncher.class.getClassLoader().getResource(

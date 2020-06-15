@@ -33,10 +33,8 @@ public class View {
         this.model = model;
     }
     /**
+     * Generates numbers on the nodes upon game start.
      * @author Noah Bastian Christiansen & Sebastian Lund Jensen
-     *
-     *
-     *
      */
     public void initializeNodes(Pane gamePane) {
         for (Node node : model.getNodes()) {
@@ -44,10 +42,9 @@ public class View {
         }
     }
     /**
+     * Adds number on nodes in click-to-draw
+     * @return The stackpane which contains the node and the number.
      * @author Noah Bastian Christiansen
-     *
-     *
-     *
      */
     public StackPane updateCanvasClick(Pane gamePane) {
         // Get edge
@@ -65,10 +62,8 @@ public class View {
         return newStackPane;
     }
     /**
+     * Adds the number on the node in case of a successful drawing.
      * @author Noah Bastian Christiansen & Sebastian Lund Jensen
-     *
-     *
-     *
      */
     public void updateCanvasDrag(Pane gamePane){
         Node newNode = model.getNewestNode();
@@ -76,10 +71,8 @@ public class View {
     }
 
     /**
+     * Adds the path to the gamepane so it is visible and changes the cursor to a crosshair to indicate that the user has begun drawing.
      * @author Noah Bastian Christiansen
-     *
-     *
-     *
      */
     public void setUpDrawingSettings(MouseEvent mousePressed, Pane gamePane) {
         Scene scene = ((javafx.scene.Node) mousePressed.getSource()).getScene();
@@ -88,20 +81,16 @@ public class View {
     }
 
     /**
+     * Changes the cursor back to default when the user collides with a line.
      * @author Noah Bastian Christiansen
-     *
-     *
-     *
      */
     public void setUpCollisionSettings(MouseEvent mouseDragged) {
         Scene scene = ((javafx.scene.Node) mouseDragged.getSource()).getScene(); //perhaps set scene somewhere in here.
         scene.setCursor(Cursor.DEFAULT);
     }
     /**
+     * Changes the cursor from a crosshair to a normal cursor to indicate that the user has finished his drawing successfully.
      * @author Noah Bastian Christiansen
-     *
-     *
-     *
      */
     public void setUpSuccessfulPathSettings(MouseEvent mouseReleased) {
         Scene scene = ((javafx.scene.Node) mouseReleased.getSource()).getScene(); //perhaps set scene somewhere in here.
@@ -204,10 +193,11 @@ public class View {
         toolTip.setHideDelay(Duration.ZERO);
     }
     /**
+     *
+     * This method numerates the nodes but creating a stack pane with the node's shape (a circle) and some text (the node's number) on it.
+     * @return A stackpane consisting of the node's shape (a circle) and some text indicating the node's number.
+     * @param node The node which needs an number added to it.
      * @author Noah Bastian Christiansen & Sebastian Lund Jensen
-     *
-     *
-     *
      */
     private StackPane addNumberOnNode(Node node){
         final Text text = new Text(""+node.getId());

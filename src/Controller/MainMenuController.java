@@ -42,6 +42,7 @@ public class MainMenuController extends Controller implements Initializable {
      * @param numberOfInitialNodes User inputs how many nodes the game must start with.
      * @throws IOException Thrown by the FXMLLoader if the fxml document is not present.
      * @author Emil Sommer Desler
+     * @author Noah Bastian Christiansen
      * This method in run on a button click and starts either a click to draw game or a drag to draw game.
      */
     private void startGame(MouseEvent event, int numberOfInitialNodes) throws IOException {

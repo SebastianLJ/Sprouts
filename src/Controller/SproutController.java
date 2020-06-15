@@ -60,25 +60,30 @@ public class SproutController extends Controller {
     }
 
     /**
+     * This method communicates to the model's drawPath method that a drawing has started
      * @author Noah Bastian Christiansen
-     * @param mouseDragged
+     * @param mouseDragged The mousedrag that begins the drawing
      */
     public void beginDrawing(MouseEvent mouseDragged) throws PathForcedToEnd, InvalidPath, CollisionException {
         sproutModel.drawPath(mouseDragged);
     }
     /**
+     * This method let's the model's finishPath method know that the path should now end.
      * @author Noah Bastian Christiansen
+     * @param mouseEvent The last mouseevent that ends the drawing.
      */
     public void completeDrawing(MouseEvent mouseEvent) throws InvalidNode, InvalidPath {
         sproutModel.finishPath(mouseEvent);
     }
     /**
+     * This method tells the model to update itself since a new node needs to be generated on the line that was just drawn.
      * @author Noah Bastian Christiansen
      */
     public void addNodeOnValidLineDrag() throws InvalidPath {
         sproutModel.getNewlyDrawnLineMidNode();
     }
     /**
+     * This method let's the gameController know if a collision has occured by letting the sproutController ask the model.
      * @author Noah Bastian Christiansen
      */
     public boolean isCollided(){
