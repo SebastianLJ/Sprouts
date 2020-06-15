@@ -178,6 +178,11 @@ public class SproutModel {
         Node startNode = nodes.get(nameOfStartNode);
         Node endNode = nodes.get(nameOfEndNode);
 
+        if(startNodeCircle==endNodeCircle){
+            Path result = pf.getLoopPath(startNode);
+           edges.add(result);
+           return;
+        }
 
         edges.add(pf.getPath(startNode, endNode));
         startNode.incNumberOfConnectingEdges(1);
@@ -319,6 +324,8 @@ public class SproutModel {
     public void addNodeOnSmartClick() throws NoValidEdgeException {
         path = (Path)(edges.get(edges.size()-1));
         int size = path.getElements().size();
+
+        System.out.println("path.getElemnts().get(size/2): " + path.getElements().get(size/2) );
 
         LineTo test = (LineTo) (path.getElements().get(size/2));
         Node newNode = new Node(test.getX(), test.getY(), 2, nodes.size());

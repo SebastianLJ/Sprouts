@@ -61,16 +61,19 @@ public class PathFinder {
         for (Shape shape : edges) {
             for (PathElement pe : ((Path) shape).getElements()) {
                 String pathElemString = pe.toString();
+                if (pe instanceof MoveTo || pe instanceof LineTo) {
 
-                double x = Double.parseDouble(pathElemString.substring(pathElemString.indexOf("x") + 2,
-                        pathElemString.indexOf(",")));
-                double y = Double.parseDouble(pathElemString.substring(pathElemString.indexOf("y") + 2,
-                        pathElemString.indexOf("]")));
 
-                int nX = downScaleX(x);
-                int nY = downScaleY(y);
+                    double x = Double.parseDouble(pathElemString.substring(pathElemString.indexOf("x") + 2,
+                            pathElemString.indexOf(",")));
+                    double y = Double.parseDouble(pathElemString.substring(pathElemString.indexOf("y") + 2,
+                            pathElemString.indexOf("]")));
 
-                grid[nY][nX] = true;
+                    int nX = downScaleX(x);
+                    int nY = downScaleY(y);
+
+                    grid[nY][nX] = true;
+                }
             }
         }
     }
@@ -79,8 +82,9 @@ public class PathFinder {
      * Grid i build iterating each point in the scaled grid, and checking if there is a point or edge
      * on or very near to that point. This is done by creating a Circle object with a radius of 0.5 and
      * checking for collision between the circle and any edges/nodes.
+     *
      * @param startNode user selected start node
-     * @param endNode user selected end node
+     * @param endNode   user selected end node
      * @author Sebastian Lund Jensen
      */
     public void initGridCircle(Node startNode, Node endNode) {
@@ -89,7 +93,7 @@ public class PathFinder {
         shape.setRadius(0.5);
         for (int i = 0; i < grid.length; i++) {
             for (int j = 0; j < grid[i].length; j++) {
-                Node node = model.findNodeFromPoint(new Point(upScaleX(j),upScaleY(i)));
+                Node node = model.findNodeFromPoint(new Point(upScaleX(j), upScaleY(i)));
 
                 //if node is inside a node that is not the start node or the end node
                 // else if the node is not inside any point
@@ -189,11 +193,26 @@ public class PathFinder {
                 }
             } catch (IndexOutOfBoundsException ignored) {
             }
-            
+
         }
         throw new NoValidEdgeException("No valid edge found between nodes " + startNode.getId()
                 + " and " + endNode.getId());
     }
+
+//    public ArrayList<Path> SelfLoop(Node startNode) throws NoValidEdgeException {
+//        Path path1 = getPath(startNode, endNode);
+//
+//        Path path2 = getPath(endNode, startNode);
+//        System.out.println("path1: " + path1);
+//        System.out.println("path2: " + path2);
+//
+//        ArrayList<Path> test = new ArrayList<>();
+//
+//        test.add(path1);
+//        test.add(path2);
+//
+//        return test;
+//    }
 
     /**
      * Builds the Path object from the path list from BFS. The path will start at the non-scaled
@@ -207,8 +226,8 @@ public class PathFinder {
      * @author Sebastian Lund Jensen
      */
     public Path getPath(Node startNode, Node endNode) throws NoValidEdgeException {
-        this.scalingFactorX = model.getWidth()/gridSize;
-        this.scalingFactorY = model.getHeight()/gridSize;
+        this.scalingFactorX = model.getWidth() / gridSize;
+        this.scalingFactorY = model.getHeight() / gridSize;
         initGrid(startNode, endNode);
         ArrayList<Point> pathListReversed = BFS(startNode, endNode);
         Path path = new Path();
@@ -219,6 +238,71 @@ public class PathFinder {
         }
         path.getElements().add(new LineTo(endNode.getX(), endNode.getY()));
         return path;
+    }
+
+    public Path getLoopPath(Node startNode) throws NoValidEdgeException {
+        boolean validPath = false;
+        Path pathToTemp = new Path();
+        Path pathToStart = new Path();
+
+        for (int i = 20; i < gridSize && !validPath; i++) {
+            for (int j = 20; j < gridSize && !validPath; j++) {
+
+                if (!validPath) {
+                    Node tempEndNode = new Node(startNode.getX() + i, startNode.getY() + j, 0, -2);
+                    try {
+                        pathToTemp = getPath(startNode, tempEndNode);
+                        pathToStart = getPath(tempEndNode, startNode);
+                        validPath = true;
+                    } catch (NoValidEdgeException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if (!validPath) {
+                    Node tempEndNode = new Node(startNode.getX() + i, startNode.getY() - j, 0, -2);
+
+                    try {
+                        pathToTemp = getPath(startNode, tempEndNode);
+                        pathToStart = getPath(tempEndNode, startNode);
+                        validPath = true;
+                    } catch (NoValidEdgeException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if (!validPath) {
+                    Node tempEndNode = new Node(startNode.getX() - i, startNode.getY() + j, 0, -2);
+                    try {
+                        pathToTemp = getPath(startNode, tempEndNode);
+                        pathToStart = getPath(tempEndNode, startNode);
+                        validPath = true;
+                    } catch (NoValidEdgeException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+                if (!validPath) {
+                    Node tempEndNode = new Node(startNode.getX() - i, startNode.getY() - j, 0, -2);
+                    try {
+                        pathToTemp = getPath(startNode, tempEndNode);
+                        pathToStart = getPath(tempEndNode, startNode);
+                        validPath = true;
+                    } catch (NoValidEdgeException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+            }
+        }
+        if (!validPath) {
+            throw new NoValidEdgeException("No valid selfloop from: " + startNode.getId());
+        }
+
+        Path resultingPath = (Path) Shape.union(pathToTemp, pathToStart);
+
+        System.out.println("resultingPath: " + resultingPath);
+
+        return resultingPath;
+
     }
 
     private int downScaleX(Double coord) {
