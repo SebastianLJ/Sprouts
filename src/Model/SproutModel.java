@@ -1,6 +1,9 @@
 package Model;
 
-import Exceptions.*;
+import Exceptions.CollisionException;
+import Exceptions.InvalidNode;
+import Exceptions.PathForcedToEnd;
+import Exceptions.InvalidPath;
 import javafx.beans.property.BooleanProperty;
 import javafx.geometry.Bounds;
 import javafx.scene.paint.Color;
@@ -147,24 +150,15 @@ public class SproutModel {
      * @throws CollisionException If the line drawn collides with itself or existing lines
      */
     public void drawLineBetweenNodes(int startNodeName, int endNodeName) throws CollisionException {
-        System.out.println("w: " + width + ", h:" + height);
         Node startNode = nodes.get(startNodeName);
         Node endNode = nodes.get(endNodeName);
+        Path path = pf.getPath(startNode, endNode);
 
-        /*if (edgesCollides(newLine)) {
-            throw new CollisionException("Line collided with an exisiting line");
-        } else {
-            // Add edge to gameboard
-            edges.add(newLine);
-            // Add new node mid edge
-            addNodeOnLine(newLine);
-            // Update number of connecting edges for the two nodes
-            startNode.incNumberOfConnectingEdges(1);
-            endNode.incNumberOfConnectingEdges(1);
-            nodes.set(startNodeName, startNode);
-            nodes.set(endNodeName, endNode);
-        }*/
+        // Add edge to gameboard
         edges.add(path);
+        // Add new node mid edge
+        addNodeOnLineDrag(path);
+        // Update number of connecting edges for the two nodes
         startNode.incNumberOfConnectingEdges(1);
         endNode.incNumberOfConnectingEdges(1);
         nodes.set(startNodeName, startNode);
@@ -288,6 +282,13 @@ public class SproutModel {
      * Adds a new node close to the midpoint of a valid line
      */
     public void addNodeOnLineDrag(){
+        int size = path.getElements().size();
+        LineTo test = (LineTo) (path.getElements().get(size/2));
+        Node newNode = new Node(test.getX(), test.getY(), 2, nodes.size());
+        nodes.add(newNode);
+    }
+
+    public void addNodeOnLineDrag(Path path){
         int size = path.getElements().size();
         LineTo test = (LineTo) (path.getElements().get(size/2));
         Node newNode = new Node(test.getX(), test.getY(), 2, nodes.size());
@@ -516,21 +517,20 @@ public class SproutModel {
 
     /**
      * Check is generated node collides with any preexisting nodes/paths
-     * @param shape generated node
+     * @param node generated node
      * @return true if collision is detected else false
      * @author Sebastian Lund Jensen
      */
-    public boolean shapeCollides(Shape shape, Node startNode, Node endNode) {
-        //check collision with other nodes
-        for (Node node : nodes) {
-            if (shape.getBoundsInLocal().intersects(node.getShape().getBoundsInLocal()) &&
-                    !(node.getId() == startNode.getId() || node.getId()==endNode.getId())) {
+    public boolean nodeCollides(Node node) {
+        //check collision with all paths except the path it is generated on
+        for (int i = 0; i < edges.size()-1; i++) {
+            if (Shape.intersect(node.getShape(), edges.get(i)).getBoundsInLocal().getWidth() != -1) {
                 return true;
             }
         }
-        //check collision with all paths
-        for (Shape edge : edges) {
-            if (shape.getBoundsInLocal().intersects(edge.getBoundsInLocal())) {
+        //check collision with other nodes
+        for (int i = 0; i < nodes.size(); i++) {
+            if (Shape.intersect(node.getShape(),nodes.get(0).getShape()).getBoundsInLocal().getWidth() != -1) {
                 return true;
             }
         }
@@ -614,6 +614,10 @@ public class SproutModel {
         return findNodeFromPoint(point) != null;
     }
 
+    public boolean isPointInsideNode(Point point, Node node) {
+        return node.isPointInsideNode(point);
+    }
+
     public void drawEdgeBetweenNodes(Circle startNode, Circle endNode) throws CollisionException {
         int nameOfStartNode = findNameOfNode(startNode);
         int nameOfEndNode = findNameOfNode(endNode);
@@ -663,18 +667,6 @@ public class SproutModel {
 
     public void setNodes(List<Node> nodes) {
         this.nodes = nodes;
-    }
-
-    public void drawSmartLine(Circle startNode, Circle endNode) throws NoValidEdgeException {
-        int nameOfStartNode = findNameOfNode(startNode);
-        int nameOfEndNode = findNameOfNode(endNode);
-
-        Node n1 = nodes.get(nameOfStartNode);
-        Node n2 = nodes.get(nameOfEndNode);
-
-
-        edges.add(pf.getPath(n1, n2));
-
     }
 }
 
