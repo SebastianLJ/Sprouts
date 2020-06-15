@@ -75,6 +75,37 @@ public class PathFinder {
     }
 
     /**
+     * Grid i build iterating each point in the scaled grid, and checking if there is a point or edge
+     * on or very near to that point. This is done by creating a Circle object with a radius of 0.5 and
+     * checking for collision between the circle and any edges/nodes.
+     * @param startNode user selected start node
+     * @param endNode user selected end node
+     * @author Sebastian Lund Jensen
+     */
+    public void initGridCircle(Node startNode, Node endNode) {
+        grid = new boolean[gridSize][gridSize];
+        Circle shape = new Circle();
+        shape.setRadius(0.5);
+        for (int i = 0; i < grid.length; i++) {
+            for (int j = 0; j < grid[i].length; j++) {
+                Node node = model.findNodeFromPoint(new Point(upScaleX(j),upScaleY(i)));
+
+                //if node is inside a node that is not the start node or the end node
+                // else if the node is not inside any point
+                if (node != null && !(node.equals(startNode) || node.equals(endNode))) {
+                    shape.setCenterX(upScaleX(j));
+                    shape.setCenterY(upScaleY(i));
+                    grid[i][j] = model.shapeCollides(shape, startNode, endNode);
+                } else if (node == null) {
+                    shape.setCenterX(upScaleX(j));
+                    shape.setCenterY(upScaleY(i));
+                    grid[i][j] = model.shapeCollides(shape, startNode, endNode);
+                }
+            }
+        }
+    }
+
+    /**
      * Takes parent list from BFS to backtrack path from start point to end point
      *
      * @param parent    list containing corresponding parent to each point
@@ -119,9 +150,12 @@ public class PathFinder {
         while (queue.size() != 0) {
             Point p0 = queue.poll();
 
+            //check if we have reached end node
             if (p0.equals(new Point(downScaleX(endNode.getX()), downScaleY(endNode.getY())))) {
                 return backtrace(parent, startNode, endNode);
             }
+
+            //visits all available points around p0 in a cross shape
             try {
                 if (!grid[p0.getY() - 1][p0.getX()] && !visited[p0.getY() - 1][p0.getX()]) {
                     visited[p0.getY() - 1][p0.getX()] = true;

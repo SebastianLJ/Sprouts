@@ -113,9 +113,10 @@ public class GameController extends SproutController implements Initializable {
         } else {
             try {
                 attemptDrawEdgeBetweenNodes(selectedNode, circle);
+                addNodeOnValidSmartALine();
                 updateCanvasClick();
             } catch (IllegalNodesChosenException e) {
-                view.illegalEdgeAnimation(gamePane, createEdge(selectedNode, circle));
+                view.illegalNode(circle);
                 view.deselectNode(selectedNode);
                 theUserHasSelectedANode = false;
             } catch (GameOverException e) {
@@ -127,6 +128,10 @@ public class GameController extends SproutController implements Initializable {
                 view.deselectNode(selectedNode);
                 theUserHasSelectedANode = false;
                 System.out.println("Collision!");
+            } catch (NoValidEdgeException e) {
+                view.deselectNode(selectedNode);
+                theUserHasSelectedANode = false;
+                System.out.println(e.getMessage());
             }
         }
     }
@@ -160,7 +165,7 @@ public class GameController extends SproutController implements Initializable {
         view.updateCanvasDrag(gamePane);
     }
 
-    public void attemptDrawEdgeBetweenNodes(Circle startNode, Circle endNode) throws IllegalNodesChosenException, GameOverException, CollisionException {
+    public void attemptDrawEdgeBetweenNodes(Circle startNode, Circle endNode) throws IllegalNodesChosenException, GameOverException, CollisionException, NoValidEdgeException {
         super.attemptDrawEdgeBetweenNodes(startNode, endNode);
         view.deselectNode(startNode);
         theUserHasSelectedANode = false; // A edge has been drawn and the node i no longer primed
