@@ -324,13 +324,20 @@ public class SproutModel {
     public void addNodeOnSmartClick() throws NoValidEdgeException {
         path = (Path)(edges.get(edges.size()-1));
         int size = path.getElements().size();
+        Node newNode;
 
         System.out.println("path.getElemnts().get(size/2): " + path.getElements().get(size/2) );
+        if(path.getElements().get(size/2) instanceof LineTo){
+         LineTo test = (LineTo) (path.getElements().get(size/2));
+            newNode = new Node(test.getX(), test.getY(), 2, nodes.size());
 
-        LineTo test = (LineTo) (path.getElements().get(size/2));
-        Node newNode = new Node(test.getX(), test.getY(), 2, nodes.size());
-
+        }
+        else{
+            MoveTo test=(MoveTo) (path.getElements().get(size/2));
+            newNode = new Node(test.getX(), test.getY(), 2, nodes.size());
+        }
         nodes.add(newNode);
+
     }
 
     public void addNodeOnSmartClickWithCollision() throws NoValidEdgeException {

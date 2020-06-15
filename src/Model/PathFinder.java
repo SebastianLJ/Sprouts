@@ -240,68 +240,126 @@ public class PathFinder {
         return path;
     }
 
+
     public Path getLoopPath(Node startNode) throws NoValidEdgeException {
+        System.out.println("modelgetHeight: " + model.getHeight());
+        System.out.println("modelgetWidth. " + model.getWidth());
         boolean validPath = false;
         Path pathToTemp = new Path();
         Path pathToStart = new Path();
 
-        for (int i = 20; i < gridSize && !validPath; i++) {
-            for (int j = 20; j < gridSize && !validPath; j++) {
-
-                if (!validPath) {
-                    Node tempEndNode = new Node(startNode.getX() + i, startNode.getY() + j, 0, -2);
+        outerloop:
+        for (int i = gridSize/16; i < gridSize; i++) {
+            for (int j = gridSize/16; j < gridSize; j++) {
+                Node tempEndNode = new Node(startNode.getX() + i, startNode.getY() + j, 0, -2);
+                if (!model.nodeCollides(tempEndNode) && tempEndNode.getX() < model.getWidth() && tempEndNode.getY() < model.getHeight()) {
                     try {
                         pathToTemp = getPath(startNode, tempEndNode);
                         pathToStart = getPath(tempEndNode, startNode);
                         validPath = true;
-                    } catch (NoValidEdgeException e) {
+                        break outerloop;
+                    } catch (NoValidEdgeException | IndexOutOfBoundsException e) {
                         e.printStackTrace();
                     }
                 }
-                if (!validPath) {
-                    Node tempEndNode = new Node(startNode.getX() + i, startNode.getY() - j, 0, -2);
+
+                tempEndNode = new Node(startNode.getX() + i, startNode.getY() - j, 0, -2);
+                if (!model.nodeCollides(tempEndNode) &&  tempEndNode.getX() < model.getWidth() &&  tempEndNode.getY() > 0) {
 
                     try {
                         pathToTemp = getPath(startNode, tempEndNode);
                         pathToStart = getPath(tempEndNode, startNode);
                         validPath = true;
-                    } catch (NoValidEdgeException e) {
-                        e.printStackTrace();
-                    }
-                }
-                if (!validPath) {
-                    Node tempEndNode = new Node(startNode.getX() - i, startNode.getY() + j, 0, -2);
-                    try {
-                        pathToTemp = getPath(startNode, tempEndNode);
-                        pathToStart = getPath(tempEndNode, startNode);
-                        validPath = true;
-                    } catch (NoValidEdgeException e) {
-                        e.printStackTrace();
-                    }
-
-                }
-                if (!validPath) {
-                    Node tempEndNode = new Node(startNode.getX() - i, startNode.getY() - j, 0, -2);
-                    try {
-                        pathToTemp = getPath(startNode, tempEndNode);
-                        pathToStart = getPath(tempEndNode, startNode);
-                        validPath = true;
-                    } catch (NoValidEdgeException e) {
+                        break outerloop;
+                    } catch (NoValidEdgeException | IndexOutOfBoundsException e) {
                         e.printStackTrace();
                     }
                 }
 
+
+                tempEndNode = new Node(startNode.getX() - i, startNode.getY() + j, 0, -2);
+                if (!model.nodeCollides(tempEndNode) && tempEndNode.getX() > 0 && tempEndNode.getY() < model.getHeight()) {
+
+                    try {
+                        pathToTemp = getPath(startNode, tempEndNode);
+                        pathToStart = getPath(tempEndNode, startNode);
+                        validPath = true;
+                        break outerloop;
+                    } catch (NoValidEdgeException | IndexOutOfBoundsException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+
+                tempEndNode = new Node(startNode.getX() - i, startNode.getY() - j, 0, -2);
+                if (!model.nodeCollides(tempEndNode) && tempEndNode.getX() > 0 && tempEndNode.getY() > 0) {
+                    try {
+                        pathToTemp = getPath(startNode, tempEndNode);
+                        pathToStart = getPath(tempEndNode, startNode);
+                        validPath = true;
+                        break outerloop;
+                    } catch (NoValidEdgeException | IndexOutOfBoundsException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if (!model.nodeCollides(tempEndNode) && tempEndNode.getX() < model.getWidth()) {
+                    try {
+                        pathToTemp = getPath(startNode, tempEndNode);
+                        pathToStart = getPath(tempEndNode, startNode);
+                        validPath = true;
+                        break outerloop;
+                    } catch (NoValidEdgeException | IndexOutOfBoundsException e) {
+                        e.printStackTrace();
+                    }
+                }
+                tempEndNode = new Node(startNode.getX() - j, startNode.getY(), 0, -2);
+                if (!model.nodeCollides(tempEndNode) && tempEndNode.getX() > 0) {
+                    try {
+                        pathToTemp = getPath(startNode, tempEndNode);
+                        pathToStart = getPath(tempEndNode, startNode);
+                        validPath = true;
+                        break outerloop;
+                    } catch (NoValidEdgeException | IndexOutOfBoundsException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                tempEndNode = new Node(startNode.getX(), startNode.getY() + j, 0, -2);
+                if (!model.nodeCollides(tempEndNode) && tempEndNode.getY() < model.getHeight()) {
+                    try {
+                        pathToTemp = getPath(startNode, tempEndNode);
+                        pathToStart = getPath(tempEndNode, startNode);
+                        validPath = true;
+                        break outerloop;
+                    } catch (NoValidEdgeException | IndexOutOfBoundsException e) {
+                        e.printStackTrace();
+                    }
+                }
+                tempEndNode = new Node(startNode.getX(), startNode.getY() - j, 0, -2);
+                if (!model.nodeCollides(tempEndNode) && tempEndNode.getY() > 0) {
+                    try {
+                        pathToTemp = getPath(startNode, tempEndNode);
+                        pathToStart = getPath(tempEndNode, startNode);
+                        validPath = true;
+                        break outerloop;
+                    } catch (NoValidEdgeException | IndexOutOfBoundsException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+            }}
+
+
+            if (!validPath) {
+                throw new NoValidEdgeException("No valid selfloop from: " + startNode.getId());
             }
-        }
-        if (!validPath) {
-            throw new NoValidEdgeException("No valid selfloop from: " + startNode.getId());
-        }
 
-        Path resultingPath = (Path) Shape.union(pathToTemp, pathToStart);
+            pathToTemp.getElements().addAll(pathToStart.getElements());
 
-        System.out.println("resultingPath: " + resultingPath);
+            System.out.println("resultingPath: " + pathToTemp);
 
-        return resultingPath;
+            return pathToTemp;
+
 
     }
 
