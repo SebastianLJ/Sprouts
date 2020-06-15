@@ -829,11 +829,13 @@ public class SproutModel {
      * @return the name/number of the node whose shape is the given circle object.
      */
     public int findNameOfNode(Circle nodeToFind) {
-        int nameOfNode = -1;
+        int nameOfNode = 0;
+        int i = 0;
         for (Node node : nodes) {
             if (node.getShape() == nodeToFind) {
-                nameOfNode = Integer.parseInt(nodeToFind.getId());
+                nameOfNode = i;
             }
+            i++;
         }
         return nameOfNode;
     }
