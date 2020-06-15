@@ -194,8 +194,6 @@ public class GameController extends SproutController implements Initializable {
      */
     @SuppressWarnings("unused")
     public void mousePressedHandler(MouseEvent mousePressed) {
-        System.out.println("width: " + gamePane.getWidth());
-        System.out.println("height: " + gamePane.getHeight());
 
         if (mousePressed.getButton() == MouseButton.PRIMARY) {
             isPathInit = false;
