@@ -115,12 +115,13 @@ public class PathFinder {
      */
     public ArrayList<Point> BFS(Node startNode, Node endNode, int gridSize) throws NoValidEdgeException {
         //any grid size larger than game pane size will not increase precision of grid
-        if (gridSize > model.getHeight()) {
+        if (gridSize > 400) {
             throw new NoValidEdgeException("no valid edge from " + startNode.getId() + " to " + endNode.getId());
         }
 
         this.gridSize = gridSize;
         initGridCircle(startNode, endNode);
+        System.out.println(this);
 
         Point[][] parent = new Point[gridSize][gridSize];
         boolean[][] visited = new boolean[gridSize][gridSize];
@@ -170,6 +171,38 @@ public class PathFinder {
                 }
             } catch (IndexOutOfBoundsException e) {
             }
+            try {
+                if (!grid[p0.getY() - 1][p0.getX() - 1] && !visited[p0.getY() - 1][p0.getX() - 1]) {
+                    visited[p0.getY() - 1][p0.getX() - 1] = true;
+                    queue.add(new Point(p0.getX() - 1, p0.getY() - 1));
+                    parent[p0.getY() - 1][p0.getX() - 1] = p0;
+                }
+            } catch (IndexOutOfBoundsException ignored) {
+            }
+            try {
+                if (!grid[p0.getY() + 1][p0.getX() - 1] && !visited[p0.getY() + 1][p0.getX() - 1]) {
+                    visited[p0.getY() + 1][p0.getX() - 1] = true;
+                    queue.add(new Point(p0.getX() - 1, p0.getY() + 1));
+                    parent[p0.getY() + 1][p0.getX() - 1] = p0;
+                }
+            } catch (IndexOutOfBoundsException ignored) {
+            }
+            try {
+                if (!grid[p0.getY() - 1][p0.getX() + 1] && !visited[p0.getY() - 1][p0.getX() + 1]) {
+                    visited[p0.getY() - 1][p0.getX() + 1] = true;
+                    queue.add(new Point(p0.getX() + 1, p0.getY() - 1));
+                    parent[p0.getY() - 1][p0.getX() + 1] = p0;
+                }
+            } catch (IndexOutOfBoundsException ignored) {
+            }
+            try {
+                if (!grid[p0.getY() + 1][p0.getX() + 1] && !visited[p0.getY() + 1][p0.getX() + 1]) {
+                    visited[p0.getY() + 1][p0.getX() + 1] = true;
+                    queue.add(new Point(p0.getX() + 1, p0.getY() + 1));
+                    parent[p0.getY() + 1][p0.getX() + 1] = p0;
+                }
+            } catch (IndexOutOfBoundsException ignored) {
+            }
 
         }
 
@@ -190,10 +223,10 @@ public class PathFinder {
      */
     public Path getPath(Node startNode, Node endNode) throws NoValidEdgeException {
         ArrayList<Point> pathListReversed = BFS(startNode, endNode, gridSizeStart);
+
         if (pathListReversed == null) {
             return new Path();
         }
-        System.out.println(pathListReversed + "\n");
         Path path = new Path();
         path.getElements().add(new MoveTo(startNode.getX(), startNode.getY()));
         for (int i = pathListReversed.size() - 2; i >= 1; i--) {
@@ -222,11 +255,14 @@ public class PathFinder {
     }
 
     public String toString() {
-        StringBuilder res = new StringBuilder();
-        for (int i = 0; i < grid.length; i++) {
-            res.append(Arrays.toString(grid[i])).append("\n");
+        if (grid.length > 0) {
+            StringBuilder res = new StringBuilder();
+            for (int i = 0; i < grid.length; i++) {
+                res.append(Arrays.toString(grid[i])).append("\n");
+            }
+            return res.toString();
         }
-        return res.toString();
+        return "";
     }
 
     private String print2dArr(boolean[][] arr) {
