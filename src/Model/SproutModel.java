@@ -1,9 +1,6 @@
 package Model;
 
-import Exceptions.CollisionException;
-import Exceptions.InvalidNode;
-import Exceptions.PathForcedToEnd;
-import Exceptions.InvalidPath;
+import Exceptions.*;
 import javafx.beans.property.BooleanProperty;
 import javafx.geometry.Bounds;
 import javafx.scene.paint.Color;

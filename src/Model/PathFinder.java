@@ -1,6 +1,7 @@
 package Model;
 
 
+import Exceptions.NoValidEdgeException;
 import javafx.scene.shape.*;
 
 import java.util.*;
@@ -136,7 +137,7 @@ public class PathFinder {
      * @author Noah Bastian Christiansen
      * @author Sebastian Lund Jensen
      */
-    public ArrayList<Point> BFS(Node startNode, Node endNode) {
+    public ArrayList<Point> BFS(Node startNode, Node endNode) throws NoValidEdgeException {
         Point[][] parent = new Point[gridSize][gridSize];
         boolean[][] visited = new boolean[gridSize][gridSize];
         Queue<Point> queue = new LinkedList<>();
@@ -188,8 +189,10 @@ public class PathFinder {
                 }
             } catch (IndexOutOfBoundsException ignored) {
             }
+            
         }
-        return null;
+        throw new NoValidEdgeException("No valid edge found between nodes " + startNode.getId()
+                + " and " + endNode.getId());
     }
 
     /**
@@ -203,11 +206,10 @@ public class PathFinder {
      * @author Noah Bastian Christiansen
      * @author Sebastian Lund Jensen
      */
-    public Path getPath(Node startNode, Node endNode) {
+    public Path getPath(Node startNode, Node endNode) throws NoValidEdgeException {
         this.scalingFactorX = model.getWidth()/gridSize;
         this.scalingFactorY = model.getHeight()/gridSize;
         initGrid(startNode, endNode);
-        System.out.println(this);
         ArrayList<Point> pathListReversed = BFS(startNode, endNode);
         Path path = new Path();
         path.getElements().add(new MoveTo(startNode.getX(), startNode.getY()));
