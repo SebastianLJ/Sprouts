@@ -296,6 +296,7 @@ public class SproutModel {
             // If new node collides with existing node
             if (twoCirclesCollide(node.getShape(), newNode.getShape())) {
                 return true;
+
             }
         }
         return false;
@@ -308,12 +309,13 @@ public class SproutModel {
      */
     private boolean newNodeCollidesWithExistingEdges(Node newNode) {
 
+
         // Traverse through all existing edges on the gameboard
         for (Shape edge: edges) {
             // If the new node collides with existing edge
             if ((edge instanceof Line && lineAndCircleCollide(edge, newNode.getShape()))
                     || (edge instanceof Circle && twoCirclesCollide((Circle) edge, newNode.getShape()))
-                    || (edge instanceof Path && edge.intersects(newNode.getShape().getBoundsInLocal()))) {
+                    || (edge instanceof Path && (Shape.intersect(newNode.getShape(), edge)).getBoundsInLocal().getWidth()!=-1)) {
                 return true;
             }
         }
