@@ -151,7 +151,7 @@ public class SproutModel {
         Node startNode = nodes.get(startNodeName);
         Node endNode = nodes.get(endNodeName);
         Line newLine = getLineBetweenNodeContours(startNode, endNode);
-        Node newNode = getNewLineMidNode(startNode, endNode);
+        Node newNode = getNodeForNewLine(startNode, endNode);
 
         if (newEdgeCollidesWithExistingEdges(newLine)) {
             throw new CollisionException("Line collided with an existing line");
@@ -180,7 +180,7 @@ public class SproutModel {
     public void drawCircleFromNodeToItself(int nodeName) throws CollisionException {
         Node node = nodes.get(nodeName);
         Circle newCircle = createCircleToDraw(node);
-        Node newNode = getNewCircleMidNode(newCircle);
+        Node newNode = getNodeForNewCircle(newCircle);
 
         if (newEdgeCollidesWithExistingEdges(newCircle)) {
             throw new CollisionException("Line collided with an existing line");
@@ -279,6 +279,9 @@ public class SproutModel {
     }
 
     private double getPointOnLine(double startCoor, double endCoor, double distance, double lineLength) {
+        if (distance >= lineLength) {
+            return endCoor;
+        }
         return startCoor + (distance/lineLength) * (endCoor-startCoor);
     }
 
@@ -313,11 +316,23 @@ public class SproutModel {
         for (Shape edge: edges) {
             // If the new node collides with existing edge
             if ((edge instanceof Line && lineAndCircleCollide(edge, newNode.getShape()))
-                    || (edge instanceof Circle && twoCirclesCollide((Circle) edge, newNode.getShape()))
-                    || (edge instanceof Path && edge.intersects(newNode.getShape().getBoundsInLocal()))) {
+                    || (edge instanceof Circle && twoCirclesCollide((Circle) edge, newNode.getShape()))) {
                 return true;
             }
+
+            if (edge instanceof Path) {
+                for (int i = 1; i < ((Path) edge).getElements().size()-1; i++) {
+                    // Create line between every two path elements
+                    Line pathLine = getLineBetweenPathElements(((Path) edge).getElements().subList(i - 1, i + 1));
+
+                    if (Shape.intersect(newNode.getShape(), pathLine).getBoundsInLocal().getWidth() != -1) {
+                        return true;
+                    }
+
+                }
+            }
         }
+
         return false;
     }
 
@@ -330,7 +345,7 @@ public class SproutModel {
      * @param endNode : the new edge end point
      * @return non-colliding node if one exists, null otherwise
      */
-    private Node getNewLineMidNode(Node startNode, Node endNode) {
+    private Node getNodeForNewLine(Node startNode, Node endNode) {
 
         double edgeLength = getDistanceBetweenTwoPoints(startNode.getX(), startNode.getY(), endNode.getX(), endNode.getY());
         double r = startNode.getNodeRadius();
@@ -379,7 +394,7 @@ public class SproutModel {
      * @param edge : the new edge
      * @return non-colliding node if one exists, null otherwise
      */
-    public Node getNewCircleMidNode(Circle edge) {
+    public Node getNodeForNewCircle(Circle edge) {
 
         int angle = 0;   // Initial node position - on circle top point
         Node newNode;
@@ -417,7 +432,7 @@ public class SproutModel {
      * @author Thea Birk Berger
      * @return non-colliding node if one exists, null otherwise
      */
-    public Node getNewlyDrawnLineMidNode() {
+    public Node getNodeForNewDrawing() {
 
         int pathSize = path.getElements().size();
         int d = pathSize/2;  // Initial node position - mid path element
@@ -494,6 +509,23 @@ public class SproutModel {
     }
 
     /**
+     * Finds the contour point of a node given a center and a nearby path element
+     * @author Thea Birk Berger
+     * @param c1 : Node center x
+     * @param c2 : Node center y
+     * @param peX : Path element coordinate x
+     * @param peY : Path element coordinate y
+     * @param radius : Node radius
+     * @return Contour point {x,y}
+     */
+    private double[] getContourPoint(double c1, double c2, double peX, double peY, double radius) {
+        double gapDistance = getDistanceBetweenTwoPoints(c1,c2,peX,peY);
+        double contourX = getPointOnLine(c1,peX,radius,gapDistance);
+        double contourY = getPointOnLine(c2,peY,radius,gapDistance);
+        return new double[] {contourX,contourY};
+    }
+
+    /**
      * @param mouseDrag A mouse drag
      * @author Noah Bastian Christiansen & Sebastian Lund Jensen
      * This method draws the line the user is tracing with his mouse.
@@ -514,9 +546,16 @@ public class SproutModel {
 
         if (!isPointInsideNodeTemp && !leftStartNode) {
             leftStartNode = true;
-            path.getElements().add(new MoveTo(point.getX(), point.getY()));
+            // Get start node contour point and add to path
+            double[] contourPoint = getContourPoint(pathStartNode.getX(),pathStartNode.getY(),point.getX(),point.getY(),pathStartNode.getNodeRadius());
+            path.getElements().add(new MoveTo(contourPoint[0],contourPoint[1]));
         } else if (isPointInsideNodeTemp && leftStartNode) {
-            throw new PathForcedToEnd("Path forcefully ended at: " + point.getX() + ", " + point.getY());
+            // Get end node contour point and add to path
+            Node endNode = findNodeFromPoint(point);
+            double[] contourPoint = getContourPoint(endNode.getX(),endNode.getY(),point.getX(),point.getY(),endNode.getNodeRadius());
+            path.getElements().add(new LineTo(contourPoint[0],contourPoint[1]));
+
+            throw new PathForcedToEnd("Path forcefully ended at: " + contourPoint[0] + ", " + contourPoint[1]);
         }
 
         pathTmp.getElements().add(new LineTo(point.getX(), point.getY()));
@@ -542,7 +581,7 @@ public class SproutModel {
         Point point = new Point((int) mouseEvent.getX(), (int) mouseEvent.getY());
         Node endNode = findNodeFromPoint(point);
         pathStartNode.incNumberOfConnectingEdges(1);
-        Node newNode = getNewlyDrawnLineMidNode();
+        Node newNode = getNodeForNewDrawing();
         if (leftStartNode && endNode != null && endNode.getNumberOfConnectingEdges() < 3 && newNode != null) {
             endNode.incNumberOfConnectingEdges(1);
             edges.add(path);

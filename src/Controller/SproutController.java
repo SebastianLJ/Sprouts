@@ -76,7 +76,7 @@ public class SproutController extends Controller {
      * @author Noah Bastian Christiansen
      */
     public void addNodeOnValidLineDrag() throws InvalidPath {
-        sproutModel.getNewlyDrawnLineMidNode();
+        sproutModel.getNodeForNewDrawing();
     }
     /**
      * @author Noah Bastian Christiansen
