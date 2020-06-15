@@ -7,8 +7,11 @@ import java.util.*;
 
 public class PathFinder {
     private SproutModel model;
-    private int gridSize = 50;
+    private int gridSize = 250;
     private boolean[][] grid = new boolean[gridSize][gridSize];
+
+    private double scalingFactorX;
+    private double scalingFactorY;
 
     public PathFinder(SproutModel model) {
         this.model = model;
@@ -23,10 +26,37 @@ public class PathFinder {
      * @author Noah Bastian Christiansen
      * @author Sebastian Lund Jensen
      */
-    public void initGrid() {
+    public void initGrid(Node startNode, Node endNode) {
+        grid = new boolean[gridSize][gridSize];
         List<Shape> edges = model.getEdges();
         List<Node> nodes = model.getNodes();
 
+        initNodes(nodes, startNode, endNode);
+        initEdges(edges);
+    }
+
+    private void initNodes(List<Node> nodes, Node startNode, Node endNode) {
+        for (Node node : nodes) {
+            findNodeCoverage(node.getX(), node.getY(), startNode, endNode);
+        }
+    }
+
+    private void findNodeCoverage(double x, double y, Node startNode, Node endNode) {
+        int nX = downScaleX(x);
+        int nY = downScaleY(y);
+
+        Point p = new Point((int) x, (int) y);
+
+        if (model.isPointInsideNode(p) && !model.isPointInsideNode(p, startNode) && !model.isPointInsideNode(p, endNode) && !grid[nY][nX]) {
+            grid[nY][nX] = true;
+            findNodeCoverage(x + scalingFactorX, y, startNode, endNode);
+            findNodeCoverage(x - scalingFactorX, y, startNode, endNode);
+            findNodeCoverage(x, y + scalingFactorY, startNode, endNode);
+            findNodeCoverage(x, y - scalingFactorY, startNode, endNode);
+        }
+    }
+
+    private void initEdges(List<Shape> edges) {
         for (Shape shape : edges) {
             for (PathElement pe : ((Path) shape).getElements()) {
                 String pathElemString = pe.toString();
@@ -41,12 +71,6 @@ public class PathFinder {
 
                 grid[nY][nX] = true;
             }
-        }
-
-        for (Node node : nodes) {
-            int x = downScaleX(node.getX());
-            int y = downScaleY(node.getY());
-            grid[y][x] = true;
         }
     }
 
@@ -67,7 +91,6 @@ public class PathFinder {
         while (!path.get(path.size() - 1).equals(new Point(downScaleX(startNode.getX()), downScaleY(startNode.getY())))) {
             path.add(parent[(path.get(path.size() - 1)).getY()][path.get(path.size() - 1).getX()]);
         }
-        //System.out.println("path: " + path.toString());
         return path;
     }
 
@@ -104,7 +127,7 @@ public class PathFinder {
                     queue.add(new Point(p0.getX(), p0.getY() - 1));
                     parent[p0.getY() - 1][p0.getX()] = p0;
                 }
-            } catch (IndexOutOfBoundsException e) {
+            } catch (IndexOutOfBoundsException ignored) {
             }
             try {
                 if (!grid[p0.getY() + 1][p0.getX()] && !visited[p0.getY() + 1][p0.getX()]) {
@@ -112,7 +135,7 @@ public class PathFinder {
                     queue.add(new Point(p0.getX(), p0.getY() + 1));
                     parent[p0.getY() + 1][p0.getX()] = p0;
                 }
-            } catch (IndexOutOfBoundsException e) {
+            } catch (IndexOutOfBoundsException ignored) {
             }
             try {
                 if (!grid[p0.getY()][p0.getX() - 1] && !visited[p0.getY()][p0.getX() - 1]) {
@@ -120,7 +143,7 @@ public class PathFinder {
                     queue.add(new Point(p0.getX() - 1, p0.getY()));
                     parent[p0.getY()][p0.getX() - 1] = p0;
                 }
-            } catch (IndexOutOfBoundsException e) {
+            } catch (IndexOutOfBoundsException ignored) {
             }
             try {
                 if (!grid[p0.getY()][p0.getX() + 1] && !visited[p0.getY()][p0.getX() + 1]) {
@@ -128,13 +151,9 @@ public class PathFinder {
                     queue.add(new Point(p0.getX() + 1, p0.getY()));
                     parent[p0.getY()][p0.getX() + 1] = p0;
                 }
-            } catch (IndexOutOfBoundsException e) {
+            } catch (IndexOutOfBoundsException ignored) {
             }
-
         }
-
-        //System.out.println("Visited \n" + print2dArr(visited));
-
         return null;
     }
 
@@ -150,34 +169,35 @@ public class PathFinder {
      * @author Sebastian Lund Jensen
      */
     public Path getPath(Node startNode, Node endNode) {
-        initGrid();
+        this.scalingFactorX = model.getWidth()/gridSize;
+        this.scalingFactorY = model.getHeight()/gridSize;
+        initGrid(startNode, endNode);
         System.out.println(this);
         ArrayList<Point> pathListReversed = BFS(startNode, endNode);
         Path path = new Path();
         path.getElements().add(new MoveTo(startNode.getX(), startNode.getY()));
-        for (int i = pathListReversed.size() - 1; i >= 0; i--) {
+        for (int i = pathListReversed.size() - 2; i > 0; i--) {
             Point p = pathListReversed.get(i);
             path.getElements().add(new LineTo(upScaleX(p.getX()), upScaleY(p.getY())));
         }
         path.getElements().add(new LineTo(endNode.getX(), endNode.getY()));
         return path;
-
     }
 
     private int downScaleX(Double coord) {
-        return (int) (coord / (model.getWidth() / grid.length));
+        return (int) (coord / scalingFactorX);
     }
 
     private int downScaleY(Double coord) {
-        return (int) (coord / (model.getHeight() / grid.length));
+        return (int) (coord / scalingFactorY);
     }
 
     private int upScaleX(int coord) {
-        return (int) (coord * (model.getWidth() / grid.length));
+        return (int) (coord * scalingFactorX) + 1;
     }
 
     private int upScaleY(int coord) {
-        return (int) (coord * (model.getHeight() / grid.length));
+        return (int) (coord * scalingFactorY) + 1;
     }
 
     public String toString() {

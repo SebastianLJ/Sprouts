@@ -154,20 +154,11 @@ public class SproutModel {
         Node endNode = nodes.get(endNodeName);
         Path path = pf.getPath(startNode, endNode);
 
-        /*if (edgesCollides(newLine)) {
-            throw new CollisionException("Line collided with an exisiting line");
-        } else {
-            // Add edge to gameboard
-            edges.add(newLine);
-            // Add new node mid edge
-            addNodeOnLine(newLine);
-            // Update number of connecting edges for the two nodes
-            startNode.incNumberOfConnectingEdges(1);
-            endNode.incNumberOfConnectingEdges(1);
-            nodes.set(startNodeName, startNode);
-            nodes.set(endNodeName, endNode);
-        }*/
+        // Add edge to gameboard
         edges.add(path);
+        // Add new node mid edge
+        addNodeOnLineDrag(path);
+        // Update number of connecting edges for the two nodes
         startNode.incNumberOfConnectingEdges(1);
         endNode.incNumberOfConnectingEdges(1);
         nodes.set(startNodeName, startNode);
@@ -291,6 +282,13 @@ public class SproutModel {
      * Adds a new node close to the midpoint of a valid line
      */
     public void addNodeOnLineDrag(){
+        int size = path.getElements().size();
+        LineTo test = (LineTo) (path.getElements().get(size/2));
+        Node newNode = new Node(test.getX(), test.getY(), 2, nodes.size());
+        nodes.add(newNode);
+    }
+
+    public void addNodeOnLineDrag(Path path){
         int size = path.getElements().size();
         LineTo test = (LineTo) (path.getElements().get(size/2));
         Node newNode = new Node(test.getX(), test.getY(), 2, nodes.size());
@@ -616,6 +614,10 @@ public class SproutModel {
         return findNodeFromPoint(point) != null;
     }
 
+    public boolean isPointInsideNode(Point point, Node node) {
+        return node.isPointInsideNode(point);
+    }
+
     public void drawEdgeBetweenNodes(Circle startNode, Circle endNode) throws CollisionException {
         int nameOfStartNode = findNameOfNode(startNode);
         int nameOfEndNode = findNameOfNode(endNode);
@@ -665,17 +667,6 @@ public class SproutModel {
 
     public void setNodes(List<Node> nodes) {
         this.nodes = nodes;
-    }
-
-    public void drawSmartLine(Circle startNode, Circle endNode) {
-        int nameOfStartNode = findNameOfNode(startNode);
-        int nameOfEndNode = findNameOfNode(endNode);
-
-        Node n1 = nodes.get(nameOfStartNode);
-        Node n2 = nodes.get(nameOfEndNode);
-
-        pf.initGrid();
-        edges.add(pf.getPath(n1, n2));
     }
 }
 
