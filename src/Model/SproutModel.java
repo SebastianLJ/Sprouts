@@ -59,7 +59,7 @@ public class SproutModel {
                 circle.setCenterX(x);
                 circle.setCenterY(y);
             } while (invalidPointLocation(circle));
-            nodes.add(new Node(x, y, 0,i));
+            nodes.add(new Node(x, y, 0,i+1));
         }
     }
 
@@ -332,7 +332,6 @@ public class SproutModel {
                 }
             }
         }
-
         return false;
     }
 
@@ -492,9 +491,9 @@ public class SproutModel {
     }
 
     /**
+     * Sets up path object and sets coordinates for starting point of drawing (the position on the pane where the click occured)
      * @param mouseClick A mouse click
      * @author Noah Bastian Christiansen & Sebastian Lund Jensen
-     * Sets up path object and sets coordinates for starting point of drawing (the position on the pane where the click occured)
      */
     public void initializePath(MouseEvent mouseClick) throws InvalidNode {
         isCollided = false;
@@ -526,11 +525,11 @@ public class SproutModel {
     }
 
     /**
-     * @param mouseDrag A mouse drag
-     * @author Noah Bastian Christiansen & Sebastian Lund Jensen
      * This method draws the line the user is tracing with his mouse.
      * The method performs subcalls to pathCollides() to ensure the drawn line is not intersecting with itself or other lines.
      * The current drawing is removed if it violates the rules.
+     * @param mouseDrag A mouse drag
+     * @author Noah Bastian Christiansen & Sebastian Lund Jensen
      */
     public void drawPath(MouseEvent mouseDrag) throws PathForcedToEnd, InvalidPath, CollisionException {
         Path pathTmp = new Path();
@@ -574,8 +573,8 @@ public class SproutModel {
     }
 
     /**
+     *  If turn was ended successfully then the drawn line is added to list of valid lines
      * @author Noah Bastian Christiansen & Sebastian Lund Jensen
-     * If turn was ended successfully then the drawn line is added to list of valid lines
      */
     public void finishPath(MouseEvent mouseEvent) throws InvalidPath, InvalidNode {
         Point point = new Point((int) mouseEvent.getX(), (int) mouseEvent.getY());
@@ -849,6 +848,7 @@ public class SproutModel {
         return -1; // Should never be reached
     }
     /**
+     * Given a Cricle object this method finds the corresponding node object.
      * @param nodeToFind The circle whose node object needs to be found
      * @author Noah Bastian Christiansen
      * @return The node that whose shape is the given circle object
@@ -862,6 +862,7 @@ public class SproutModel {
         return null;
     }
     /**
+     * Given a Circle object it finds the id of the corresponding node.
      * @param nodeToFind The circle whose name we want
      * @author Noah Bastian Christiansen
      * @return the name/number of the node whose shape is the given circle object.

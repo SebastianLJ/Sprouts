@@ -34,36 +34,34 @@ public class MainMenuController extends Controller implements Initializable {
     private boolean promptedForDragGame;
     private boolean promptedForClickGame;
 
+
     private DoubleProperty fontSize = new SimpleDoubleProperty(10);
 
     /**
-     * @author Emil Sommer Desler
-     * This method in run on a button click and starts either a click to draw game or a drag to draw game.
-     * @param event The mouse click on the button.
+     * @param event                The mouse click on the button.
      * @param numberOfInitialNodes User inputs how many nodes the game must start with.
      * @throws IOException Thrown by the FXMLLoader if the fxml document is not present.
+     * @author Emil Sommer Desler
+     * @author Noah Bastian Christiansen
+     * This method in run on a button click and starts either a click to draw game or a drag to draw game.
      */
     private void startGame(MouseEvent event, int numberOfInitialNodes) throws IOException {
         FXMLLoader loader = new FXMLLoader(
                 SproutLauncher.class.getClassLoader().getResource(
                         "GameView.fxml")
         );
-
-        GameController controller = new GameController();
-        controller.setGameMode(whichGameType);
-        controller.setNumberOfInitialNodes(numberOfInitialNodes);
-
-        loader.setController(controller);
+        Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
 
         Parent gameViewParent = loader.load();
-
-        Scene gameViewScene = new Scene(gameViewParent);
-
-        //This line gets the Stage information
-        Stage window = (Stage)((Node) event.getSource()).getScene().getWindow();
+        GameController controller = loader.getController();
+        Scene gameViewScene = new Scene(gameViewParent, SettingsController.width, SettingsController.height);
 
         window.setScene(gameViewScene);
+        window.setResizable(false);
+        controller.setGameMode(whichGameType);
+        controller.setNumberOfInitialNodes(numberOfInitialNodes);
         window.show();
+
     }
 
     public void startClickToDrawGame() {
@@ -91,11 +89,11 @@ public class MainMenuController extends Controller implements Initializable {
     }
 
     /**
+     * @param event The mouse click on the button.
+     * @throws IOException Thrown by the FXMLLoader if the fxml document is not present.
      * @author Emil Sommer Desler
      * This method is executed when the user decides to simulate a file.
      * This method opens a display where the user can enter the name of the file.txt he want to simulate.
-     * @param event The mouse click on the button.
-     * @throws IOException Thrown by the FXMLLoader if the fxml document is not present.
      */
     public void startEnterFileName(ActionEvent event) throws IOException {
         changeScene(event, "EnterFileName.fxml");
@@ -149,7 +147,12 @@ public class MainMenuController extends Controller implements Initializable {
         }
     }
 
+    public void changeSettings(ActionEvent event) throws IOException {
+        changeScene(event, "GameSettings.fxml");
+    }
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
     }
+
 }
