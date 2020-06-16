@@ -48,7 +48,7 @@ public class PathFinder {
 
         Point p = new Point((int) x, (int) y);
 
-        if (model.isPointInsideNode(p) && !model.isPointInsideNode(p, startNode) && !model.isPointInsideNode(p, endNode) && !grid[nY][nX]) {
+        if (nX < grid.length && nY < grid.length && model.isPointInsideNode(p) && !model.isPointInsideNode(p, startNode) && !model.isPointInsideNode(p, endNode) && !grid[nY][nX]) {
             grid[nY][nX] = true;
             findNodeCoverage(x + scalingFactorX, y, startNode, endNode);
             findNodeCoverage(x - scalingFactorX, y, startNode, endNode);
@@ -257,21 +257,6 @@ public class PathFinder {
                 + " and " + endNode.getId());
     }
 
-//    public ArrayList<Path> SelfLoop(Node startNode) throws NoValidEdgeException {
-//        Path path1 = getPath(startNode, endNode);
-//
-//        Path path2 = getPath(endNode, startNode);
-//        System.out.println("path1: " + path1);
-//        System.out.println("path2: " + path2);
-//
-//        ArrayList<Path> test = new ArrayList<>();
-//
-//        test.add(path1);
-//        test.add(path2);
-//
-//        return test;
-//    }
-
     /**
      * Builds the Path object from the path list from BFS. The path will start at the non-scaled
      * start node, and end at the non-scaled end node, to make sure the path will connect to the points.
@@ -333,16 +318,16 @@ public class PathFinder {
 
     }
 
-    public Path[] selfLoopTestNode(Node startNode, int i, int j, Operator[] ops) {
+    public Path[] selfLoopTestNode(Node startNode, int i, int j, Operator[] ops) throws NoValidEdgeException {
         Path pathToTemp = null, pathToStart = null;
         Node tempEndNode = new Node(ops[0].apply(startNode.getX(),i), ops[1].apply(startNode.getY(), j), 0, -2);
         if (tempEndNode.getX() < model.getWidth() && tempEndNode.getY() < model.getHeight() && !model.nodeCollides(tempEndNode)) {
             try {
                 pathToTemp = getPath(startNode, tempEndNode);
                 pathToStart = getPath(tempEndNode, startNode);
-            } catch (NoValidEdgeException | IndexOutOfBoundsException e) {
-                e.printStackTrace();
+            } catch (NoValidEdgeException e) {
             }
+
         }
         Path[] res = new Path[2];
         res[0] = pathToTemp;
