@@ -8,7 +8,8 @@ import java.util.*;
 
 public class PathFinder {
     private SproutModel model;
-    private int gridSize = 250;
+    private int gridSizeStart = 50;
+    private int gridSize = gridSizeStart;
     private boolean[][] grid = new boolean[gridSize][gridSize];
 
     private double scalingFactorX;
@@ -33,7 +34,7 @@ public class PathFinder {
         List<Node> nodes = model.getNodes();
 
         initNodes(nodes, startNode, endNode);
-        initEdges(edges);
+        initEdges2(edges);
     }
 
     private void initNodes(List<Node> nodes, Node startNode, Node endNode) {
@@ -216,7 +217,15 @@ public class PathFinder {
      * @author Noah Bastian Christiansen
      * @author Sebastian Lund Jensen
      */
-    public ArrayList<Point> BFS(Node startNode, Node endNode) throws NoValidEdgeException {
+    public ArrayList<Point> BFS(Node startNode, Node endNode, int gridSize) throws NoValidEdgeException {
+
+        if(gridSize > model.getWidth()) {
+            throw new NoValidEdgeException("No valid edge found between nodes " + startNode.getId()
+                    + " and " + endNode.getId());
+        }
+
+        this.gridSize = gridSize;
+
         Point[][] parent = new Point[gridSize][gridSize];
         boolean[][] visited = new boolean[gridSize][gridSize];
         Queue<Point> queue = new LinkedList<>();
@@ -253,8 +262,7 @@ public class PathFinder {
                 }
             }
         }
-        throw new NoValidEdgeException("No valid edge found between nodes " + startNode.getId()
-                + " and " + endNode.getId());
+        return BFS(startNode, endNode, gridSize+gridSizeStart);
     }
 
     /**
@@ -272,7 +280,7 @@ public class PathFinder {
         this.scalingFactorX = model.getWidth() / gridSize;
         this.scalingFactorY = model.getHeight() / gridSize;
         initGrid(startNode, endNode);
-        ArrayList<Point> pathListReversed = BFS(startNode, endNode);
+        ArrayList<Point> pathListReversed = BFS(startNode, endNode, gridSizeStart);
         Path path = new Path();
         path.getElements().add(new MoveTo(startNode.getX(), startNode.getY()));
         for (int i = pathListReversed.size() - 2; i > 0; i--) {
