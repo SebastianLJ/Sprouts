@@ -11,6 +11,12 @@ public enum Operator {
         public double apply(double a, double b) {
             return a - b;
         }
+    },
+    UNARY('U') {
+        @Override
+        public double apply(double a, double b) {
+            return a;
+        }
     };
 
     private final char op;

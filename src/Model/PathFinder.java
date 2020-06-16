@@ -145,6 +145,8 @@ public class PathFinder {
         Point[][] parent = new Point[gridSize][gridSize];
         boolean[][] visited = new boolean[gridSize][gridSize];
         Queue<Point> queue = new LinkedList<>();
+        Operator[][] opCombs = {{Operator.UNARY, Operator.SUBTRACTION}, {Operator.UNARY, Operator.ADDITION},
+                {Operator.SUBTRACTION, Operator.UNARY}, {Operator.ADDITION, Operator.UNARY}};
 
         //mark end node as false
         grid[downScaleY(endNode.getY())][downScaleX(endNode.getX())] = false;
@@ -161,39 +163,20 @@ public class PathFinder {
             }
 
             //visits all available points around p0 in a cross shape
-            try {
-                if (!grid[p0.getY() - 1][p0.getX()] && !visited[p0.getY() - 1][p0.getX()]) {
-                    visited[p0.getY() - 1][p0.getX()] = true;
-                    queue.add(new Point(p0.getX(), p0.getY() - 1));
-                    parent[p0.getY() - 1][p0.getX()] = p0;
-                }
-            } catch (IndexOutOfBoundsException ignored) {
-            }
-            try {
-                if (!grid[p0.getY() + 1][p0.getX()] && !visited[p0.getY() + 1][p0.getX()]) {
-                    visited[p0.getY() + 1][p0.getX()] = true;
-                    queue.add(new Point(p0.getX(), p0.getY() + 1));
-                    parent[p0.getY() + 1][p0.getX()] = p0;
-                }
-            } catch (IndexOutOfBoundsException ignored) {
-            }
-            try {
-                if (!grid[p0.getY()][p0.getX() - 1] && !visited[p0.getY()][p0.getX() - 1]) {
-                    visited[p0.getY()][p0.getX() - 1] = true;
-                    queue.add(new Point(p0.getX() - 1, p0.getY()));
-                    parent[p0.getY()][p0.getX() - 1] = p0;
-                }
-            } catch (IndexOutOfBoundsException ignored) {
-            }
-            try {
-                if (!grid[p0.getY()][p0.getX() + 1] && !visited[p0.getY()][p0.getX() + 1]) {
-                    visited[p0.getY()][p0.getX() + 1] = true;
-                    queue.add(new Point(p0.getX() + 1, p0.getY()));
-                    parent[p0.getY()][p0.getX() + 1] = p0;
-                }
-            } catch (IndexOutOfBoundsException ignored) {
-            }
+            for(Operator[] opComb : opCombs) {
+                try {
+                    if (!grid[(int) opComb[1].apply(p0.getY(), 1)][(int) opComb[0].apply(p0.getX(),1)]
+                            && !visited[(int) opComb[1].apply(p0.getY(), 1)][(int) opComb[0].apply(p0.getX(),1)]) {
 
+                        visited[(int) opComb[1].apply(p0.getY(), 1)][(int) opComb[0].apply(p0.getX(),1)] = true;
+                        queue.add(new Point((int) opComb[0].apply(p0.getX(),1),
+                                (int) opComb[1].apply(p0.getY(),1)));
+
+                        parent[(int) opComb[1].apply(p0.getY(), 1)][(int) opComb[0].apply(p0.getX(),1)] = p0;
+                    }
+                } catch (IndexOutOfBoundsException ignored) {
+                }
+            }
         }
         throw new NoValidEdgeException("No valid edge found between nodes " + startNode.getId()
                 + " and " + endNode.getId());
