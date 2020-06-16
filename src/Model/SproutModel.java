@@ -596,9 +596,6 @@ public class SproutModel {
             path.getElements().clear();
             throw new InvalidNode(endNode);
         }
-        pf.initGrid();
-        System.out.println(pf);
-
     }
 
     /**
@@ -959,6 +956,10 @@ public class SproutModel {
 
     public void setNodes(List<Node> nodes) {
         this.nodes = nodes;
+    }
+
+    public boolean isPointInsideNode(Point point, Node node) {
+        return node.isPointInsideNode(point);
     }
 }
 
