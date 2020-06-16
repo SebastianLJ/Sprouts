@@ -1,6 +1,7 @@
 package Controller;
 
 import Exceptions.*;
+import Model.EdgeTools;
 import Model.SproutModel;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Circle;

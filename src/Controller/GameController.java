@@ -10,6 +10,7 @@ import javafx.fxml.Initializable;
 
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.control.Label;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -37,6 +38,7 @@ public class GameController extends SproutController implements Initializable {
     private Circle selectedNode;
     private boolean dragged;
     private boolean isPathInit = false;
+    public Label messageForPlayer;
 
     public GameController() {
         super();
@@ -126,6 +128,7 @@ public class GameController extends SproutController implements Initializable {
                 view.illegalEdgeAnimation(gamePane, createEdge(selectedNode, shapeOfNode));
                 view.deselectNode(selectedNode);
                 theUserHasSelectedANode = false;
+                System.out.println(e.getMessage());
             } catch (GameOverException e) {
                 updateCanvasClick();
                 System.out.println("Game Over!");
@@ -134,11 +137,12 @@ public class GameController extends SproutController implements Initializable {
                 view.illegalEdgeAnimation(gamePane, createEdge(selectedNode, shapeOfNode));
                 view.deselectNode(selectedNode);
                 theUserHasSelectedANode = false;
-                System.out.println("Collision!");
+                messageForPlayer.setText(e.getMessage());           // TODO: Can this be put in view?
+                System.out.println(e.getMessage());
+//                System.out.println("Collision!");
             }
         }
     }
-
 
     /**
      *  If the user has selected a node and clicks on something else than a node the selected node is deselected
