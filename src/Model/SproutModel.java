@@ -176,7 +176,18 @@ public class SproutModel {
      */
     public void drawCircleFromNodeToItself(int nodeName) throws CollisionException {
         Node node = nodes.get(nodeName);
-        Circle newCircle = createCircleToDraw(node);
+
+        Path path = pf.getPath(node, node);
+
+        // Add edge to gameboard
+        edges.add(path);
+        // Add new node mid edge
+        addNodeOnLineDrag(path);
+        // Update number of connecting edges for the two nodes
+        node.incNumberOfConnectingEdges(2);
+        nodes.set(nodeName, node);
+
+        /*Circle newCircle = createCircleToDraw(node);
 
         if (edgesCollides(newCircle)) {
             throw new CollisionException("Line collided with an exisiting line");
@@ -188,7 +199,7 @@ public class SproutModel {
             // Update number of connecting edges for the node
             node.incNumberOfConnectingEdges(2);
             nodes.set(nodeName, node);
-        }
+        }*/
 
     }
 
