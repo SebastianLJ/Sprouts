@@ -78,6 +78,81 @@ public class PathFinder {
         }
     }
 
+    private void initEdges2(List<Shape> edges) {
+        if (edges.size() > 0) {
+            Path tmp = (Path) edges.get(edges.size() - 1);
+            findPathCoverage(tmp);
+        }
+    }
+
+    private void findPathCoverage(Path path) {
+        int direction = -1;  //0 for right, 1 for left, 2 for down 3 for right
+        int j;
+        int cellIndex = -1;
+        double endPointX = -1;
+        double endPointY = -1;
+        double startPointX = -1;
+        double startPointY = -1;
+
+        for (int i = 0; i < path.getElements().size() - 1; i++) {
+            j = 0;
+            if (path.getElements().get(i) instanceof MoveTo) {
+                startPointX = ((MoveTo) path.getElements().get(i)).getX();
+                startPointY = ((MoveTo) path.getElements().get(i)).getY();
+            } else {
+                startPointX = ((LineTo) path.getElements().get(i)).getX();
+                startPointY = ((LineTo) path.getElements().get(i)).getY();
+            }
+            if (path.getElements().get(i + 1) instanceof MoveTo) {
+                endPointX = ((MoveTo) path.getElements().get(i + 1)).getX();
+                endPointY = ((MoveTo) path.getElements().get(i + 1)).getY();
+
+            } else {
+                endPointX = ((LineTo) path.getElements().get(i + 1)).getX();
+                endPointY = ((LineTo) path.getElements().get(i + 1)).getY();
+
+            }
+            double diffX = endPointX - startPointX;
+            double diffY = endPointY - startPointY;
+            if (diffX > 0) {
+                direction = 0;
+                cellIndex = downScaleX(startPointX);
+            }
+            if (diffX < 0) {
+                direction = 1;
+                cellIndex = downScaleX(startPointX);
+
+            }
+            if (diffY > 0) {
+                direction = 2;
+                cellIndex = downScaleX(startPointY);
+            }
+            if (diffY < 0) {
+                direction = 3;
+                cellIndex = downScaleY(startPointY);
+            }
+
+            while (upScaleX(cellIndex + j) < endPointX && direction == 0) { //moving towards right
+                grid[downScaleY(startPointY)][cellIndex + j] = true;
+                j++;
+            }
+
+            while (upScaleX(cellIndex - j) > endPointX && direction == 1) { //moving towards left
+                grid[downScaleY(startPointY)][cellIndex - j] = true;
+                j--;
+            }
+
+            while (upScaleY(cellIndex + j) < endPointY && direction == 2) { //moving down
+                grid[cellIndex + j][downScaleX(startPointX)] = true;
+                j++;
+            }
+            while (upScaleY(cellIndex - j) > endPointY && direction == 3) { //moving up
+                grid[cellIndex - j][downScaleX(startPointX)] = true;
+                j--;
+            }
+        }
+    }
+
     /**
      * Grid i build iterating each point in the scaled grid, and checking if there is a point or edge
      * on or very near to that point. This is done by creating a Circle object with a radius of 0.5 and
@@ -349,7 +424,6 @@ public class PathFinder {
 
             }}
 
-
             if (!validPath) {
                 throw new NoValidEdgeException("No valid selfloop from: " + startNode.getId());
             }
@@ -359,7 +433,6 @@ public class PathFinder {
             System.out.println("resultingPath: " + pathToTemp);
 
             return pathToTemp;
-
 
     }
 
