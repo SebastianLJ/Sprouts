@@ -181,10 +181,10 @@ public class SproutModel {
         if(startNodeCircle==endNodeCircle){
             Path result = pf.getLoopPath(startNode);
            edges.add(result);
-           return;
         }
-
-        edges.add(pf.getPath(startNode, endNode));
+        else {
+            edges.add(pf.getPath(startNode, endNode));
+        }
         startNode.incNumberOfConnectingEdges(1);
         endNode.incNumberOfConnectingEdges(1);
 
@@ -326,7 +326,6 @@ public class SproutModel {
         int size = path.getElements().size();
         Node newNode;
 
-        System.out.println("path.getElemnts().get(size/2): " + path.getElements().get(size/2) );
         if(path.getElements().get(size/2) instanceof LineTo){
          LineTo test = (LineTo) (path.getElements().get(size/2));
             newNode = new Node(test.getX(), test.getY(), 2, nodes.size());

@@ -2,6 +2,7 @@ package Model;
 
 
 import Exceptions.NoValidEdgeException;
+import io.cucumber.java.it.Ma;
 import javafx.scene.shape.*;
 
 import java.util.*;
@@ -11,6 +12,7 @@ public class PathFinder {
     private int gridSizeStart = 50;
     private int gridSize = gridSizeStart;
     private boolean[][] grid = new boolean[gridSize][gridSize];
+    private int counter = 0;
 
     private double scalingFactorX;
     private double scalingFactorY;
@@ -29,12 +31,17 @@ public class PathFinder {
      * @author Sebastian Lund Jensen
      */
     public void initGrid(Node startNode, Node endNode) {
+        this.scalingFactorX = model.getWidth() / gridSize;
+        this.scalingFactorY = model.getHeight() / gridSize;
         grid = new boolean[gridSize][gridSize];
         List<Shape> edges = model.getEdges();
         List<Node> nodes = model.getNodes();
 
         initNodes(nodes, startNode, endNode);
-        initEdges2(edges);
+       //  initEdges(edges);
+         // initEdges2(edges);
+        // initEdges3(edges);
+        initEdges4(edges);
     }
 
     private void initNodes(List<Node> nodes, Node startNode, Node endNode) {
@@ -55,6 +62,8 @@ public class PathFinder {
             findNodeCoverage(x - scalingFactorX, y, startNode, endNode);
             findNodeCoverage(x, y + scalingFactorY, startNode, endNode);
             findNodeCoverage(x, y - scalingFactorY, startNode, endNode);
+        } else if (!model.isPointInsideNode(p, startNode) && !model.isPointInsideNode(p, endNode)) {
+            if (nY < grid.length && nX < grid.length) grid[nY][nX] = true;
         }
     }
 
@@ -79,9 +88,76 @@ public class PathFinder {
         }
     }
 
+    private void initEdges3(List<Shape> edges) {
+        for (Shape x : edges) {
+            Path tmp = (Path) x;
+            int size = tmp.getElements().size();
+            MoveTo startVec0 = (MoveTo) tmp.getElements().get(0);
+            LineTo startVec1 = (LineTo) tmp.getElements().get(1);
+            LineTo endVec1 = (LineTo) tmp.getElements().get(size - 1);
+            findPathCoverage2(startVec0.getX(), startVec0.getY(), startVec1.getX(), startVec1.getY());
+
+
+            if (tmp.getElements().get(size-2) instanceof MoveTo){
+                MoveTo endVec0 = (MoveTo) tmp.getElements().get(size - 2);
+                findPathCoverage2(endVec0.getX(), endVec0.getY(), endVec1.getX(), endVec1.getY());
+            }
+            else
+            {
+                LineTo endVec0 = (LineTo) tmp.getElements().get(size - 2);
+                findPathCoverage2(endVec0.getX(), endVec0.getY(), endVec1.getX(), endVec1.getY());
+            }
+
+        }
+    }
+
+    private void initEdges4(List<Shape> edges){
+        String pathElemString1;
+        String pathElemString2;
+
+        for (Shape shape : edges) {
+            for (int i = 0; i < ((Path) shape).getElements().size() - 1; i++) {
+                pathElemString1 = ((Path) shape).getElements().get(i).toString();
+                pathElemString2 = ((Path) shape).getElements().get(i + 1).toString();
+
+                double x1 = Double.parseDouble(pathElemString1.substring(pathElemString1.indexOf("x") + 2,
+                        pathElemString1.indexOf(",")));
+                double y1 = Double.parseDouble(pathElemString1.substring(pathElemString1.indexOf("y") + 2,
+                        pathElemString1.indexOf("]")));
+
+                double x2 = Double.parseDouble(pathElemString2.substring(pathElemString2.indexOf("x") + 2,
+                        pathElemString2.indexOf(",")));
+                double y2 = Double.parseDouble(pathElemString2.substring(pathElemString2.indexOf("y") + 2,
+                        pathElemString2.indexOf("]")));
+
+                findPathCoverage2(x1, y1, x2, y2);
+            }
+        }
+    }
+
+
+    private void findPathCoverage2(double startX, double startY, double endX, double endY) { //gaps happen during grid resizing, perhaps off by one or some round off error?
+        double vecX = endX - startX;
+        double vecY = endY - startY;
+        double vecLength = Math.sqrt(Math.pow(vecX, 2) + Math.pow(vecY, 2));
+        vecX = vecX / scalingFactorX;
+        vecY = vecY / scalingFactorY;
+        double vecScaledLength = Math.sqrt(Math.pow(vecX, 2) + Math.pow(vecY, 2));
+//        double vecX = endX - startX;
+//        double vecY = endY - startY;
+//        double vecLength = Math.sqrt(Math.pow(vecX, 2) + Math.pow(vecY, 2));
+//        double scale = Math.min(scalingFactorX, scalingFactorY);
+//        vecX = vecX/scale;
+//        vecY = vecY /scale;
+//        double vecScaledLength = Math.sqrt(Math.pow(vecX, 2) + Math.pow(vecY, 2));
+        for (int i = 0; i <= (vecLength / vecScaledLength); i++) {
+            grid[downScaleY(startY + i * vecY)][downScaleX(startX + i * vecX)] = true;
+        }
+    }
+
     private void initEdges2(List<Shape> edges) {
-        if (edges.size() > 0) {
-            Path tmp = (Path) edges.get(edges.size() - 1);
+        for (Shape x : edges) {
+            Path tmp = (Path) x;
             findPathCoverage(tmp);
         }
     }
@@ -97,6 +173,8 @@ public class PathFinder {
 
         for (int i = 0; i < path.getElements().size() - 1; i++) {
             j = 0;
+            direction = -1;
+            cellIndex = -1;
             if (path.getElements().get(i) instanceof MoveTo) {
                 startPointX = ((MoveTo) path.getElements().get(i)).getX();
                 startPointY = ((MoveTo) path.getElements().get(i)).getY();
@@ -115,41 +193,40 @@ public class PathFinder {
             }
             double diffX = endPointX - startPointX;
             double diffY = endPointY - startPointY;
-            if (diffX > 0) {
+            if (diffX > 0 && diffY == 0) {
                 direction = 0;
                 cellIndex = downScaleX(startPointX);
-            }
-            if (diffX < 0) {
+            } else if (diffX < 0 && diffY == 0) {
                 direction = 1;
                 cellIndex = downScaleX(startPointX);
 
             }
-            if (diffY > 0) {
+            if (diffY > 0 && diffX == 0) {
                 direction = 2;
-                cellIndex = downScaleX(startPointY);
-            }
-            if (diffY < 0) {
+                cellIndex = downScaleY(startPointY);
+            } else if (diffY < 0 && diffX == 0) {
                 direction = 3;
                 cellIndex = downScaleY(startPointY);
             }
 
-            while (upScaleX(cellIndex + j) < endPointX && direction == 0) { //moving towards right
+            while (direction == 0 && upScaleX(cellIndex + j) <= endPointX) { //moving towards right
                 grid[downScaleY(startPointY)][cellIndex + j] = true;
                 j++;
             }
 
-            while (upScaleX(cellIndex - j) > endPointX && direction == 1) { //moving towards left
+            while (direction == 1 & upScaleX(cellIndex - j) >= endPointX) { //moving towards left
                 grid[downScaleY(startPointY)][cellIndex - j] = true;
-                j--;
+                j++;
+
             }
 
-            while (upScaleY(cellIndex + j) < endPointY && direction == 2) { //moving down
+            while (direction == 2 && upScaleY(cellIndex + j) <= endPointY) { //moving down
                 grid[cellIndex + j][downScaleX(startPointX)] = true;
                 j++;
             }
-            while (upScaleY(cellIndex - j) > endPointY && direction == 3) { //moving up
+            while (direction == 3 && upScaleY(cellIndex - j) >= endPointY) { //moving up
                 grid[cellIndex - j][downScaleX(startPointX)] = true;
-                j--;
+                j++;
             }
         }
     }
@@ -218,13 +295,15 @@ public class PathFinder {
      * @author Sebastian Lund Jensen
      */
     public ArrayList<Point> BFS(Node startNode, Node endNode, int gridSize) throws NoValidEdgeException {
+        System.out.println("gridSize: " + gridSize);
 
-        if(gridSize > model.getWidth()) {
+        if (gridSize > model.getHeight()) {
             throw new NoValidEdgeException("No valid edge found between nodes " + startNode.getId()
                     + " and " + endNode.getId());
         }
 
         this.gridSize = gridSize;
+        initGrid(startNode, endNode);
 
         Point[][] parent = new Point[gridSize][gridSize];
         boolean[][] visited = new boolean[gridSize][gridSize];
@@ -247,22 +326,22 @@ public class PathFinder {
             }
 
             //visits all available points around p0 in a cross shape
-            for(Operator[] opComb : opCombs) {
+            for (Operator[] opComb : opCombs) {
                 try {
-                    if (!grid[(int) opComb[1].apply(p0.getY(), 1)][(int) opComb[0].apply(p0.getX(),1)]
-                            && !visited[(int) opComb[1].apply(p0.getY(), 1)][(int) opComb[0].apply(p0.getX(),1)]) {
+                    if (!grid[(int) opComb[1].apply(p0.getY(), 1)][(int) opComb[0].apply(p0.getX(), 1)]
+                            && !visited[(int) opComb[1].apply(p0.getY(), 1)][(int) opComb[0].apply(p0.getX(), 1)]) {
 
-                        visited[(int) opComb[1].apply(p0.getY(), 1)][(int) opComb[0].apply(p0.getX(),1)] = true;
-                        queue.add(new Point((int) opComb[0].apply(p0.getX(),1),
-                                (int) opComb[1].apply(p0.getY(),1)));
+                        visited[(int) opComb[1].apply(p0.getY(), 1)][(int) opComb[0].apply(p0.getX(), 1)] = true;
+                        queue.add(new Point((int) opComb[0].apply(p0.getX(), 1),
+                                (int) opComb[1].apply(p0.getY(), 1)));
 
-                        parent[(int) opComb[1].apply(p0.getY(), 1)][(int) opComb[0].apply(p0.getX(),1)] = p0;
+                        parent[(int) opComb[1].apply(p0.getY(), 1)][(int) opComb[0].apply(p0.getX(), 1)] = p0;
                     }
                 } catch (IndexOutOfBoundsException ignored) {
                 }
             }
         }
-        return BFS(startNode, endNode, gridSize+gridSizeStart);
+        return BFS(startNode, endNode, gridSize + gridSizeStart);
     }
 
     /**
@@ -277,9 +356,6 @@ public class PathFinder {
      * @author Sebastian Lund Jensen
      */
     public Path getPath(Node startNode, Node endNode) throws NoValidEdgeException {
-        this.scalingFactorX = model.getWidth() / gridSize;
-        this.scalingFactorY = model.getHeight() / gridSize;
-        initGrid(startNode, endNode);
         ArrayList<Point> pathListReversed = BFS(startNode, endNode, gridSizeStart);
         Path path = new Path();
         path.getElements().add(new MoveTo(startNode.getX(), startNode.getY()));
@@ -288,6 +364,8 @@ public class PathFinder {
             path.getElements().add(new LineTo(upScaleX(p.getX()), upScaleY(p.getY())));
         }
         path.getElements().add(new LineTo(endNode.getX(), endNode.getY()));
+        //System.out.println("path: " + path);
+        System.out.println("grid: \n " + this);
         return path;
     }
 
@@ -300,8 +378,8 @@ public class PathFinder {
         Operator[][] opCombs = {{Operator.ADDITION, Operator.ADDITION}, {Operator.ADDITION, Operator.SUBTRACTION},
                 {Operator.SUBTRACTION, Operator.ADDITION}, {Operator.SUBTRACTION, Operator.SUBTRACTION}};
         outerloop:
-        for (int i = gridSize / 16; i < gridSize; i++) {
-            for (int j = gridSize / 16; j < gridSize; j++) {
+        for (int i = 15; i < gridSize*16; i++) {
+            for (int j = 15; j < gridSize*16; j++) {
                 for (Operator[] opComb : opCombs) {
                     pathHolder = selfLoopTestNode(startNode, i, j, opComb);
                     if (pathHolder[0] != null && pathHolder[1] != null) {
@@ -328,7 +406,7 @@ public class PathFinder {
 
     public Path[] selfLoopTestNode(Node startNode, int i, int j, Operator[] ops) throws NoValidEdgeException {
         Path pathToTemp = null, pathToStart = null;
-        Node tempEndNode = new Node(ops[0].apply(startNode.getX(),i), ops[1].apply(startNode.getY(), j), 0, -2);
+        Node tempEndNode = new Node(ops[0].apply(startNode.getX(), i), ops[1].apply(startNode.getY(), j), 0, -2);
         if (tempEndNode.getX() < model.getWidth() && tempEndNode.getY() < model.getHeight() && !model.nodeCollides(tempEndNode)) {
             try {
                 pathToTemp = getPath(startNode, tempEndNode);
@@ -363,7 +441,13 @@ public class PathFinder {
     public String toString() {
         StringBuilder res = new StringBuilder();
         for (int i = 0; i < grid.length; i++) {
-            res.append(Arrays.toString(grid[i])).append("\n");
+            for (int j = 0; j < grid.length; j++) {
+                if (grid[i][j]) res.append(" 1 ");
+                else {
+                    res.append(" 0 ");
+                }
+            }
+            res.append("\n");
         }
         return res.toString();
     }
