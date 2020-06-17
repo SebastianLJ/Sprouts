@@ -1,9 +1,6 @@
 package Model;
 
-import Exceptions.CollisionException;
-import Exceptions.InvalidNode;
-import Exceptions.PathForcedToEnd;
-import Exceptions.InvalidPath;
+import Exceptions.*;
 import javafx.scene.shape.*;
 
 import javafx.scene.input.MouseEvent;
@@ -155,6 +152,25 @@ public class SproutModel {
         }
     }
 
+    public void drawSmartLine(Circle startNodeCircle, Circle endNodeCircle) throws NoValidEdgeException {
+        int nameOfStartNode = findNameOfNode(startNodeCircle);
+        int nameOfEndNode = findNameOfNode(endNodeCircle);
+
+        Node startNode = nodes.get(nameOfStartNode);
+        Node endNode = nodes.get(nameOfEndNode);
+
+        if(startNodeCircle==endNodeCircle){
+            Path result = pf.getLoopPath(startNode);
+           edges.add(result);
+        }
+        else {
+            edges.add(pf.getPath(startNode, endNode));
+        }
+        startNode.incNumberOfConnectingEdges(1);
+        endNode.incNumberOfConnectingEdges(1);
+
+    }
+
     /**
      * Adds a circular edge to the gameboard - connecting a node to itself
      * @author Thea Birk Berger
@@ -298,26 +314,50 @@ public class SproutModel {
     }
 
     /**
-     * Check is generated node collides with any preexisting nodes/paths
-     * @param node generated node
+     * Checks if shape collide with any edges or nodes
+     * @param shape object to collision check
      * @return true if collision is detected else false
      * @author Sebastian Lund Jensen
      */
-    public boolean nodeCollides(Node node) {
-        //check collision with all paths except the path it is generated on
-        for (int i = 0; i < edges.size()-1; i++) {
-            if (Shape.intersect(node.getShape(), edges.get(i)).getBoundsInLocal().getWidth() != -1) {
+    public boolean shapeCollides(Shape shape, Node startNode, Node endNode) {
+        //check collision with other nodes
+        for (Node node : nodes) {
+            if (shape.getBoundsInLocal().intersects(node.getShape().getBoundsInLocal()) &&
+                    !(node.getId() == startNode.getId() || node.getId()==endNode.getId())) {
                 return true;
             }
         }
-        //check collision with other nodes
-        for (int i = 0; i < nodes.size(); i++) {
-            if (Shape.intersect(node.getShape(),nodes.get(0).getShape()).getBoundsInLocal().getWidth() != -1) {
+        //check collision with all paths
+        for (Shape edge : edges) {
+            if (shape.getBoundsInLocal().intersects(edge.getBoundsInLocal())) {
                 return true;
             }
         }
         return false;
     }
+
+    /**
+     * Checks if node collides with any edges or nodes expect the newest edge
+     * @param nNode generated node
+     * @return true if collision is detected else false
+     * @author Sebastian Lund Jensen
+     */
+    public boolean nodeCollides(Node nNode) {
+        //check collision with other nodes
+        for (Node node : nodes) {
+            if (nNode.getShape().getBoundsInLocal().intersects(node.getShape().getBoundsInLocal())) {
+                return true;
+            }
+        }
+        //check collision with all paths
+        for (int i = 0; i < edges.size() - 2; i++) {
+            if (nNode.getShape().getBoundsInLocal().intersects(edges.get(i).getBoundsInLocal())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     /**
      * Creates a new node to appear on new line
@@ -366,6 +406,47 @@ public class SproutModel {
         } while (nodeCollision);
 
         return newNode;
+    }
+
+    public void addNodeOnLineDrag(Path path){
+        int size = path.getElements().size();
+        LineTo test = (LineTo) (path.getElements().get(size/2));
+        Node newNode = new Node(test.getX(), test.getY(), 2, nodes.size());
+        nodes.add(newNode);
+    }
+
+    public void addNodeOnSmartClick() throws NoValidEdgeException {
+        path = (Path)(edges.get(edges.size()-1));
+        int size = path.getElements().size();
+        Node newNode;
+
+        if(path.getElements().get(size/2) instanceof LineTo){
+         LineTo test = (LineTo) (path.getElements().get(size/2));
+            newNode = new Node(test.getX(), test.getY(), 2, nodes.size());
+
+        }
+        else{
+            MoveTo test=(MoveTo) (path.getElements().get(size/2));
+            newNode = new Node(test.getX(), test.getY(), 2, nodes.size());
+        }
+        nodes.add(newNode);
+
+    }
+
+    public void addNodeOnSmartClickWithCollision() throws NoValidEdgeException {
+        double[] nodePercentPriority = {0.50, 0.40, 0.60, 0.30, 0.70};
+        path = (Path)(edges.get(edges.size()-1));
+        int size = path.getElements().size();
+
+        for (double aNodePercentPriority : nodePercentPriority) {
+            LineTo test = (LineTo) (path.getElements().get((int) (size * aNodePercentPriority)));
+            Node newNode = new Node(test.getX(), test.getY(), 2, nodes.size());
+            if (!nodeCollides(newNode)) {
+                nodes.add(newNode);
+                return;
+            }
+        }
+        throw new NoValidEdgeException("no room for node to be generated");
     }
 
     /**
@@ -525,7 +606,7 @@ public class SproutModel {
         Path pathTmp = new Path();
         pathTmp.getElements().add(new MoveTo(point.getX(), point.getY()));
 
-        // 
+        //
         point = new Point((int) mouseDrag.getX(), (int) mouseDrag.getY());
         boolean isPointInsideNodeTemp = isPointInsideNode(point);
 
@@ -604,9 +685,6 @@ public class SproutModel {
             invalidNode.setNode(endNode);
             throw invalidNode;
         }
-        pf.initGrid();
-        System.out.println(pf);
-
     }
 
     public int getNumberOfEdgesAtNode(Circle nodeToFind) {
@@ -632,6 +710,7 @@ public class SproutModel {
         }
         return null;
     }
+
     /**
      * Given a Circle object it finds the id of the corresponding node.
      * @param nodeToFind The circle whose name we want
@@ -727,6 +806,10 @@ public class SproutModel {
      */
     public boolean isPointInsideNode(Point point) {
         return findNodeFromPoint(point) != null;
+    }
+
+    public boolean isPointInsideNode(Point point, Node node) {
+        return node.isPointInsideNode(point);
     }
 
     public Node getNewestNode() {
