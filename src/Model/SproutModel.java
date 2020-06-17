@@ -21,7 +21,7 @@ public class SproutModel {
     // Drag-to-draw related variable
     private Path path;
     private boolean hasCollided;
-    private Point point;
+    private Point mousePosition;
     private Node pathStartNode;
     private boolean leftStartNode = false;
     private PathFinder pf;
@@ -364,8 +364,8 @@ public class SproutModel {
      * and adjusts its position so that there is no collision with existing nodes or edges.
      * Returns null if no such node can be found.
      * @author Thea Birk Berger
-     * @param startNode : the new edge start point
-     * @param endNode : the new edge end point
+     * @param startNode : the new edge start mousePosition
+     * @param endNode : the new edge end mousePosition
      * @return non-colliding node if one exists, null otherwise
      */
     private Node getNewNodeForLine(Node startNode, Node endNode) {
@@ -378,7 +378,7 @@ public class SproutModel {
         boolean nodeCollision;
 
         do {
-            // Define new node with distance d from the line start point
+            // Define new node with distance d from the line start mousePosition
             double newNodeX = edgeTools.getPointOnLine(startNode.getX(), endNode.getX(), d, edgeLength);
             double newNodeY = edgeTools.getPointOnLine(startNode.getY(), endNode.getY(), d, edgeLength);
             newNode = new Node(newNodeX, newNodeY, 2, nodes.size()+1);
@@ -392,13 +392,13 @@ public class SproutModel {
                     // Move new node to beginning of line
                     d = r + (r/10);
                 } else {
-                    // Move new node further towards line end point
+                    // Move new node further towards line end mousePosition
                     d += 2 * r + (r/10);
                 }
                 nodeCollision = true;
             }
 
-            // If the new node is back at the starting point
+            // If the new node is back at the starting mousePosition
             if (nodeCollision && d >= edgeLength/2 - (r * 2) && d <= edgeLength/2 + (r * 2)) {
                 return null;
             }
@@ -459,7 +459,7 @@ public class SproutModel {
      */
     public Node getNewNodeForCircle(Circle edge) {
 
-        int angle = 0;   // Initial node position - on circle top point
+        int angle = 0;   // Initial node position - on circle top mousePosition
         Node newNode;
         boolean nodeCollision;
 
@@ -478,7 +478,7 @@ public class SproutModel {
                 // Increment angle
                 angle += newNode.getNodeRadius() + (newNode.getNodeRadius()/10);
 
-                // If the new node is back at the starting point
+                // If the new node is back at the starting mousePosition
                 if (angle >= 360) {
                     return null;
                 }
@@ -576,15 +576,15 @@ public class SproutModel {
     }
 
     /**
-     * Sets up path object and sets coordinates for starting point of drawing (the position on the pane where the click occured)
+     * Sets up path object and sets coordinates for starting mousePosition of drawing (the position on the pane where the click occured)
      * @param mouseClick A mouse click
      * @author Noah Bastian Christiansen & Sebastian Lund Jensen
      */
     public void initializePath(MouseEvent mouseClick) throws InvalidNode {
         hasCollided = false;
         leftStartNode = false;
-        point = new Point((int) mouseClick.getX(), (int) mouseClick.getY());
-        pathStartNode = findNodeFromPoint(point);
+        mousePosition = new Point((int) mouseClick.getX(), (int) mouseClick.getY());
+        pathStartNode = findNodeFromPoint(mousePosition);
         if (pathStartNode != null && pathStartNode.getNumberOfConnectingEdges() < 3) {
             path = new Path();
         } else {
@@ -595,63 +595,91 @@ public class SproutModel {
     }
 
     /**
-     * This method draws the line the user is tracing with his mouse.
-     * The method performs subcalls to pathSelfCollides() to ensure the drawn line is not intersecting with itself or other lines.
+     * This method draws the line the user is tracing with their mouse.
+     * The method performs sub calls to pathSelfCollides() and pathCollidesWithOtherEdges()
+     * to ensure the drawn line is not intersecting with itself or other lines.
      * The current drawing is removed if it violates the rules.
      * @param mouseDrag A mouse drag
      * @author Noah Bastian Christiansen & Sebastian Lund Jensen
      */
     public void drawPath(MouseEvent mouseDrag) throws PathForcedToEnd, InvalidPath, CollisionException {
-        // Convert current mouse position to a path element
+
+        // Add mouse drag start-position to temporary path
         Path pathTmp = new Path();
-        pathTmp.getElements().add(new MoveTo(point.getX(), point.getY()));
+        pathTmp.getElements().add(new MoveTo(mousePosition.getX(), mousePosition.getY()));
 
-        //
-        point = new Point((int) mouseDrag.getX(), (int) mouseDrag.getY());
-        boolean isPointInsideNodeTemp = isPointInsideNode(point);
+        mousePosition = new Point((int) mouseDrag.getX(), (int) mouseDrag.getY());
+        boolean isPointInsideNodeTemp = isPointInsideNode(mousePosition);
 
-        // If drawing exceeds the canvas frame
-        if (point.getX() < 0 || point.getX() > width || point.getY() < 0 || point.getY() > height) {
-            InvalidPath invalidPath = new InvalidPath("The line cannot exceed the game frame");
-            invalidPath.setPath(path);
-            throw invalidPath;
-        }
+        // Throw exception if mouse has exceeded canvas frame
+        checkIfMouseHasExceededCanvasFrame();
+        // Check if path should start or end and add path elements accordingly
+        startOrEndPath(isPointInsideNodeTemp);
 
-        // If drawing has left the start node
-        if (!isPointInsideNodeTemp && !leftStartNode) {
-            // Get start node contour point and add to path (close path start gap)
-            double[] contourPoint = edgeTools.getContourPoint(pathStartNode.getX(),pathStartNode.getY(),point.getX(),point.getY(),pathStartNode.getNodeRadius());
-            path.getElements().add(new MoveTo(contourPoint[0],contourPoint[1]));
-            leftStartNode = true;
-        // If drawing has reached an end node
-        } else if (isPointInsideNodeTemp && leftStartNode) {
-            // Get end node contour point and add to path (close path end gap)
-            Node endNode = findNodeFromPoint(point);
-            double[] contourPoint = edgeTools.getContourPoint(endNode.getX(),endNode.getY(),point.getX(),point.getY(),endNode.getNodeRadius());
-            path.getElements().add(new LineTo(contourPoint[0],contourPoint[1]));
-            System.out.println("Path forcefully ended at: " + contourPoint[0] + ", " + contourPoint[1]);
-            throw new PathForcedToEnd("Path forcefully ended at: " + contourPoint[0] + ", " + contourPoint[1]);
-        }
-        // Save current mouse position in temporary path
-        pathTmp.getElements().add(new LineTo(point.getX(), point.getY()));
+        // Add mouse drag end-position to temporary path
+        pathTmp.getElements().add(new LineTo(mousePosition.getX(), mousePosition.getY()));
 
         boolean selfCollision = pathSelfCollides(pathTmp);
         boolean edgeCollision = pathCollidesWithOtherEdges(pathTmp);
 
+        // If temporary path collides with itself or other edges
         if (selfCollision || edgeCollision) {
-            Path exceptionPath = new Path(List.copyOf(path.getElements()));
+            // Reset path storage
             path.getElements().clear();
             pathTmp.getElements().clear();
             hasCollided = true;
-            System.out.println("collision at " + point.getX() + ", " + point.getY());
+            System.out.println("collision at " + mousePosition.getX() + ", " + mousePosition.getY());
 
             // Set and throw exception
+            Path exceptionPath = new Path(List.copyOf(path.getElements()));
             CollisionException collisionException = new CollisionException(selfCollision ? "The line cannot cross itself" : "The line collided with another line");
             collisionException.setPath(exceptionPath);
             throw collisionException;
+        // If temporary path does not collide and has not yet reached an end node
         } else if (leftStartNode && !isPointInsideNodeTemp) {
-            path.getElements().add(new LineTo(point.getX(), point.getY()));
+            // Add mouse drag end-position to path (the path now has an extra path element)
+            path.getElements().add(new LineTo(mousePosition.getX(), mousePosition.getY()));
             pathTmp.getElements().clear();
+        }
+    }
+
+    /**
+     * @author Noah Bastian Christiansen & Sebastian Lund Jensen
+     * @throws InvalidPath if mouse has exceeded canvas frame
+     */
+    private void checkIfMouseHasExceededCanvasFrame() throws InvalidPath {
+
+        if (mousePosition.getX() < 0 || mousePosition.getX() > width || mousePosition.getY() < 0 || mousePosition.getY() > height) {
+            InvalidPath invalidPath = new InvalidPath("The line cannot exceed the game frame");
+            invalidPath.setPath(path);
+            throw invalidPath;
+        }
+    }
+
+    /**
+     * Checks if drawing has left the start node, and starts the path with its first path element if is has.
+     * Checks if drawing has reached an end node, and ends the path with the final path element if is has.
+     * @param mouseIsInsideANode : True if mouse is currently on a node
+     * @throws InvalidPath if the mouse has exceeded the canvas frame
+     * @throws PathForcedToEnd if the mouse has hit an end node
+     * @author Noah Bastian Christiansen & Sebastian Lund Jensen
+     */
+    private void startOrEndPath(boolean mouseIsInsideANode) throws InvalidPath, PathForcedToEnd {
+
+        // If drawing has left the start node and has not yet reached an end node
+        if (!mouseIsInsideANode && !leftStartNode) {
+            // Get start node contour mousePosition and add to path (close path start-gap)
+            double[] contourPoint = edgeTools.getContourPoint(pathStartNode.getX(),pathStartNode.getY(), mousePosition.getX(), mousePosition.getY(),pathStartNode.getNodeRadius());
+            path.getElements().add(new MoveTo(contourPoint[0],contourPoint[1]));
+            leftStartNode = true;
+        // If drawing has reached an end node
+        } else if (mouseIsInsideANode && leftStartNode) {
+            // Get end node contour mousePosition and add to path (close path end-gap)
+            Node endNode = findNodeFromPoint(mousePosition);
+            double[] contourPoint = edgeTools.getContourPoint(endNode.getX(),endNode.getY(), mousePosition.getX(), mousePosition.getY(),endNode.getNodeRadius());
+            path.getElements().add(new LineTo(contourPoint[0],contourPoint[1]));
+            System.out.println("Path forcefully ended at: " + contourPoint[0] + ", " + contourPoint[1]);
+            throw new PathForcedToEnd("Path forcefully ended at: " + contourPoint[0] + ", " + contourPoint[1]);
         }
     }
 
@@ -732,7 +760,7 @@ public class SproutModel {
     /**
      * @author Sebastian Lund Jensen
      * @param point user mouseEvent
-     * @return null if the point is not inside any node, else the node surrounding the point
+     * @return null if the mousePosition is not inside any node, else the node surrounding the mousePosition
      */
     public Node findNodeFromPoint(Point point) {
         for (Node node : nodes) {
@@ -802,7 +830,7 @@ public class SproutModel {
     /**
      * @author Sebastian Lund Jensen
      * @param point user mouseEvent
-     * @return true if point is inside node
+     * @return true if mousePosition is inside node
      */
     public boolean isPointInsideNode(Point point) {
         return findNodeFromPoint(point) != null;
