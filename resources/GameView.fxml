@@ -1,18 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.geometry.Point3D?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 
 <BorderPane fx:id="borderPane" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.GameController">
    <bottom>
-      <Button contentDisplay="CENTER" mnemonicParsing="false" onAction="#goToMainMenu" text="Back" textAlignment="RIGHT" BorderPane.alignment="BOTTOM_RIGHT">
+      <HBox alignment="BOTTOM_LEFT" prefHeight="27.0" prefWidth="632.0" BorderPane.alignment="BOTTOM_CENTER">
          <BorderPane.margin>
-            <Insets right="15.0" top="10.0" />
-         </BorderPane.margin></Button>
+            <Insets left="15.0" right="15.0" top="10.0" />
+         </BorderPane.margin>
+         <children>
+            <Button fx:id="backButtom" alignment="CENTER_RIGHT" contentDisplay="CENTER" mnemonicParsing="false" onAction="#goToMainMenu" text="Back" textAlignment="RIGHT">
+               <rotationAxis>
+                  <Point3D />
+               </rotationAxis>
+               <HBox.margin>
+                  <Insets left="20.0" />
+               </HBox.margin>
+            </Button>
+            <Label fx:id="gameResponse" alignment="BOTTOM_CENTER" contentDisplay="CENTER" prefHeight="17.0" prefWidth="515.0" textAlignment="CENTER">
+               <HBox.margin>
+                  <Insets left="50.0" right="50.0" />
+               </HBox.margin>
+            </Label>
+         </children>
+      </HBox>
    </bottom>
    <opaqueInsets>
       <Insets />
@@ -26,7 +44,6 @@
             <Insets left="16.0" right="16.0" top="16.0" />
          </BorderPane.margin>
          <Pane fx:id="gamePane" layoutX="30.0" layoutY="23.0" minHeight="438.0" minWidth="680.0" onMouseDragged="#mouseDraggedHandler" onMousePressed="#mousePressedHandler" onMouseReleased="#mouseReleasedHandler" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
-         <Label fx:id="messageForPlayer" alignment="BOTTOM_CENTER" contentDisplay="CENTER" layoutX="32.0" layoutY="530.0" prefHeight="17.0" prefWidth="656.0" text="MessageForPlayer" textAlignment="CENTER" />
       </AnchorPane>
    </center>
 </BorderPane>

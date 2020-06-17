@@ -23,9 +23,6 @@ public class PathFinder {
         for (Shape shape : edges) {
             for (PathElement pe : ((Path) shape).getElements()) {
                 String pathElemString = pe.toString();
-
-
-
                 double x = Double.parseDouble(pathElemString.substring(pathElemString.indexOf("x")+2,
                         pathElemString.indexOf(",")));
                 double y = Double.parseDouble(pathElemString.substring(pathElemString.indexOf("y")+2,

@@ -7,14 +7,6 @@ import java.util.List;
 
 public class EdgeTools {
 
-    private double canvasWidth;
-    private double canvasHeight;
-
-    public EdgeTools(double canvasWidth, double canvasHeight) {
-        this.canvasWidth = canvasWidth;
-        this.canvasHeight = canvasHeight;
-    }
-
     int distanceBetweenCircleCenter(Circle circle1, Circle circle2) {
         double dx = circle2.getCenterX()-circle1.getCenterX();
         double dy = circle2.getCenterY()-circle1.getCenterY();
@@ -29,7 +21,7 @@ public class EdgeTools {
      * @param endNode
      * @return a Line object
      */
-    Line getLineBetweenNodes(Node startNode, Node endNode) {
+    Line createLineBetweenNodes(Node startNode, Node endNode) {
 
         Line newLine = new Line();
         newLine.setStartX(startNode.getX());
@@ -47,7 +39,7 @@ public class EdgeTools {
      * @param endNode : The end node
      * @return a Line object
      */
-    Line getLineBetweenNodeContours(Node startNode, Node endNode) {
+    Line createLineBetweenNodeContours(Node startNode, Node endNode) {
 
         double x1 = startNode.getX();
         double x2 = endNode.getX();
@@ -90,18 +82,14 @@ public class EdgeTools {
      * @return a Circle object
      */
     Circle createCircleToDraw(Node node) {
+
         Circle newCircle = new Circle();
+        double nodeDiameter = Node.radius*2;
 
-        double radius = Node.radius*2;
-        double nodeX = node.getX();
-        double nodeY = node.getY();
-
-        // Get edge center coordinates so that it does not exceed the game frame
-        Double[] center = getCircleCenterCoordinates(nodeX, nodeY, radius);
         // Set edge properties
-        newCircle.setCenterX(center[0]);
-        newCircle.setCenterY(center[1]);
-        newCircle.setRadius(radius);
+        newCircle.setCenterX(node.getX());
+        newCircle.setCenterY(node.getY() + nodeDiameter);
+        newCircle.setRadius(nodeDiameter);
         newCircle.setFill(Color.TRANSPARENT);
         newCircle.setStroke(Color.BLACK);
 
@@ -115,35 +103,6 @@ public class EdgeTools {
             return endCoor;
         }
         return startCoor + (distance/lineLength) * (endCoor-startCoor);
-    }
-
-    /**
-     * Gets circular edge position given node coordinates.
-     * The edge is valid as long as the node is positioned on it.
-     * The position of the edge is chosen so that is does not exceed the game frame.
-     * @author Thea Birk Berger
-     * @param originNodeX
-     * @param originNodeY
-     * @param radius
-     * @return the edge center coordinates
-     */
-    public Double[] getCircleCenterCoordinates(double originNodeX, double originNodeY, double radius) {
-
-        Double[] center = {originNodeX, originNodeY};
-
-        if (originNodeX - radius >= 0) {
-            center[0] = originNodeX - radius;
-        } else if (originNodeX + radius < canvasWidth) {
-            center[0] = originNodeX + radius;
-        } else if (originNodeY - radius >= 0) {
-            center[1] = originNodeY - radius;
-        } else {
-            center[1] = originNodeY + radius;
-        }
-
-        // TODO: does not work - exceeds canvas frame
-
-        return center;
     }
 
     /**
@@ -174,7 +133,7 @@ public class EdgeTools {
         double x = pe instanceof MoveTo ? ((MoveTo) pe).getX() : ((LineTo) pe).getX();
         double y = pe instanceof MoveTo ? ((MoveTo) pe).getY() : ((LineTo) pe).getY();
 
-        Node node = new Node(x,y,0, numberOfNodes);
+        Node node = new Node(x,y,0, numberOfNodes+1);
 
         return node;
     }
@@ -192,7 +151,7 @@ public class EdgeTools {
 
         Node pathCoor1 = getCoordinates(pe1, numberOfNodes);
         Node pathCoor2 = getCoordinates(pe2, numberOfNodes);
-        return getLineBetweenNodes(pathCoor1, pathCoor2);
+        return createLineBetweenNodes(pathCoor1, pathCoor2);
     }
 
     /**
@@ -273,7 +232,7 @@ public class EdgeTools {
         if (startNode.getId() == endNode.getId()) {
             return createCircleToDraw(startNode);
         } else {
-            return getLineBetweenNodeContours(startNode, endNode);
+            return createLineBetweenNodeContours(startNode, endNode);
         }
     }
 

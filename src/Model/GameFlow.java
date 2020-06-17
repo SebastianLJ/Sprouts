@@ -14,17 +14,21 @@ public class GameFlow {
         this.player1sTurn = !player1sTurn;
     }
 
-    public boolean noRemainingLegalMoves(List<Node> nodes) {
+    public boolean noRemainingLegalMovesSimpleGame(List<Node> nodes) {
 
         int doesNotHaveMaxEdges = 0;
-
         for (Node node : nodes) {
             doesNotHaveMaxEdges += node.getNumberOfConnectingEdges() < 3 ? 1 : 0;
         }
         return doesNotHaveMaxEdges <= 1;
     }
 
-    public int getCurrentPlayer() {
+    public boolean noRemainingLegalMovesAdvancedGame() {
+        return true;
+    }
+
+
+        public int getCurrentPlayer() {
         return player1sTurn ? 1 : 2;
     }
 

@@ -9,16 +9,12 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Circle;
-import javafx.stage.Stage;
 
 
 import java.io.IOException;
@@ -38,7 +34,7 @@ public class GameController extends SproutController implements Initializable {
     private Circle selectedNode;
     private boolean dragged;
     private boolean isPathInit = false;
-    public Label messageForPlayer;
+    public Label gameResponse;
 
     public GameController() {
         super();
@@ -128,6 +124,7 @@ public class GameController extends SproutController implements Initializable {
                 view.illegalEdgeAnimation(gamePane, createEdge(selectedNode, shapeOfNode));
                 view.deselectNode(selectedNode);
                 theUserHasSelectedANode = false;
+                view.showGameResponse(gameResponse, e.getMessage());
                 System.out.println(e.getMessage());
             } catch (GameOverException e) {
                 updateCanvasClick();
@@ -136,10 +133,8 @@ public class GameController extends SproutController implements Initializable {
                 // view.illegalEdgeAnimation(gamePane, createEdge(selectedNode, (Circle) mouseEvent.getSource()));
                 view.illegalEdgeAnimation(gamePane, createEdge(selectedNode, shapeOfNode));
                 view.deselectNode(selectedNode);
+                view.showGameResponse(gameResponse, e.getMessage());
                 theUserHasSelectedANode = false;
-                messageForPlayer.setText(e.getMessage());           // TODO: Can this be put in view?
-                System.out.println(e.getMessage());
-//                System.out.println("Collision!");
             }
         }
     }
@@ -206,9 +201,10 @@ public class GameController extends SproutController implements Initializable {
                     setupDrawing(mousePressed);
                     view.setUpDrawingSettings(mousePressed, gamePane);
                     isPathInit = true;
-                } catch (InvalidNode invalidNode) {
-                    if (invalidNode.getNode() != null) {
-                        view.illegalNode(invalidNode.getNode().getShape());
+                } catch (InvalidNode e) {
+                    if (e.getNode() != null) {
+                        view.illegalNode(e.getNode().getShape());
+                        view.showGameResponse(gameResponse, e.getMessage());
                     }
                 }
             }
@@ -230,10 +226,14 @@ public class GameController extends SproutController implements Initializable {
                 if (gameMode == DRAG_TO_DRAW_MODE) {
                     try {
                         beginDrawing(mouseDragged);
-                    } catch (PathForcedToEnd | InvalidPath e) {
+                    } catch (PathForcedToEnd e) {
                         finishPathHelper(mouseDragged);
+                    } catch (InvalidPath e) {
+                        finishPathHelper(mouseDragged);
+                        view.showGameResponse(gameResponse, e.getMessage());
                     } catch (CollisionException e) {
                         view.illegalPath(gamePane, e.getPath());
+                        view.showGameResponse(gameResponse, e.getMessage());
                     }
                     if (isCollided()) {
                         view.setUpCollisionSettings(mouseDragged);
@@ -271,10 +271,12 @@ public class GameController extends SproutController implements Initializable {
             dragged = false;
             isPathInit = false;
             view.illegalPath(gamePane, e.getPath());
-        } catch (InvalidNode invalidNode) {
+            view.showGameResponse(gameResponse, e.getMessage());
+        } catch (InvalidNode e) {
             dragged = false;
             isPathInit = false;
-            view.illegalNode(invalidNode.getNode().getShape());
+            view.illegalNode(e.getNode().getShape());
+            view.showGameResponse(gameResponse, e.getMessage());
         }
     }
 

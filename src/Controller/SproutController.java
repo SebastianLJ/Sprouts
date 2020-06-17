@@ -1,7 +1,6 @@
 package Controller;
 
 import Exceptions.*;
-import Model.EdgeTools;
 import Model.SproutModel;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Circle;
@@ -81,7 +80,7 @@ public class SproutController extends Controller {
      * @author Noah Bastian Christiansen
      */
     public void addNodeOnValidLineDrag() throws InvalidPath {
-        sproutModel.getNodeForNewDrawing();
+        sproutModel.getNewNodeForDrawnLine();
     }
     /**
      * This method let's the gameController know if a collision has occured by letting the sproutController ask the model.
