@@ -33,7 +33,6 @@ public class PathFinder {
     public void initGrid(Node startNode, Node endNode) {
         this.scalingFactorX = model.getWidth() / this.gridSizeX;
         this.scalingFactorY = model.getHeight() / this.gridSizeY;
-        System.out.println("INIT GRID \n" + "scaling x: " + scalingFactorX + "\n scaling y: " + scalingFactorY);
         grid = new boolean[this.gridSizeY][this.gridSizeX];
         List<Shape> edges = model.getEdges();
         List<Node> nodes = model.getNodes();
@@ -282,7 +281,6 @@ public class PathFinder {
         while (!path.get(path.size() - 1).equals(new Point(downScaleX(startNode.getX()), downScaleY(startNode.getY())))) {
             path.add(parent[(path.get(path.size() - 1)).getY()][path.get(path.size() - 1).getX()]);
         }
-        //System.out.println("path: " + path.toString());
         return path;
     }
 
@@ -359,15 +357,11 @@ public class PathFinder {
             path.getElements().add(new LineTo(upScaleX(p.getX()), upScaleY(p.getY())));
         }
         path.getElements().add(new LineTo(endNode.getX(), endNode.getY()));
-        //System.out.println("path: " + path);
-        System.out.println("grid: \n" + this);
         return path;
     }
 
 
     public Path getLoopPath(Node startNode) throws NoValidEdgeException {
-        System.out.println("modelgetHeight: " + model.getHeight());
-        System.out.println("modelgetWidth. " + model.getWidth());
         boolean validPath = false;
         Path[] pathHolder = null;
         Operator[][] opCombs = {{Operator.ADDITION, Operator.ADDITION}, {Operator.ADDITION, Operator.SUBTRACTION},
@@ -392,7 +386,6 @@ public class PathFinder {
 
         pathHolder[0].getElements().addAll(pathHolder[1].getElements());
 
-        System.out.println("resultingPath: " + pathHolder[0]);
 
         return pathHolder[0];
 
