@@ -9,8 +9,8 @@ import java.util.*;
 
 public class PathFinder {
     private SproutModel model;
-    private int gridSizeX = 98;
-    private int gridSizeY = 50;
+    private int gridSizeX = 248;
+    private int gridSizeY = 120;
     private boolean[][] grid = new boolean[gridSizeY][gridSizeX];
     private int counter = 0;
     private ArrayList<Integer> id = new ArrayList<>();
@@ -35,6 +35,7 @@ public class PathFinder {
     public void initGrid(Node startNode, Node endNode) {
         this.scalingFactorX = model.getWidth() / this.gridSizeX;
         this.scalingFactorY = model.getHeight() / this.gridSizeY;
+        System.out.println("INIT GRID \n" + "scaling x: " + scalingFactorX + "\n scaling y: " + scalingFactorY);
         grid = new boolean[this.gridSizeY][this.gridSizeX];
         List<Shape> edges = model.getEdges();
         List<Node> nodes = model.getNodes();
@@ -62,7 +63,8 @@ public class PathFinder {
 
         Point p = new Point((int) x, (int) y);
 
-        if (nX < gridSizeX && nY < gridSizeY && model.isPointInsideNode(p) && !model.isPointInsideNode(p, startNode) && !model.isPointInsideNode(p, endNode) && !grid[nY][nX]) {
+        if (nX < gridSizeX && nY < gridSizeY && model.isPointInsideNode(p) && !model.isPointInsideNode(p, startNode)
+                && !model.isPointInsideNode(p, endNode) && !grid[nY][nX]) {
             grid[nY][nX] = true;
             findNodeCoverage(x + scalingFactorX, y, startNode, endNode);
             findNodeCoverage(x - scalingFactorX, y, startNode, endNode);
@@ -311,15 +313,7 @@ public class PathFinder {
      * @author Noah Bastian Christiansen
      * @author Sebastian Lund Jensen
      */
-    public ArrayList<Point> BFS(Node startNode, Node endNode, int gridSizeX, int gridSizeY) throws NoValidEdgeException {
-
-        if (gridSizeY > model.getHeight()) {
-            throw new NoValidEdgeException("No valid edge found between nodes " + startNode.getId()
-                    + " and " + endNode.getId());
-        }
-
-        this.gridSizeX = gridSizeX;
-        this.gridSizeY = gridSizeY;
+    public ArrayList<Point> BFS(Node startNode, Node endNode) throws NoValidEdgeException {
         initGrid(startNode, endNode);
         System.out.println("grid: " + grid);
 
@@ -359,7 +353,8 @@ public class PathFinder {
                 }
             }
         }
-        return BFS(startNode, endNode, gridSizeX*2, gridSizeY*2);
+        throw new NoValidEdgeException("No valid edge found between nodes " + startNode.getId()
+                + " and " + endNode.getId());
     }
 
     /**
@@ -374,8 +369,7 @@ public class PathFinder {
      * @author Sebastian Lund Jensen
      */
     public Path getPath(Node startNode, Node endNode) throws NoValidEdgeException {
-        System.out.println("width: " + model.getWidth() + "\nHeight: " + model.getHeight());
-        ArrayList<Point> pathListReversed = BFS(startNode, endNode, gridSizeX, gridSizeY);
+        ArrayList<Point> pathListReversed = BFS(startNode, endNode);
         Path path = new Path();
         path.getElements().add(new MoveTo(startNode.getX(), startNode.getY()));
         for (int i = pathListReversed.size() - 2; i > 0; i--) {
@@ -384,7 +378,7 @@ public class PathFinder {
         }
         path.getElements().add(new LineTo(endNode.getX(), endNode.getY()));
         //System.out.println("path: " + path);
-        System.out.println("grid: \n " + this);
+        System.out.println("grid: \n" + this);
         return path;
     }
 
@@ -450,11 +444,11 @@ public class PathFinder {
     }
 
     private int upScaleX(int coord) {
-        return (int) (coord * scalingFactorX) + 1;
+        return (int) (coord * scalingFactorX);
     }
 
     private int upScaleY(int coord) {
-        return (int) (coord * scalingFactorY) + 1;
+        return (int) (coord * scalingFactorY);
     }
 
     public String toString() {
