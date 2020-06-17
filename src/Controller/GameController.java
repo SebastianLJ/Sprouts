@@ -121,7 +121,7 @@ public class GameController extends SproutController implements Initializable {
                 attemptDrawEdgeBetweenNodes(selectedNode, shapeOfNode);
                 updateCanvasClick();
             } catch (IllegalNodesChosenException e) {
-                view.illegalEdgeAnimation(gamePane, createEdge(selectedNode, shapeOfNode));
+                view.illegalEdgeAnimation(gamePane, getIllegalEdgeBetweenNodes(selectedNode, shapeOfNode));
                 view.deselectNode(selectedNode);
                 theUserHasSelectedANode = false;
                 view.showGameResponse(gameResponse, e.getMessage());
@@ -130,8 +130,8 @@ public class GameController extends SproutController implements Initializable {
                 updateCanvasClick();
                 System.out.println("Game Over!");
             } catch (CollisionException e) {
-                // view.illegalEdgeAnimation(gamePane, createEdge(selectedNode, (Circle) mouseEvent.getSource()));
-                view.illegalEdgeAnimation(gamePane, createEdge(selectedNode, shapeOfNode));
+                // view.illegalEdgeAnimation(gamePane, getIllegalEdgeBetweenNodes(selectedNode, (Circle) mouseEvent.getSource()));
+                view.illegalEdgeAnimation(gamePane, getIllegalEdgeBetweenNodes(selectedNode, shapeOfNode));
                 view.deselectNode(selectedNode);
                 view.showGameResponse(gameResponse, e.getMessage());
                 theUserHasSelectedANode = false;
@@ -253,7 +253,7 @@ public class GameController extends SproutController implements Initializable {
      */
     public void mouseReleasedHandler(MouseEvent mouseReleased) {
         if (mouseReleased.getButton() == MouseButton.PRIMARY) {
-            if (gameMode == DRAG_TO_DRAW_MODE && !getSproutModel().getIsCollided() && dragged && isPathInit) {
+            if (gameMode == DRAG_TO_DRAW_MODE && !getSproutModel().hasNewestPathCollided() && dragged && isPathInit) {
                 finishPathHelper(mouseReleased);
             }
             view.setUpSuccessfulPathSettings(mouseReleased);

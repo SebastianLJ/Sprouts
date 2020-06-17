@@ -74,7 +74,7 @@ public class View {
     public void setUpDrawingSettings(MouseEvent mousePressed, Pane gamePane) {
         Scene scene = ((javafx.scene.Node) mousePressed.getSource()).getScene();
         scene.setCursor(Cursor.CROSSHAIR);
-        gamePane.getChildren().add(model.getPath());
+        gamePane.getChildren().add(model.getMostRecentlyDrawnPath());
     }
 
     /**

@@ -65,9 +65,9 @@ public class playGameSteps {
     public void nodesAndAreValid(Integer int1, Integer int2) {
 
         if (int1 != int2) {
-            assertTrue(main.getController().getSproutModel().getNumberOfEdges(int1) < 3 && main.getController().getSproutModel().getNumberOfEdges(int2) < 3);
+            assertTrue(main.getController().getSproutModel().getNumberOfEdgesAtNode(int1) < 3 && main.getController().getSproutModel().getNumberOfEdgesAtNode(int2) < 3);
         } else {
-            assertTrue(main.getController().getSproutModel().getNumberOfEdges(int1) < 2);
+            assertTrue(main.getController().getSproutModel().getNumberOfEdgesAtNode(int1) < 2);
         }
     }
 
