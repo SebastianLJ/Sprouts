@@ -1,9 +1,6 @@
 package Controller;
 
-import Exceptions.CollisionException;
-import Exceptions.GameOverException;
-import Exceptions.IllegalNodesChosenException;
-import Exceptions.NumberOfInitialNodesException;
+import Exceptions.*;
 import Utility.TooltipCell;
 import View.View;
 import javafx.animation.KeyFrame;
@@ -172,7 +169,7 @@ public class FileSimulationController extends SproutController implements Initia
                         message = e.getMessage();
                         gameResponseLabel.setText(e.getMessage());
                         timeline.stop();
-                    } catch (CollisionException e) {
+                    } catch (CollisionException | NoValidEdgeException e) {
                         color = "-fx-background-color: red";
                         message = "Failed at executing move : from " + move[0] + " to " + move[1];
                         gameResponseLabel.setText(e.getMessage());

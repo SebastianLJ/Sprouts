@@ -38,7 +38,7 @@ public class SproutController extends Controller {
         }
     }
 
-    public void attemptDrawEdgeBetweenNodes(int startNodeName, int endNodeName) throws IllegalNodesChosenException, GameOverException, CollisionException {
+    public void attemptDrawEdgeBetweenNodes(int startNodeName, int endNodeName) throws IllegalNodesChosenException, GameOverException, CollisionException, NoValidEdgeException {
         if (!(sproutModel.hasNode(startNodeName) && sproutModel.hasNode(endNodeName))) {
             outputExceptionMessage = "One or both nodes does not exist";
             throw new IllegalNodesChosenException(outputExceptionMessage);
@@ -82,6 +82,10 @@ public class SproutController extends Controller {
     public void addNodeOnValidLineDrag() throws InvalidPath {
         sproutModel.getNodeForNewDrawing();
     }
+
+    public void addNodeOnValidSmartALine() throws NoValidEdgeException {
+        sproutModel.addNodeOnSmartClick();
+    }
     /**
      * This method let's the gameController know if a collision has occured by letting the sproutController ask the model.
      * @author Noah Bastian Christiansen
@@ -111,8 +115,7 @@ public class SproutController extends Controller {
         return sproutModel.getNodes();
     }
 
-    public void attemptDrawEdgeBetweenNodes(Circle startNode, Circle endNode) throws IllegalNodesChosenException, GameOverException, CollisionException {
-
+    public void attemptDrawEdgeBetweenNodes(Circle startNode, Circle endNode) throws IllegalNodesChosenException, GameOverException, CollisionException, NoValidEdgeException {
         if (!(sproutModel.hasNode(startNode) && sproutModel.hasNode(endNode))) {
             outputExceptionMessage = "One or both nodes does not exist";
             throw new IllegalNodesChosenException(outputExceptionMessage);
@@ -121,7 +124,8 @@ public class SproutController extends Controller {
             outputExceptionMessage = "Nodes cannot have more than 3 connecting edges";
             throw new IllegalNodesChosenException(outputExceptionMessage);
         } else {
-            sproutModel.drawEdgeBetweenNodes(startNode, endNode);
+
+            sproutModel.drawSmartLine(startNode, endNode);
 
             if (sproutModel.hasNoRemainingLegalMoves()) {
                 outputExceptionMessage = "There are no more legal moves. The winner is player " + sproutModel.getCurrentPlayer();
@@ -130,6 +134,7 @@ public class SproutController extends Controller {
             } else {
                 sproutModel.changeTurns();
             }
+
         }
     }
 
