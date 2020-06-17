@@ -1,13 +1,14 @@
 package Model;
 
 
+import Exceptions.NoValidEdgeException;
 import javafx.scene.shape.*;
 
 import java.util.*;
 
 public class PathFinder {
     private SproutModel model;
-    private int gridSize = 10;
+    private int gridSize = 250;
     private boolean[][] grid = new boolean[gridSize][gridSize];
 
     private double scalingFactorX;
@@ -53,6 +54,8 @@ public class PathFinder {
             findNodeCoverage(x - scalingFactorX, y, startNode, endNode);
             findNodeCoverage(x, y + scalingFactorY, startNode, endNode);
             findNodeCoverage(x, y - scalingFactorY, startNode, endNode);
+        } else if (!model.isPointInsideNode(p, startNode) && !model.isPointInsideNode(p, endNode)) {
+            if (nY < grid.length && nX < grid.length) grid[nY][nX] = true;
         }
     }
 
@@ -108,14 +111,13 @@ public class PathFinder {
      * @author Noah Bastian Christiansen
      * @author Sebastian Lund Jensen
      */
-    public ArrayList<Point> BFS(Node startNode, Node endNode, boolean[][] visited) {
+    public ArrayList<Point> BFS(Node startNode, Node endNode) throws NoValidEdgeException {
         Point[][] parent = new Point[gridSize][gridSize];
+        boolean[][] visited = new boolean[gridSize][gridSize];
         Queue<Point> queue = new LinkedList<>();
 
         //mark end node as false
         grid[downScaleY(endNode.getY())][downScaleX(endNode.getX())] = false;
-
-        visited[downScaleY(endNode.getY())][downScaleX(endNode.getX())] = false;
 
         visited[downScaleY(startNode.getY())][downScaleX(startNode.getX())] = true;
         queue.add(new Point(downScaleX(startNode.getX()), downScaleY(startNode.getY())));
@@ -123,9 +125,12 @@ public class PathFinder {
         while (queue.size() != 0) {
             Point p0 = queue.poll();
 
+            //check if we have reached end node
             if (p0.equals(new Point(downScaleX(endNode.getX()), downScaleY(endNode.getY())))) {
                 return backtrace(parent, startNode, endNode);
             }
+
+            //visits all available points around p0 in a cross shape
             try {
                 if (!grid[p0.getY() - 1][p0.getX()] && !visited[p0.getY() - 1][p0.getX()]) {
                     visited[p0.getY() - 1][p0.getX()] = true;
@@ -158,100 +163,10 @@ public class PathFinder {
                 }
             } catch (IndexOutOfBoundsException ignored) {
             }
-
+            
         }
-        return null;
-    }
-
-    public ArrayList<Point> selfLoop(Node startNode, Node endNode, boolean[][] visited) {
-        Point[][] parent = new Point[gridSize][gridSize];
-        Stack<Point> stack = new Stack<>();
-
-        //mark end node as false
-        grid[downScaleY(endNode.getY())][downScaleX(endNode.getX())] = false;
-
-        visited[downScaleY(startNode.getY())][downScaleX(startNode.getX())] = true;
-        stack.add(new Point(downScaleX(startNode.getX()), downScaleY(startNode.getY())));
-
-        while (!stack.empty()) {
-            Point p0 = stack.pop();
-            System.out.println(p0);
-            visited[p0.getY()][p0.getX()] = true;
-
-            if (lengthOfPath(createPathFromPointSequence(startNode, endNode, backtraceDFS(parent, p0))) > 30) {
-                return backtraceDFS(parent, p0);
-            }
-            try {
-                if (!grid[p0.getY() - 1][p0.getX()] && !visited[p0.getY() - 1][p0.getX()]) {
-                    stack.add(new Point(p0.getX(), p0.getY() - 1));
-                    parent[p0.getY() - 1][p0.getX()] = p0;
-                }
-            } catch (IndexOutOfBoundsException ignored) {
-            }
-            try {
-                if (!grid[p0.getY() + 1][p0.getX()] && !visited[p0.getY() + 1][p0.getX()]) {
-                    stack.add(new Point(p0.getX(), p0.getY() + 1));
-                    parent[p0.getY() + 1][p0.getX()] = p0;
-                }
-            } catch (IndexOutOfBoundsException ignored) {
-            }
-            try {
-                if (!grid[p0.getY()][p0.getX() - 1] && !visited[p0.getY()][p0.getX() - 1]) {
-                    stack.add(new Point(p0.getX() - 1, p0.getY()));
-                    parent[p0.getY()][p0.getX() - 1] = p0;
-                }
-            } catch (IndexOutOfBoundsException ignored) {
-            }
-            try {
-                if (!grid[p0.getY()][p0.getX() + 1] && !visited[p0.getY()][p0.getX() + 1]) {
-                    stack.add(new Point(p0.getX() + 1, p0.getY()));
-                    parent[p0.getY()][p0.getX() + 1] = p0;
-                }
-            } catch (IndexOutOfBoundsException ignored) {
-            }
-        }
-
-        return null;
-    }
-
-    private ArrayList<Point> backtraceDFS(Point[][] parent, Point p0) {
-        ArrayList<Point> path = new ArrayList<>();
-        path.add(p0);
-        while (parent[(path.get(path.size() - 1)).getY()][path.get(path.size() - 1).getX()] != null) {
-            path.add(parent[(path.get(path.size() - 1)).getY()][path.get(path.size() - 1).getX()]);
-        }
-        return path;
-    }
-
-    private double lengthOfPath(Path path) {
-        double length = 0.;
-
-        double x0;
-        double y0;
-        double x1;
-        double y1;
-
-        for (int i = 0; i < path.getElements().size() - 1; i++) {
-            String pathElemString0 = path.getElements().get(i).toString();
-            String pathElemString1 = path.getElements().get(i + 1).toString();
-
-            x0 = Double.parseDouble(pathElemString0.substring(pathElemString0.indexOf("x") + 2,
-                    pathElemString0.indexOf(",")));
-            y0 = Double.parseDouble(pathElemString0.substring(pathElemString0.indexOf("y") + 2,
-                    pathElemString0.indexOf("]")));
-
-            x1 = Double.parseDouble(pathElemString1.substring(pathElemString1.indexOf("x") + 2,
-                    pathElemString1.indexOf(",")));
-            y1 = Double.parseDouble(pathElemString1.substring(pathElemString1.indexOf("y") + 2,
-                    pathElemString1.indexOf("]")));
-
-            length += lengthBetweenPoints(x0, y0, x1, y1);
-        }
-        return length;
-    }
-
-    private double lengthBetweenPoints(double x0, double y0, double x1, double y1) {
-        return Math.sqrt(Math.pow(x1 - x0, 2.) + Math.pow(y1 - y0, 2.));
+        throw new NoValidEdgeException("No valid edge found between nodes " + startNode.getId()
+                + " and " + endNode.getId());
     }
 
     /**
@@ -265,28 +180,19 @@ public class PathFinder {
      * @author Noah Bastian Christiansen
      * @author Sebastian Lund Jensen
      */
-    public Path getPath(Node startNode, Node endNode) {
+    public Path getPath(Node startNode, Node endNode) throws NoValidEdgeException {
         this.scalingFactorX = model.getWidth() / gridSize;
         this.scalingFactorY = model.getHeight() / gridSize;
         initGrid(startNode, endNode);
         //System.out.println(this);
         ArrayList<Point> pathListReversed;
         if (startNode == endNode) {
-            pathListReversed = selfLoop(startNode, endNode, new boolean[gridSize][gridSize]);
-            boolean[][] visited = markPathAsVisited(pathListReversed);
-            pathListReversed = BFS(new Node(upScaleX(pathListReversed.get(0).getX()), upScaleY(pathListReversed.get(0).getY()), -1, -1), endNode, visited);
+            // TODO
+            pathListReversed = null;
         } else {
-            pathListReversed = BFS(startNode, endNode, new boolean[gridSize][gridSize]);
+            pathListReversed = BFS(startNode, endNode);
         }
         return createPathFromPointSequence(startNode, endNode, pathListReversed);
-    }
-
-    private boolean[][] markPathAsVisited(ArrayList<Point> pathListReversed) {
-        boolean[][] visited = new boolean[gridSize][gridSize];
-        for (Point p : pathListReversed) {
-            visited[p.getY()][p.getX()] = true;
-        }
-        return visited;
     }
 
     private Path createPathFromPointSequence(Node startNode, Node endNode, ArrayList<Point> pathListReversed) {
