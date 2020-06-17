@@ -9,8 +9,8 @@ import java.util.*;
 
 public class PathFinder {
     private SproutModel model;
-    private int gridSizeX = 248;
-    private int gridSizeY = 120;
+    private int gridSizeX = 0;
+    private int gridSizeY = 0;
     private boolean[][] grid = new boolean[gridSizeY][gridSizeX];
     private int counter = 0;
 
@@ -351,6 +351,8 @@ public class PathFinder {
      * @author Sebastian Lund Jensen
      */
     public Path getPath(Node startNode, Node endNode) throws NoValidEdgeException {
+        this.gridSizeX = (int) model.getWidth()/2;
+        this.gridSizeY = (int) model.getHeight()/2;
         ArrayList<Point> pathListReversed = BFS(startNode, endNode);
         Path path = new Path();
         path.getElements().add(new MoveTo(startNode.getX(), startNode.getY()));
