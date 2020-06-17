@@ -127,8 +127,8 @@ public class FileSimulationController extends SproutController implements Initia
     }
 
     /**
-     * @author Sebastian Lund & Emil Sommer Desler
      * Creates the timeline object that handles the simulation of the text file.
+     * @author Sebastian Lund & Emil Sommer Desler
      * @return The created timeline
      */
     private Timeline createTimeline() {
@@ -171,14 +171,11 @@ public class FileSimulationController extends SproutController implements Initia
                         message = e.getMessage();
                         timeline.stop();
                         view.showGameResponse(gameResponseLabel, e.getMessage());
-                    } catch (CollisionException e) {
+                    } catch (CollisionException | NoValidEdgeException | InvalidPath e) {
                         color = "-fx-background-color: red";
                         message = "Failed at executing move : from " + move[0] + " to " + move[1];
                         timeline.stop();
                         view.showGameResponse(gameResponseLabel, e.getMessage());
-                    } catch (NoValidEdgeException e) {
-                        // TODO
-                        e.printStackTrace();
                     }
 
                     i++;

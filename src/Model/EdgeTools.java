@@ -7,11 +7,13 @@ import java.util.List;
 
 public class EdgeTools {
 
-    int distanceBetweenCircleCenter(Circle circle1, Circle circle2) {
-        double dx = circle2.getCenterX()-circle1.getCenterX();
-        double dy = circle2.getCenterY()-circle1.getCenterY();
+    double distanceBetweenCircleCenter(Circle circle1, Circle circle2) {
 
-        return (int) Math.ceil(Math.sqrt(dx*dx+dy*dy));
+        double x1 = circle1.getCenterX();
+        double y1 = circle1.getCenterY();
+        double x2 = circle2.getCenterX();
+        double y2 = circle2.getCenterY();
+        return getDistanceBetweenTwoPoints(x1,y1,x2,y2);
     }
 
     /**
@@ -128,12 +130,12 @@ public class EdgeTools {
      * @param numberOfNodes : Number of nodes on the gameboard
      * @return Node with center in (x,y)
      */
-    public Node getCoordinates(PathElement pe, int numberOfNodes) {
+    public Node getCoordinates(PathElement pe, int connectingEdges, int numberOfNodes) {
 
         double x = pe instanceof MoveTo ? ((MoveTo) pe).getX() : ((LineTo) pe).getX();
         double y = pe instanceof MoveTo ? ((MoveTo) pe).getY() : ((LineTo) pe).getY();
 
-        Node node = new Node(x,y,0, numberOfNodes+1);
+        Node node = new Node(x,y,connectingEdges,numberOfNodes+1);
 
         return node;
     }
@@ -149,8 +151,8 @@ public class EdgeTools {
         PathElement pe1 = pathElements.get(0);
         PathElement pe2 = pathElements.get(1);
 
-        Node pathCoor1 = getCoordinates(pe1, numberOfNodes);
-        Node pathCoor2 = getCoordinates(pe2, numberOfNodes);
+        Node pathCoor1 = getCoordinates(pe1, 0, numberOfNodes);
+        Node pathCoor2 = getCoordinates(pe2, 0, numberOfNodes);
         return createLineBetweenNodes(pathCoor1, pathCoor2);
     }
 

@@ -38,7 +38,7 @@ public class SproutController extends Controller {
         }
     }
 
-    public void attemptDrawEdgeBetweenNodes(int startNodeName, int endNodeName) throws IllegalNodesChosenException, GameOverException, CollisionException, NoValidEdgeException {
+    public void attemptDrawEdgeBetweenNodes(int startNodeName, int endNodeName) throws IllegalNodesChosenException, GameOverException, CollisionException, NoValidEdgeException, InvalidPath {
         if (!(sproutModel.hasNode(startNodeName) && sproutModel.hasNode(endNodeName))) {
             outputExceptionMessage = "One or both nodes does not exist";
             throw new IllegalNodesChosenException(outputExceptionMessage);
@@ -80,12 +80,12 @@ public class SproutController extends Controller {
      * @author Noah Bastian Christiansen
      */
     public void addNodeOnValidLineDrag() throws InvalidPath {
-        sproutModel.getNewNodeForDrawnLine();
+        sproutModel.getNewNodeForPath();
     }
 
-    public void addNodeOnValidSmartALine() throws NoValidEdgeException {
-        sproutModel.addNodeOnSmartClick();
-    }
+//    public void addNodeOnValidSmartALine() throws NoValidEdgeException, InvalidPath {
+//        sproutModel.getNewNodeForSmartLine();
+//    }
     /**
      * This method let's the gameController know if a collision has occured by letting the sproutController ask the model.
      * @author Noah Bastian Christiansen
@@ -115,7 +115,7 @@ public class SproutController extends Controller {
         return sproutModel.getNodes();
     }
 
-    public void attemptDrawEdgeBetweenNodes(Circle startNode, Circle endNode) throws IllegalNodesChosenException, GameOverException, CollisionException, NoValidEdgeException {
+    public void attemptDrawEdgeBetweenNodes(Circle startNode, Circle endNode) throws IllegalNodesChosenException, GameOverException, CollisionException, NoValidEdgeException, InvalidPath {
         if (!(sproutModel.hasNode(startNode) && sproutModel.hasNode(endNode))) {
             outputExceptionMessage = "One or both nodes does not exist";
             throw new IllegalNodesChosenException(outputExceptionMessage);

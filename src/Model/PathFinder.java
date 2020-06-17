@@ -2,7 +2,6 @@ package Model;
 
 
 import Exceptions.NoValidEdgeException;
-import io.cucumber.java.it.Ma;
 import javafx.scene.shape.*;
 
 import java.util.*;
@@ -135,7 +134,6 @@ public class PathFinder {
             }
         }
     }
-
 
     private void findPathCoverage2(double startX, double startY, double endX, double endY) { //gaps happen during grid resizing, perhaps off by one or some round off error?
         double vecX = endX - startX;
@@ -300,8 +298,10 @@ public class PathFinder {
         Point[][] parent = new Point[gridSizeY][gridSizeX];
         boolean[][] visited = new boolean[gridSizeY][gridSizeX];
         Queue<Point> queue = new LinkedList<>();
-        Operator[][] opCombs = {{Operator.UNARY, Operator.SUBTRACTION}, {Operator.UNARY, Operator.ADDITION},
-                {Operator.SUBTRACTION, Operator.UNARY}, {Operator.ADDITION, Operator.UNARY}};
+        Operator[][] opCombs = {{Operator.UNARY, Operator.SUBTRACTION},
+                                {Operator.UNARY, Operator.ADDITION},
+                                {Operator.SUBTRACTION, Operator.UNARY},
+                                {Operator.ADDITION, Operator.UNARY}};
 
         //mark end node as false
         grid[downScaleY(endNode.getY())][downScaleX(endNode.getX())] = false;
@@ -333,8 +333,9 @@ public class PathFinder {
                 }
             }
         }
-        throw new NoValidEdgeException("No valid edge found between nodes " + startNode.getId()
+        throw new NoValidEdgeException("No valid line found between nodes " + startNode.getId()
                 + " and " + endNode.getId());
+
     }
 
     /**
@@ -349,16 +350,20 @@ public class PathFinder {
      * @author Sebastian Lund Jensen
      */
     public Path getPath(Node startNode, Node endNode) throws NoValidEdgeException {
+
         ArrayList<Point> pathListReversed = BFS(startNode, endNode);
         Path path = new Path();
         path.getElements().add(new MoveTo(startNode.getX(), startNode.getY()));
+
         for (int i = pathListReversed.size() - 2; i > 0; i--) {
             Point p = pathListReversed.get(i);
             path.getElements().add(new LineTo(upScaleX(p.getX()), upScaleY(p.getY())));
         }
         path.getElements().add(new LineTo(endNode.getX(), endNode.getY()));
+
         return path;
     }
+
 
 
     public Path getLoopPath(Node startNode) throws NoValidEdgeException {
@@ -381,7 +386,7 @@ public class PathFinder {
 
 
         if (!validPath) {
-            throw new NoValidEdgeException("No valid selfloop from: " + startNode.getId());
+            throw new NoValidEdgeException("No valid self loop from: " + startNode.getId() + " found");
         }
 
         pathHolder[0].getElements().addAll(pathHolder[1].getElements());

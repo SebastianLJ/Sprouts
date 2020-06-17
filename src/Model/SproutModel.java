@@ -70,7 +70,7 @@ public class SproutModel {
             if (intersect.getBoundsInLocal().getWidth() != -1) {
                 return true;
             }
-            if (DISTANCE_BETWEEN_POINTS > edgeTools.distanceBetweenCircleCenter(node.getShape(), circle)) {
+            if (DISTANCE_BETWEEN_POINTS > (int) edgeTools.distanceBetweenCircleCenter(node.getShape(), circle)) {
                 return true;
             }
         }
@@ -152,23 +152,29 @@ public class SproutModel {
         }
     }
 
-    public void drawSmartLine(Circle startNodeCircle, Circle endNodeCircle) throws NoValidEdgeException {
+    public void drawSmartLine(Circle startNodeCircle, Circle endNodeCircle) throws NoValidEdgeException, InvalidPath {
         int nameOfStartNode = findNameOfNode(startNodeCircle);
         int nameOfEndNode = findNameOfNode(endNodeCircle);
 
         Node startNode = nodes.get(nameOfStartNode);
         Node endNode = nodes.get(nameOfEndNode);
 
-        if(startNodeCircle==endNodeCircle){
-            Path result = pf.getLoopPath(startNode);
-           edges.add(result);
-        }
-        else {
-            edges.add(pf.getPath(startNode, endNode));
-        }
-        startNode.incNumberOfConnectingEdges(1);
-        endNode.incNumberOfConnectingEdges(1);
+        path = startNodeCircle==endNodeCircle ? pf.getLoopPath(startNode) : pf.getPath(startNode, endNode);
+        Node newNode = getNewNodeForPath();
 
+        if (newNode != null) {
+            // Update model
+            edges.add(path);
+            nodes.add(newNode);
+            startNode.incNumberOfConnectingEdges(1);
+            endNode.incNumberOfConnectingEdges(1);
+            nodes.set(nameOfStartNode, startNode);
+            nodes.set(nameOfEndNode, endNode);
+        } else {
+            InvalidPath invalidPath = new InvalidPath("There is no space for a new node on this edge");
+            invalidPath.setPath(path);
+            throw invalidPath;
+        }
     }
 
     /**
@@ -358,6 +364,28 @@ public class SproutModel {
         return false;
     }
 
+    public void addNodeOnLineDrag(Path path){
+        int size = path.getElements().size();
+        LineTo test = (LineTo) (path.getElements().get(size/2));
+        Node newNode = new Node(test.getX(), test.getY(), 2, nodes.size());
+        nodes.add(newNode);
+    }
+
+    public void addNodeOnSmartClickWithCollision() throws NoValidEdgeException {
+        double[] nodePercentPriority = {0.50, 0.40, 0.60, 0.30, 0.70};
+        path = (Path)(edges.get(edges.size()-1));
+        int size = path.getElements().size();
+
+        for (double aNodePercentPriority : nodePercentPriority) {
+            LineTo test = (LineTo) (path.getElements().get((int) (size * aNodePercentPriority)));
+            Node newNode = new Node(test.getX(), test.getY(), 2, nodes.size());
+            if (!nodeCollides(newNode)) {
+                nodes.add(newNode);
+                return;
+            }
+        }
+        throw new NoValidEdgeException("There is no space for a new node on this line");
+    }
 
     /**
      * Creates a new node to appear on new line
@@ -408,47 +436,6 @@ public class SproutModel {
         return newNode;
     }
 
-    public void addNodeOnLineDrag(Path path){
-        int size = path.getElements().size();
-        LineTo test = (LineTo) (path.getElements().get(size/2));
-        Node newNode = new Node(test.getX(), test.getY(), 2, nodes.size());
-        nodes.add(newNode);
-    }
-
-    public void addNodeOnSmartClick() throws NoValidEdgeException {
-        path = (Path)(edges.get(edges.size()-1));
-        int size = path.getElements().size();
-        Node newNode;
-
-        if(path.getElements().get(size/2) instanceof LineTo){
-         LineTo test = (LineTo) (path.getElements().get(size/2));
-            newNode = new Node(test.getX(), test.getY(), 2, nodes.size());
-
-        }
-        else{
-            MoveTo test=(MoveTo) (path.getElements().get(size/2));
-            newNode = new Node(test.getX(), test.getY(), 2, nodes.size());
-        }
-        nodes.add(newNode);
-
-    }
-
-    public void addNodeOnSmartClickWithCollision() throws NoValidEdgeException {
-        double[] nodePercentPriority = {0.50, 0.40, 0.60, 0.30, 0.70};
-        path = (Path)(edges.get(edges.size()-1));
-        int size = path.getElements().size();
-
-        for (double aNodePercentPriority : nodePercentPriority) {
-            LineTo test = (LineTo) (path.getElements().get((int) (size * aNodePercentPriority)));
-            Node newNode = new Node(test.getX(), test.getY(), 2, nodes.size());
-            if (!nodeCollides(newNode)) {
-                nodes.add(newNode);
-                return;
-            }
-        }
-        throw new NoValidEdgeException("no room for node to be generated");
-    }
-
     /**
      * Creates a new node to appear on new circular edge
      * and adjusts its position so that there is no collision with existing nodes or edges.
@@ -497,7 +484,7 @@ public class SproutModel {
      * @author Thea Birk Berger
      * @return non-colliding node if one exists, null otherwise
      */
-    public Node getNewNodeForDrawnLine() {
+    public Node getNewNodeForPath() {
 
         int pathSize = path.getElements().size();
         int d = pathSize/2;  // Initial node position - mid path element
@@ -505,8 +492,7 @@ public class SproutModel {
         boolean nodeCollision;
 
         do {
-            LineTo pathElem = (LineTo) (path.getElements().get(d));
-            newNode = new Node(pathElem.getX(), pathElem.getY(), 2, nodes.size()+1);
+            newNode = edgeTools.getCoordinates(path.getElements().get(d), 2, nodes.size());
             nodeCollision = false;
 
             // If there is collision => chose new path element for the node position
@@ -685,13 +671,13 @@ public class SproutModel {
 
     /**
      * If turn was ended successfully then the drawn line is added to list of valid lines
-     * @author Noah Bastian Christiansen & Sebastian Lund Jensen
+     * @author Noah Bastian Christiansen & Sebastian Lund Jensen & Thea Birk Berger
      */
     public void finishPath(MouseEvent mouseEvent) throws InvalidPath, InvalidNode {
         Point point = new Point((int) mouseEvent.getX(), (int) mouseEvent.getY());
         Node endNode = findNodeFromPoint(point);
         pathStartNode.incNumberOfConnectingEdges(1);
-        Node newNode = getNewNodeForDrawnLine();
+        Node newNode = getNewNodeForPath();
         if (leftStartNode && endNode != null && endNode.getNumberOfConnectingEdges() < 3 && newNode != null) {
             endNode.incNumberOfConnectingEdges(1);
             edges.add(path);
@@ -701,7 +687,7 @@ public class SproutModel {
             Path tempPath = new Path(List.copyOf(path.getElements()));
             path.getElements().clear();
             // Set and throw exception
-            InvalidPath invalidPath = new InvalidPath("There must be space on the line for a new node");
+            InvalidPath invalidPath = new InvalidPath("There is no space for a new node on this line");
             invalidPath.setPath(tempPath);
             throw invalidPath;
         } else {
