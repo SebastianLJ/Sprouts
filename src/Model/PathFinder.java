@@ -13,6 +13,8 @@ public class PathFinder {
     private int gridSizeY = 50;
     private boolean[][] grid = new boolean[gridSizeY][gridSizeX];
     private int counter = 0;
+    private ArrayList<Integer> id = new ArrayList<>();
+
 
     private double scalingFactorX;
     private double scalingFactorY;
@@ -36,6 +38,7 @@ public class PathFinder {
         grid = new boolean[this.gridSizeY][this.gridSizeX];
         List<Shape> edges = model.getEdges();
         List<Node> nodes = model.getNodes();
+        findCenterNode(nodes);
 
         initNodes(nodes, startNode, endNode);
        //  initEdges(edges);
@@ -46,6 +49,9 @@ public class PathFinder {
 
     private void initNodes(List<Node> nodes, Node startNode, Node endNode) {
         for (Node node : nodes) {
+            if(id.contains(node.getId())){
+                System.out.println("initalizing half node");
+            }
             findNodeCoverage(node.getX(), node.getY(), startNode, endNode);
         }
     }
@@ -65,6 +71,17 @@ public class PathFinder {
         } else if (!model.isPointInsideNode(p, startNode) && !model.isPointInsideNode(p, endNode)) {
             if (nY < gridSizeY && nX < gridSizeX) grid[nY][nX] = true;
         }
+    }
+    private ArrayList<Node> findCenterNode(List<Node> nodes){
+        ArrayList<Node> nodeList= new ArrayList<>();
+        for ( Node x : nodes) {
+            if(downScaleX(x.getX()) == 49 ) {
+                System.out.println("id: " + x.getId());
+                id.add(x.getId());
+                nodeList.add(x);
+            }
+        }
+        return nodeList;
     }
 
     private void initEdges(List<Shape> edges) {
@@ -304,6 +321,7 @@ public class PathFinder {
         this.gridSizeX = gridSizeX;
         this.gridSizeY = gridSizeY;
         initGrid(startNode, endNode);
+        System.out.println("grid: " + grid);
 
         Point[][] parent = new Point[gridSizeY][gridSizeX];
         boolean[][] visited = new boolean[gridSizeY][gridSizeX];
