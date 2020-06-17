@@ -43,8 +43,8 @@ public class SproutController extends Controller {
             outputExceptionMessage = "One or both nodes does not exist";
             throw new IllegalNodesChosenException(outputExceptionMessage);
         } else {
-            Circle startNode = sproutModel.getNodeWithName(startNodeName);
-            Circle endNode = sproutModel.getNodeWithName(endNodeName);
+            Circle startNode = sproutModel.getNodeFromId(startNodeName);
+            Circle endNode = sproutModel.getNodeFromId(endNodeName);
             attemptDrawEdgeBetweenNodes(startNode, endNode);
             gameOnGoing = false;
         }
@@ -80,7 +80,7 @@ public class SproutController extends Controller {
      * @author Noah Bastian Christiansen
      */
     public void addNodeOnValidLineDrag() throws InvalidPath {
-        sproutModel.getNodeForNewDrawing();
+        sproutModel.getNewNodeForDrawnLine();
     }
 
     public void addNodeOnValidSmartALine() throws NoValidEdgeException {
@@ -91,7 +91,7 @@ public class SproutController extends Controller {
      * @author Noah Bastian Christiansen
      */
     public boolean isCollided(){
-        return sproutModel.getIsCollided();
+        return sproutModel.hasNewestPathCollided();
     }
 
     public SproutModel getSproutModel() {
@@ -119,8 +119,8 @@ public class SproutController extends Controller {
         if (!(sproutModel.hasNode(startNode) && sproutModel.hasNode(endNode))) {
             outputExceptionMessage = "One or both nodes does not exist";
             throw new IllegalNodesChosenException(outputExceptionMessage);
-        } else if ((startNode != endNode && (sproutModel.getNumberOfEdges(startNode) == 3 || sproutModel.getNumberOfEdges(endNode) == 3)) ||
-                (startNode == endNode && sproutModel.getNumberOfEdges(startNode) > 1)) {
+        } else if ((startNode != endNode && (sproutModel.getNumberOfEdgesAtNode(startNode) == 3 || sproutModel.getNumberOfEdgesAtNode(endNode) == 3)) ||
+                (startNode == endNode && sproutModel.getNumberOfEdgesAtNode(startNode) > 1)) {
             outputExceptionMessage = "Nodes cannot have more than 3 connecting edges";
             throw new IllegalNodesChosenException(outputExceptionMessage);
         } else {
@@ -138,8 +138,8 @@ public class SproutController extends Controller {
         }
     }
 
-    public Shape createEdge(Circle startNode, Circle endNode) {
-        return sproutModel.createEdgeBetweenNodes(startNode, endNode);
+    public Shape getIllegalEdgeBetweenNodes(Circle startNode, Circle endNode) {
+        return sproutModel.getIllegalEdgeBetweenNodes(startNode, endNode);
     }
 
     public boolean isGameOnGoing() {

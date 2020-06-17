@@ -16,13 +16,10 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
-import java.util.Stack;
 
 
 public class View {
@@ -77,7 +74,7 @@ public class View {
     public void setUpDrawingSettings(MouseEvent mousePressed, Pane gamePane) {
         Scene scene = ((javafx.scene.Node) mousePressed.getSource()).getScene();
         scene.setCursor(Cursor.CROSSHAIR);
-        gamePane.getChildren().add(model.getPath());
+        gamePane.getChildren().add(model.getMostRecentlyDrawnPath());
     }
 
     /**
@@ -140,10 +137,7 @@ public class View {
         circle.setStrokeType(StrokeType.INSIDE);
         circle.setStroke(Color.RED);
         FadeTransition fadeTransition = new FadeTransition(Duration.seconds(0.2), circle);
-        fadeTransition.setFromValue(1.0);
-        fadeTransition.setToValue(0.4);
-        fadeTransition.setCycleCount(4);
-        fadeTransition.setAutoReverse(true);
+        blinkAnimation(fadeTransition, 4);
         fadeTransition.setOnFinished(e -> { circle.setStrokeWidth(0.0);
                                             circle.setStroke(Color.BLACK);
                                             circle.setOpacity(1.0);
@@ -155,13 +149,26 @@ public class View {
         path.setStroke(Color.RED);
         gamePane.getChildren().add(path);
         FadeTransition fadeTransition = new FadeTransition(Duration.seconds(0.2), path);
-        fadeTransition.setFromValue(1.0);
-        fadeTransition.setToValue(0.4);
-        fadeTransition.setCycleCount(4);
-        fadeTransition.setAutoReverse(true);
+        blinkAnimation(fadeTransition, 4);
 
         fadeTransition.setOnFinished(e -> gamePane.getChildren().remove(path));
         fadeTransition.play();
+    }
+
+    public void showGameResponse(Label gameResponseLabel, String text) {
+
+        gameResponseLabel.setText(text);
+        FadeTransition fadeTransition = new FadeTransition(Duration.seconds(1), gameResponseLabel);
+        blinkAnimation(fadeTransition, 2);
+        fadeTransition.setOnFinished(e -> gameResponseLabel.setText(""));
+        fadeTransition.play();
+    }
+
+    public void blinkAnimation(FadeTransition fadeTransition, int times) {
+        fadeTransition.setFromValue(1.0);
+        fadeTransition.setToValue(0.4);
+        fadeTransition.setCycleCount(times);
+        fadeTransition.setAutoReverse(true);
     }
 
     public void resetGameView(Pane gamePane) {

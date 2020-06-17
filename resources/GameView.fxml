@@ -1,17 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.geometry.Point3D?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 
 <BorderPane fx:id="borderPane" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.GameController">
    <bottom>
-      <Button mnemonicParsing="false" onAction="#goToMainMenu" text="Back" BorderPane.alignment="BOTTOM_CENTER">
+      <HBox alignment="BOTTOM_LEFT" prefHeight="27.0" prefWidth="632.0" BorderPane.alignment="BOTTOM_CENTER">
          <BorderPane.margin>
-            <Insets top="10.0" />
-         </BorderPane.margin></Button>
+            <Insets left="15.0" right="15.0" top="10.0" />
+         </BorderPane.margin>
+         <children>
+            <Button fx:id="backButtom" alignment="CENTER_RIGHT" contentDisplay="CENTER" mnemonicParsing="false" onAction="#goToMainMenu" text="Back" textAlignment="RIGHT">
+               <rotationAxis>
+                  <Point3D />
+               </rotationAxis>
+               <HBox.margin>
+                  <Insets left="20.0" />
+               </HBox.margin>
+            </Button>
+            <Label fx:id="gameResponse" alignment="BOTTOM_CENTER" contentDisplay="CENTER" prefHeight="17.0" prefWidth="515.0" textAlignment="CENTER">
+               <HBox.margin>
+                  <Insets left="50.0" right="50.0" />
+               </HBox.margin>
+            </Label>
+         </children>
+      </HBox>
    </bottom>
    <opaqueInsets>
       <Insets />
@@ -20,7 +39,7 @@
       <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
    </padding>
    <center>
-      <AnchorPane fx:id="anchorPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="478.0" minWidth="720.0" style="-fx-background-color: antiquewhite, white; -fx-background-insets: 0,20; -fx-padding: 10;" BorderPane.alignment="CENTER">
+      <AnchorPane fx:id="anchorPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="478.0" minWidth="720.0" prefWidth="735.0" style="-fx-background-color: antiquewhite, white; -fx-background-insets: 0,20; -fx-padding: 10;" BorderPane.alignment="CENTER">
          <BorderPane.margin>
             <Insets left="16.0" right="16.0" top="16.0" />
          </BorderPane.margin>
