@@ -9,11 +9,15 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Circle;
+import javafx.stage.Stage;
 
 
 import java.io.IOException;
@@ -22,7 +26,7 @@ import java.util.ResourceBundle;
 
 public class GameController extends SproutController implements Initializable {
     @FXML
-    public Pane gamePane;
+    Pane gamePane;
 
     private int gameMode; // 0 is clickToDraw and 1 is dragToDraw
     private int numberOfInitialNodes;
@@ -51,6 +55,7 @@ public class GameController extends SproutController implements Initializable {
      * @param url            Required - Not used.
      * @param resourceBundle Required - Not used.
      * @author Emil Sommer Desler
+     * @author Noah Bastian Christiansen
      * Connects this class to the gamecontroller called sproutController and the view that handles all visual updates of the game.
      * Tells the model the size of the game and initializes the game with the given amount of starting nodes.
      */
@@ -59,9 +64,10 @@ public class GameController extends SproutController implements Initializable {
         // Create connection to view that updates view with information from the model
         view = new View(getSproutModel());
 
+
         Platform.runLater(() -> {
-            // Tell the model how big the game is
-            updateSize(0.0, 0.0);
+
+
             updateSize(gamePane.getWidth(), gamePane.getHeight());
 
             try {
@@ -77,9 +83,12 @@ public class GameController extends SproutController implements Initializable {
             view.initializeNodes(gamePane);
             initializeListenerForStackPane();
         });
+
     }
 
     /**
+     * Iterates through each of the gamePane's  child nodes and if it is a stackpane, a listener is added to it.
+     * This listener is then used to select the stackpane that is clicked on in click-to-draw
      * @author Noah Bastian Christiansen
      */
     private void initializeListenerForStackPane() {
@@ -93,10 +102,10 @@ public class GameController extends SproutController implements Initializable {
     }
 
     /**
-     * @param mouseEvent The mouse click the user performs.
-     * @author Emil Sommer Desler & Noah Bastian Christiansen
      * This method handles the game where the user clicks nodes in order to draw edges between them.
      * By clicking a node the user primes that node for drawing and when clicking another node a line is drawn between the nodes (if the line is legal).
+     * @param mouseEvent The mouse click the user performs.
+     * @author Emil Sommer Desler & Noah Bastian Christiansen
      */
     private void clickToDraw(MouseEvent mouseEvent) {
         StackPane test;
@@ -138,10 +147,10 @@ public class GameController extends SproutController implements Initializable {
 
 
     /**
+     *  If the user has selected a node and clicks on something else than a node the selected node is deselected
+     *  and the user is free to select a new node.
      * @param mouseClick The mouse click the user performs.
      * @author Emil Sommer Desler & Noah Bastian Christiansen
-     * If the user has selected a node and clicks on something else than a node the selected node is deselected
-     * and the user is free to select a new node.
      */
     @SuppressWarnings("unused")
     public void onMouseClicked(MouseEvent mouseClick) {
@@ -157,9 +166,9 @@ public class GameController extends SproutController implements Initializable {
     }
 
     /**
+     *  This method is called when the user finishes his/her move  in drag to draw.
+     *  If the user had no collisions and drew a valid line this method will call upon the view to display the newly generated node.
      * @author Noah Bastian Christiansen
-     * This method is called when the user finishes his/her move  in drag to draw.
-     * If the user had no collisions and drew a valid line this method will call upon the view to display the newly generated node.
      */
     private void updateCanvasDrag() {
         view.updateCanvasDrag(gamePane);
@@ -183,14 +192,15 @@ public class GameController extends SproutController implements Initializable {
     }
 
     /**
+     *  This method is called when the user presses on a node in the gamemode drag to draw.
+     *  It takes a mouseEvent and sets up the model and the view
+     *  A path is initialized only if it starts from a node
      * @param mousePressed The mouse press the user performs.
      * @author Noah Bastian Christiansen & Sebastian Lund Jensen
-     * This method is called when the user presses on a node in the gamemode drag to draw.
-     * It takes a mouseEvent and sets up the model and the view
-     * A path is initialized only if it starts from a node
      */
     @SuppressWarnings("unused")
     public void mousePressedHandler(MouseEvent mousePressed) {
+
         if (mousePressed.getButton() == MouseButton.PRIMARY) {
             isPathInit = false;
             if (gameMode == DRAG_TO_DRAW_MODE) {
@@ -209,9 +219,9 @@ public class GameController extends SproutController implements Initializable {
 
     @SuppressWarnings("unused")
     /**
+     *  Repeatedly called when the user is dragging his mouse in order to draw.
+     *  Calls the model's method that draws path to mousevent's coordinates and the method that checks for intersections/collisions
      * @author Noah Bastian Christiansen & Sebastian Lund Jensen
-     * Repeatedly called when the user is dragging his mouse in order to draw.
-     * Calls the model's method that draws path to mousevent's coordinates and the method that checks for intersections/collisions
      * @param mouseDragged the mouse drag the user performs. This MouseEvent contains coordinates.
      */
     public void mouseDraggedHandler(MouseEvent mouseDragged) {
@@ -238,9 +248,9 @@ public class GameController extends SproutController implements Initializable {
 
     @SuppressWarnings("unused")
     /**
+     *   This method is called when the user finishes a drawing in drag to draw. A path is finished, only if it ends in a node.
+     *   If the user had no collisions the path can be added to list of valid lines and a new node can be generated on the path.
      * @author Noah Bastian Christiansen & Sebastian Lund Jensen
-     * This method is called when the user finishes a drawing in drag to draw. A path is finished, only if it ends in a node.
-     * If the user had no collisions the path can be added to list of valid lines and a new node can be generated on the path.
      * @param mouseReleased The mouse release the user performs.
      */
     public void mouseReleasedHandler(MouseEvent mouseReleased) {
@@ -255,7 +265,6 @@ public class GameController extends SproutController implements Initializable {
     private void finishPathHelper(MouseEvent mouseEvent) {
         try {
             completeDrawing(mouseEvent);
-            addNodeOnValidLineDrag();
             updateCanvasDrag();
             dragged = false;
             isPathInit = false;
@@ -274,4 +283,6 @@ public class GameController extends SproutController implements Initializable {
     void setNumberOfInitialNodes(int numberOfInitialNodes) {
         this.numberOfInitialNodes = numberOfInitialNodes;
     }
+
+
 }
