@@ -47,6 +47,17 @@ public class PathFinder {
         // initEdges3(edges);
         initEdges4(edges);
     }
+    private ArrayList<Node> findCenterNode(List<Node> nodes){
+        ArrayList<Node> nodeList= new ArrayList<>();
+        for ( Node x : nodes) {
+            if(downScaleX(x.getX()) == 49 ) {
+                System.out.println("id: " + x.getId());
+                id.add(x.getId());
+                nodeList.add(x);
+            }
+        }
+        return nodeList;
+    }
 
     private void initNodes(List<Node> nodes, Node startNode, Node endNode) {
         for (Node node : nodes) {
@@ -74,17 +85,7 @@ public class PathFinder {
             if (nY < gridSizeY && nX < gridSizeX) grid[nY][nX] = true;
         }
     }
-    private ArrayList<Node> findCenterNode(List<Node> nodes){
-        ArrayList<Node> nodeList= new ArrayList<>();
-        for ( Node x : nodes) {
-            if(downScaleX(x.getX()) == 49 ) {
-                System.out.println("id: " + x.getId());
-                id.add(x.getId());
-                nodeList.add(x);
-            }
-        }
-        return nodeList;
-    }
+
 
     private void initEdges(List<Shape> edges) {
         for (Shape shape : edges) {
