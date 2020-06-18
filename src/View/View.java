@@ -2,10 +2,7 @@ package View;
 
 import Model.Node;
 import Model.SproutModel;
-import javafx.animation.FadeTransition;
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
-import javafx.animation.Timeline;
+import javafx.animation.*;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -16,13 +13,10 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
-import java.util.Stack;
 
 
 public class View {
@@ -32,43 +26,38 @@ public class View {
     public View(SproutModel model) {
         this.model = model;
     }
+
     /**
+     * Generates numbers on the nodes upon game start.
      * @author Noah Bastian Christiansen & Sebastian Lund Jensen
-     *
-     *
-     *
      */
     public void initializeNodes(Pane gamePane) {
         for (Node node : model.getNodes()) {
             gamePane.getChildren().add(addNumberOnNode(node));
         }
     }
+
     /**
+     * Adds number on nodes in click-to-draw
+     * @return The stack pane which contains the node and the number.
      * @author Noah Bastian Christiansen
-     *
-     *
-     *
      */
     public StackPane updateCanvasClick(Pane gamePane) {
         // Get edge
         Shape newEdge = model.getNewestEdge();
-
         // Get node
         Node newNode = model.getNewestNode();
-
         // Animate edge
         legalEdgeAnimation(gamePane, newEdge);
-
         // Add new node to view
         StackPane newStackPane = addNumberOnNode(newNode);
         gamePane.getChildren().add(newStackPane);
         return newStackPane;
     }
+
     /**
+     * Adds the number on the node in case of a successful drawing.
      * @author Noah Bastian Christiansen & Sebastian Lund Jensen
-     *
-     *
-     *
      */
     public void updateCanvasDrag(Pane gamePane){
         Node newNode = model.getNewestNode();
@@ -76,32 +65,26 @@ public class View {
     }
 
     /**
+     * Adds the path to the gamepane so it is visible and changes the cursor to a crosshair to indicate that the user has begun drawing.
      * @author Noah Bastian Christiansen
-     *
-     *
-     *
      */
     public void setUpDrawingSettings(MouseEvent mousePressed, Pane gamePane) {
         Scene scene = ((javafx.scene.Node) mousePressed.getSource()).getScene();
         scene.setCursor(Cursor.CROSSHAIR);
-        gamePane.getChildren().add(model.getPath());
+        gamePane.getChildren().add(model.getMostRecentlyDrawnPath());
     }
 
     /**
+     * Changes the cursor back to default when the user collides with a line.
      * @author Noah Bastian Christiansen
-     *
-     *
-     *
      */
     public void setUpCollisionSettings(MouseEvent mouseDragged) {
         Scene scene = ((javafx.scene.Node) mouseDragged.getSource()).getScene(); //perhaps set scene somewhere in here.
         scene.setCursor(Cursor.DEFAULT);
     }
     /**
+     * Changes the cursor from a crosshair to a normal cursor to indicate that the user has finished his drawing successfully.
      * @author Noah Bastian Christiansen
-     *
-     *
-     *
      */
     public void setUpSuccessfulPathSettings(MouseEvent mouseReleased) {
         Scene scene = ((javafx.scene.Node) mouseReleased.getSource()).getScene(); //perhaps set scene somewhere in here.
@@ -143,7 +126,20 @@ public class View {
             timeline.play();
         } else {
             gamePane.getChildren().add(shape);
+//            legalSmartEdgeAnimation(gamePane, shape);
         }
+    }
+
+    public void legalSmartEdgeAnimation(Pane gamePane, Shape shape) {
+
+        final PathTransition pathTransition = new PathTransition();
+        pathTransition.setDuration(Duration.seconds(8.0));
+        pathTransition.setDelay(Duration.seconds(.5));
+        pathTransition.setPath(shape);
+//        pathTransition.setOrientation(PathTransition.OrientationType.ORTHOGONAL_TO_TANGENT);
+        pathTransition.setCycleCount(Timeline.INDEFINITE);
+        pathTransition.setAutoReverse(true);
+        pathTransition.play();
     }
 
     public void illegalNode(Circle circle) {
@@ -151,10 +147,7 @@ public class View {
         circle.setStrokeType(StrokeType.INSIDE);
         circle.setStroke(Color.RED);
         FadeTransition fadeTransition = new FadeTransition(Duration.seconds(0.2), circle);
-        fadeTransition.setFromValue(1.0);
-        fadeTransition.setToValue(0.4);
-        fadeTransition.setCycleCount(4);
-        fadeTransition.setAutoReverse(true);
+        blinkAnimation(fadeTransition, 4);
         fadeTransition.setOnFinished(e -> { circle.setStrokeWidth(0.0);
                                             circle.setStroke(Color.BLACK);
                                             circle.setOpacity(1.0);
@@ -166,13 +159,26 @@ public class View {
         path.setStroke(Color.RED);
         gamePane.getChildren().add(path);
         FadeTransition fadeTransition = new FadeTransition(Duration.seconds(0.2), path);
-        fadeTransition.setFromValue(1.0);
-        fadeTransition.setToValue(0.4);
-        fadeTransition.setCycleCount(4);
-        fadeTransition.setAutoReverse(true);
+        blinkAnimation(fadeTransition, 4);
 
         fadeTransition.setOnFinished(e -> gamePane.getChildren().remove(path));
         fadeTransition.play();
+    }
+
+    public void showGameResponse(Label gameResponseLabel, String text) {
+
+        gameResponseLabel.setText(text);
+        FadeTransition fadeTransition = new FadeTransition(Duration.seconds(1), gameResponseLabel);
+        blinkAnimation(fadeTransition, 2);
+        fadeTransition.setOnFinished(e -> gameResponseLabel.setText(""));
+        fadeTransition.play();
+    }
+
+    public void blinkAnimation(FadeTransition fadeTransition, int times) {
+        fadeTransition.setFromValue(1.0);
+        fadeTransition.setToValue(0.4);
+        fadeTransition.setCycleCount(times);
+        fadeTransition.setAutoReverse(true);
     }
 
     public void resetGameView(Pane gamePane) {
@@ -204,10 +210,11 @@ public class View {
         toolTip.setHideDelay(Duration.ZERO);
     }
     /**
+     *
+     * This method numerates the nodes but creating a stack pane with the node's shape (a circle) and some text (the node's number) on it.
+     * @return A stackpane consisting of the node's shape (a circle) and some text indicating the node's number.
+     * @param node The node which needs an number added to it.
      * @author Noah Bastian Christiansen & Sebastian Lund Jensen
-     *
-     *
-     *
      */
     private StackPane addNumberOnNode(Node node){
         final Text text = new Text(""+node.getId());

@@ -9,12 +9,12 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 
 import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Circle;
-
 
 import java.io.IOException;
 import java.net.URL;
@@ -22,7 +22,7 @@ import java.util.ResourceBundle;
 
 public class GameController extends SproutController implements Initializable {
     @FXML
-    public Pane gamePane;
+    Pane gamePane;
 
     private int gameMode; // 0 is clickToDraw and 1 is dragToDraw
     private int numberOfInitialNodes;
@@ -33,8 +33,10 @@ public class GameController extends SproutController implements Initializable {
     private Circle selectedNode;
     private boolean dragged;
     private boolean isPathInit = false;
+    public Label gameResponse;
+    private boolean smartGame;
 
-    public GameController () {
+    public GameController() {
         super();
     }
 
@@ -51,6 +53,7 @@ public class GameController extends SproutController implements Initializable {
      * @param url            Required - Not used.
      * @param resourceBundle Required - Not used.
      * @author Emil Sommer Desler
+     * @author Noah Bastian Christiansen
      * Connects this class to the gamecontroller called sproutController and the view that handles all visual updates of the game.
      * Tells the model the size of the game and initializes the game with the given amount of starting nodes.
      */
@@ -59,9 +62,10 @@ public class GameController extends SproutController implements Initializable {
         // Create connection to view that updates view with information from the model
         view = new View(getSproutModel());
 
+
         Platform.runLater(() -> {
-            // Tell the model how big the game is
-            updateSize(0.0,0.0);
+
+
             updateSize(gamePane.getWidth(), gamePane.getHeight());
 
             try {
@@ -77,15 +81,16 @@ public class GameController extends SproutController implements Initializable {
             view.initializeNodes(gamePane);
             initializeListenerForStackPane();
         });
+
     }
 
     /**
+     * Iterates through each of the gamePane's  child nodes and if it is a stackpane, a listener is added to it.
+     * This listener is then used to select the stackpane that is clicked on in click-to-draw
      * @author Noah Bastian Christiansen
-     *
-     *
      */
-    private void initializeListenerForStackPane(){
-        if(gameMode==CLICK_TO_DRAW_MODE) {
+    private void initializeListenerForStackPane() {
+        if (gameMode == CLICK_TO_DRAW_MODE) {
             for (Node stackPane : gamePane.getChildren()) {
                 if (stackPane instanceof StackPane) {
                     stackPane.setOnMouseClicked(this::clickToDraw);
@@ -95,51 +100,61 @@ public class GameController extends SproutController implements Initializable {
     }
 
     /**
+     * This method handles the game where the user clicks nodes in order to draw edges between them.
+     * By clicking a node the user primes that node for drawing and when clicking another node a edge is drawn between the nodes (if the edge is legal).
      * @param mouseEvent The mouse click the user performs.
      * @author Emil Sommer Desler & Noah Bastian Christiansen
-     * This method handles the game where the user clicks nodes in order to draw edges between them.
-     * By clicking a node the user primes that node for drawing and when clicking another node a line is drawn between the nodes (if the line is legal).
      */
     private void clickToDraw(MouseEvent mouseEvent) {
         StackPane test;
-        Circle cirkel = new Circle();
-        if(mouseEvent.getSource() instanceof StackPane){
-        test = (StackPane) mouseEvent.getSource();
-        cirkel = (Circle) test.getChildren().get(0);
-        }
-        else{
+        Circle circle = new Circle();
+        if (mouseEvent.getSource() instanceof StackPane) {
+            test = (StackPane) mouseEvent.getSource();
+            circle = (Circle) test.getChildren().get(0);
+        } else {
             onMouseClicked(mouseEvent);
         }
 
         if (!theUserHasSelectedANode) {
-            primeNodeToDrawEdgeFrom(cirkel);
+            primeNodeToDrawEdgeFrom(circle);
         } else {
             try {
-                attemptDrawEdgeBetweenNodes(selectedNode, cirkel);
+                attemptDrawEdgeBetweenNodes(selectedNode, circle);
                 updateCanvasClick();
             } catch (IllegalNodesChosenException e) {
-                view.illegalEdgeAnimation(gamePane, createEdge(selectedNode, cirkel));
+//                view.illegalEdgeAnimation(gamePane, getIllegalEdgeBetweenNodes(selectedNode, circle));
+                view.illegalNode(circle);
                 view.deselectNode(selectedNode);
-                theUserHasSelectedANode = false;
+                view.showGameResponse(gameResponse, e.getMessage());
+                System.out.println(e.getMessage());
             } catch (GameOverException e) {
                 updateCanvasClick();
                 System.out.println("Game Over!");
             } catch (CollisionException e) {
-               // view.illegalEdgeAnimation(gamePane, createEdge(selectedNode, (Circle) mouseEvent.getSource()));
-                view.illegalEdgeAnimation(gamePane, createEdge(selectedNode, cirkel));
-                view.deselectNode(selectedNode);
                 theUserHasSelectedANode = false;
+                view.illegalEdgeAnimation(gamePane, getIllegalEdgeBetweenNodes(selectedNode, circle));
+                view.deselectNode(selectedNode);
+                view.showGameResponse(gameResponse, e.getMessage());
                 System.out.println("Collision!");
+            } catch (NoValidEdgeException e) {
+                theUserHasSelectedANode = false;
+                view.deselectNode(selectedNode);
+                view.showGameResponse(gameResponse, e.getMessage());
+                System.out.println(e.getMessage());
+            } catch (InvalidPath e) {
+                theUserHasSelectedANode = false;
+                view.illegalEdgeAnimation(gamePane, getIllegalEdgeBetweenNodes(selectedNode, circle));
+                view.deselectNode(selectedNode);
+                view.showGameResponse(gameResponse, e.getMessage());
             }
         }
     }
 
-
     /**
+     *  If the user has selected a node and clicks on something else than a node the selected node is deselected
+     *  and the user is free to select a new node.
      * @param mouseClick The mouse click the user performs.
      * @author Emil Sommer Desler & Noah Bastian Christiansen
-     * If the user has selected a node and clicks on something else than a node the selected node is deselected
-     * and the user is free to select a new node.
      */
     @SuppressWarnings("unused")
     public void onMouseClicked(MouseEvent mouseClick) {
@@ -155,16 +170,20 @@ public class GameController extends SproutController implements Initializable {
     }
 
     /**
+     *  This method is called when the user finishes his/her move in drag to draw.
+     *  If the user had no collisions and drew a valid line this method will call upon the view to display the newly generated node.
      * @author Noah Bastian Christiansen
-     * This method is called when the user finishes his/her move  in drag to draw.
-     * If the user had no collisions and drew a valid line this method will call upon the view to display the newly generated node.
      */
     private void updateCanvasDrag() {
         view.updateCanvasDrag(gamePane);
     }
 
-    public void attemptDrawEdgeBetweenNodes(Circle startNode, Circle endNode) throws IllegalNodesChosenException, GameOverException, CollisionException {
-        super.attemptDrawEdgeBetweenNodes(startNode, endNode);
+    public void attemptDrawEdgeBetweenNodes(Circle startNode, Circle endNode) throws IllegalNodesChosenException, GameOverException, CollisionException, NoValidEdgeException, InvalidPath {
+        if (smartGame) {
+            super.attemptDrawSmartEdgeBetweenNodes(startNode, endNode);
+        } else {
+            super.attemptDrawEdgeBetweenNodes(startNode, endNode);
+        }
         view.deselectNode(startNode);
         theUserHasSelectedANode = false; // A edge has been drawn and the node i no longer primed
     }
@@ -181,14 +200,15 @@ public class GameController extends SproutController implements Initializable {
     }
 
     /**
+     *  This method is called when the user presses on a node in the game mode: drag to draw.
+     *  It takes a mouseEvent and sets up the model and the view
+     *  A path is initialized only if it starts from a node
      * @param mousePressed The mouse press the user performs.
      * @author Noah Bastian Christiansen & Sebastian Lund Jensen
-     * This method is called when the user presses on a node in the gamemode drag to draw.
-     * It takes a mouseEvent and sets up the model and the view
-     * A path is initialized only if it starts from a node
      */
     @SuppressWarnings("unused")
     public void mousePressedHandler(MouseEvent mousePressed) {
+
         if (mousePressed.getButton() == MouseButton.PRIMARY) {
             isPathInit = false;
             if (gameMode == DRAG_TO_DRAW_MODE) {
@@ -196,9 +216,10 @@ public class GameController extends SproutController implements Initializable {
                     setupDrawing(mousePressed);
                     view.setUpDrawingSettings(mousePressed, gamePane);
                     isPathInit = true;
-                } catch (InvalidNode invalidNode) {
-                    if (invalidNode.getNode() != null) {
-                        view.illegalNode(invalidNode.getNode().getShape());
+                } catch (InvalidNode e) {
+                    if (e.getNode() != null) {
+                        view.illegalNode(e.getNode().getShape());
+                        view.showGameResponse(gameResponse, e.getMessage());
                     }
                 }
             }
@@ -207,9 +228,9 @@ public class GameController extends SproutController implements Initializable {
 
     @SuppressWarnings("unused")
     /**
-     * @author Noah Bastian Christiansen & Sebastian Lund Jensen
      * Repeatedly called when the user is dragging his mouse in order to draw.
      * Calls the model's method that draws path to mousevent's coordinates and the method that checks for intersections/collisions
+     * @author Noah Bastian Christiansen & Sebastian Lund Jensen
      * @param mouseDragged the mouse drag the user performs. This MouseEvent contains coordinates.
      */
     public void mouseDraggedHandler(MouseEvent mouseDragged) {
@@ -220,10 +241,14 @@ public class GameController extends SproutController implements Initializable {
                 if (gameMode == DRAG_TO_DRAW_MODE) {
                     try {
                         beginDrawing(mouseDragged);
-                    } catch (PathForcedToEnd | InvalidPath e) {
+                    } catch (PathForcedToEnd e) {
                         finishPathHelper(mouseDragged);
+                    } catch (InvalidPath e) {
+                        finishPathHelper(mouseDragged);
+                        view.showGameResponse(gameResponse, e.getMessage());
                     } catch (CollisionException e) {
                         view.illegalPath(gamePane, e.getPath());
+                        view.showGameResponse(gameResponse, e.getMessage());
                     }
                     if (isCollided()) {
                         view.setUpCollisionSettings(mouseDragged);
@@ -236,14 +261,14 @@ public class GameController extends SproutController implements Initializable {
 
     @SuppressWarnings("unused")
     /**
-     * @author Noah Bastian Christiansen & Sebastian Lund Jensen
      * This method is called when the user finishes a drawing in drag to draw. A path is finished, only if it ends in a node.
      * If the user had no collisions the path can be added to list of valid lines and a new node can be generated on the path.
+     * @author Noah Bastian Christiansen & Sebastian Lund Jensen
      * @param mouseReleased The mouse release the user performs.
      */
     public void mouseReleasedHandler(MouseEvent mouseReleased) {
         if (mouseReleased.getButton() == MouseButton.PRIMARY) {
-            if (gameMode == DRAG_TO_DRAW_MODE && !getSproutModel().getIsCollided() && dragged && isPathInit) {
+            if (gameMode == DRAG_TO_DRAW_MODE && !getSproutModel().hasNewestPathCollided() && dragged && isPathInit) {
                 finishPathHelper(mouseReleased);
             }
             view.setUpSuccessfulPathSettings(mouseReleased);
@@ -253,7 +278,6 @@ public class GameController extends SproutController implements Initializable {
     private void finishPathHelper(MouseEvent mouseEvent) {
         try {
             completeDrawing(mouseEvent);
-            addNodeOnValidLineDrag();
             updateCanvasDrag();
             dragged = false;
             isPathInit = false;
@@ -262,14 +286,21 @@ public class GameController extends SproutController implements Initializable {
             dragged = false;
             isPathInit = false;
             view.illegalPath(gamePane, e.getPath());
-        } catch (InvalidNode invalidNode) {
+            view.showGameResponse(gameResponse, e.getMessage());
+        } catch (InvalidNode e) {
             dragged = false;
             isPathInit = false;
-            view.illegalNode(invalidNode.getNode().getShape());
+            view.illegalNode(e.getNode().getShape());
+            view.showGameResponse(gameResponse, e.getMessage());
         }
     }
 
     void setNumberOfInitialNodes(int numberOfInitialNodes) {
         this.numberOfInitialNodes = numberOfInitialNodes;
+    }
+
+
+    public void setSmartGame(boolean smartGame) {
+        this.smartGame = smartGame;
     }
 }

@@ -1,14 +1,13 @@
 package Controller;
 
-import Exceptions.CollisionException;
-import Exceptions.GameOverException;
-import Exceptions.IllegalNodesChosenException;
-import Exceptions.NumberOfInitialNodesException;
+import Exceptions.*;
 import Utility.TooltipCell;
 import View.View;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.Initializable;
@@ -27,6 +26,8 @@ import java.util.ResourceBundle;
 public class FileSimulationController extends SproutController implements Initializable {
     public Pane gamePane;
     public Label gameResponseLabel;
+    public ToggleGroup drawMode;
+
     public ListView<String> moveList;
     private String filename;
     private ArrayList<String> moves = new ArrayList<>();
@@ -38,6 +39,8 @@ public class FileSimulationController extends SproutController implements Initia
     private Timeline timeline = createTimeline();
     private int i = 0;
 
+    private boolean smartGame;
+
     public FileSimulationController() {
         super();
     }
@@ -47,9 +50,9 @@ public class FileSimulationController extends SproutController implements Initia
     }
 
     /**
-     * @author Emil Sommer Desler
      * Initialize the scene connecting it you the view class that handles the visual updates to the scene
      * Also sets up the cell factory that allow to create custom cells for the list showing the moves in the simulated files.
+     * @author Emil Sommer Desler
      * @param url Required - Not used.
      * @param resourceBundle Required - Not used.
      */
@@ -64,6 +67,11 @@ public class FileSimulationController extends SproutController implements Initia
             cells.add(cell);
             return cell;
         });
+
+        drawMode.selectedToggleProperty().addListener((ov, old_toggle, new_toggle) -> {
+            smartGame = !smartGame;
+            runFile();
+        });
     }
 
     public void goToMainMenu(ActionEvent event) throws IOException {
@@ -75,8 +83,8 @@ public class FileSimulationController extends SproutController implements Initia
     }
 
     /**
-     * @author Sebastian Lund
      * Checks file for invalid syntax using regex.
+     * @author Sebastian Lund
      * @return 0 if file is valid / linenumber of invalid syntax if file is invalid.
      * @throws IOException file reader exception.
      */
@@ -104,8 +112,8 @@ public class FileSimulationController extends SproutController implements Initia
     }
 
     /**
-     * @author Sebastian Lund & Emil Sommer Desler
      * Runs the simulation of the given file when the user clicks the button.
+     * @author Sebastian Lund & Emil Sommer Desler
      */
     public void runFile() {
         // Reset model
@@ -130,8 +138,8 @@ public class FileSimulationController extends SproutController implements Initia
     }
 
     /**
-     * @author Sebastian Lund & Emil Sommer Desler
      * Creates the timeline object that handles the simulation of the text file.
+     * @author Sebastian Lund & Emil Sommer Desler
      * @return The created timeline
      */
     private Timeline createTimeline() {
@@ -154,7 +162,12 @@ public class FileSimulationController extends SproutController implements Initia
                         } else {
                             //execute moves
                             move = moves.get(i).split("\\s");
-                            attemptDrawEdgeBetweenNodes(Integer.parseInt(move[0]) - 1, Integer.parseInt(move[1]) - 1);
+
+                            if (smartGame) {
+                                attemptDrawSmartEdgeBetweenNodes(Integer.parseInt(move[0]) - 1, Integer.parseInt(move[1]) - 1);
+                            } else {
+                                attemptDrawEdgeBetweenNodes(Integer.parseInt(move[0]) - 1, Integer.parseInt(move[1]) - 1);
+                            }
                             view.updateCanvasClick(gamePane);
                             message = "successfully executed move : from " + move[0] + " to " + move[1];
                         }
@@ -163,20 +176,22 @@ public class FileSimulationController extends SproutController implements Initia
                         color = "-fx-background-color: red";
                         message = e.getMessage();
                         legalGame = false;
+                        view.showGameResponse(gameResponseLabel, e.getMessage());
                     } catch (IllegalNodesChosenException e) {
                         color = "-fx-background-color: red";
                         message = "Failed at executing move : from " + move[0] + " to " + move[1] + "\n" + e.getMessage();
                         legalGame = false;
+                        view.showGameResponse(gameResponseLabel, e.getMessage());
                     } catch (GameOverException e) {
                         color = "-fx-background-color: yellow";
                         message = e.getMessage();
-                        gameResponseLabel.setText(e.getMessage());
                         timeline.stop();
-                    } catch (CollisionException e) {
+                        view.showGameResponse(gameResponseLabel, e.getMessage());
+                    } catch (CollisionException | NoValidEdgeException | InvalidPath e) {
                         color = "-fx-background-color: red";
                         message = "Failed at executing move : from " + move[0] + " to " + move[1];
-                        gameResponseLabel.setText(e.getMessage());
                         timeline.stop();
+                        view.showGameResponse(gameResponseLabel, e.getMessage());
                     }
 
                     i++;

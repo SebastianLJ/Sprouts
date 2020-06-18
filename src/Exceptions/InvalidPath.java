@@ -7,7 +7,13 @@ public class InvalidPath extends Exception {
 
     public InvalidPath(Path path) {this.path = path;}
 
+    public InvalidPath(String message) {super(message);}
+
     public Path getPath() {
         return path;
+    }
+
+    public void setPath(Path path) {
+        this.path = path;
     }
 }
