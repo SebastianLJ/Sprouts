@@ -125,7 +125,7 @@ public class SproutController extends Controller {
             throw new IllegalNodesChosenException(outputExceptionMessage);
         } else {
 
-            sproutModel.drawSmartLine(startNode, endNode);
+            sproutModel.drawSmartEdge(startNode, endNode);
 
             if (sproutModel.hasNoRemainingLegalMoves()) {
                 outputExceptionMessage = "There are no more legal moves. The winner is player " + sproutModel.getCurrentPlayer();

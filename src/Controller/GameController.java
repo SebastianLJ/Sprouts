@@ -101,7 +101,7 @@ public class GameController extends SproutController implements Initializable {
 
     /**
      * This method handles the game where the user clicks nodes in order to draw edges between them.
-     * By clicking a node the user primes that node for drawing and when clicking another node a line is drawn between the nodes (if the line is legal).
+     * By clicking a node the user primes that node for drawing and when clicking another node a edge is drawn between the nodes (if the edge is legal).
      * @param mouseEvent The mouse click the user performs.
      * @author Emil Sommer Desler & Noah Bastian Christiansen
      */
@@ -170,7 +170,7 @@ public class GameController extends SproutController implements Initializable {
     }
 
     /**
-     *  This method is called when the user finishes his/her move  in drag to draw.
+     *  This method is called when the user finishes his/her move in drag to draw.
      *  If the user had no collisions and drew a valid line this method will call upon the view to display the newly generated node.
      * @author Noah Bastian Christiansen
      */
@@ -196,7 +196,7 @@ public class GameController extends SproutController implements Initializable {
     }
 
     /**
-     *  This method is called when the user presses on a node in the gamemode drag to draw.
+     *  This method is called when the user presses on a node in the game mode: drag to draw.
      *  It takes a mouseEvent and sets up the model and the view
      *  A path is initialized only if it starts from a node
      * @param mousePressed The mouse press the user performs.
@@ -224,8 +224,8 @@ public class GameController extends SproutController implements Initializable {
 
     @SuppressWarnings("unused")
     /**
-     *  Repeatedly called when the user is dragging his mouse in order to draw.
-     *  Calls the model's method that draws path to mousevent's coordinates and the method that checks for intersections/collisions
+     * Repeatedly called when the user is dragging his mouse in order to draw.
+     * Calls the model's method that draws path to mousevent's coordinates and the method that checks for intersections/collisions
      * @author Noah Bastian Christiansen & Sebastian Lund Jensen
      * @param mouseDragged the mouse drag the user performs. This MouseEvent contains coordinates.
      */
@@ -257,8 +257,8 @@ public class GameController extends SproutController implements Initializable {
 
     @SuppressWarnings("unused")
     /**
-     *   This method is called when the user finishes a drawing in drag to draw. A path is finished, only if it ends in a node.
-     *   If the user had no collisions the path can be added to list of valid lines and a new node can be generated on the path.
+     * This method is called when the user finishes a drawing in drag to draw. A path is finished, only if it ends in a node.
+     * If the user had no collisions the path can be added to list of valid lines and a new node can be generated on the path.
      * @author Noah Bastian Christiansen & Sebastian Lund Jensen
      * @param mouseReleased The mouse release the user performs.
      */

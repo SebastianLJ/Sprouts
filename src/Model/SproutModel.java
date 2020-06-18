@@ -25,6 +25,7 @@ public class SproutModel {
     private Node pathStartNode;
     private boolean leftStartNode = false;
     private PathFinder pf;
+    private List<Node> failedNodes;
 
     // Classes with other model responsibilities
     public EdgeTools edgeTools;
@@ -33,6 +34,7 @@ public class SproutModel {
     public SproutModel() {
         edges = new ArrayList<>();
         nodes = new ArrayList<>();
+        failedNodes = new ArrayList<>();
         gameFlow = new GameFlow();
         pf = new PathFinder(this);
         edgeTools = new EdgeTools();
@@ -152,7 +154,7 @@ public class SproutModel {
         }
     }
 
-    public void drawSmartLine(Circle startNodeCircle, Circle endNodeCircle) throws NoValidEdgeException, InvalidPath {
+    public void drawSmartEdge(Circle startNodeCircle, Circle endNodeCircle) throws NoValidEdgeException, InvalidPath {
         int nameOfStartNode = findNameOfNode(startNodeCircle);
         int nameOfEndNode = findNameOfNode(endNodeCircle);
 
@@ -488,6 +490,7 @@ public class SproutModel {
 
         int pathSize = path.getElements().size();
         int d = pathSize/2;  // Initial node position - mid path element
+        failedNodes.clear();
         Node newNode;
         boolean nodeCollision;
 
@@ -498,6 +501,7 @@ public class SproutModel {
             // If there is collision => chose new path element for the node position
             if (newNodeCollidesWithExistingNodes(newNode) || newNodeCollidesWithExistingEdges(newNode)) {
                 nodeCollision = true;
+                failedNodes.add(newNode);
 
                 // If the new node has reached the end of path => place node on path beginning
                 d = d+1 < pathSize ? d+1 : 1;
@@ -803,6 +807,10 @@ public class SproutModel {
             }
         }
         return false;
+    }
+
+    public List<Node> getFailedNodesForMostRecentPath() {
+        return failedNodes;
     }
 
     public Circle getNodeFromId(int id) {

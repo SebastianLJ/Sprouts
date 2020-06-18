@@ -2,10 +2,7 @@ package View;
 
 import Model.Node;
 import Model.SproutModel;
-import javafx.animation.FadeTransition;
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
-import javafx.animation.Timeline;
+import javafx.animation.*;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -29,6 +26,7 @@ public class View {
     public View(SproutModel model) {
         this.model = model;
     }
+
     /**
      * Generates numbers on the nodes upon game start.
      * @author Noah Bastian Christiansen & Sebastian Lund Jensen
@@ -38,26 +36,25 @@ public class View {
             gamePane.getChildren().add(addNumberOnNode(node));
         }
     }
+
     /**
      * Adds number on nodes in click-to-draw
-     * @return The stackpane which contains the node and the number.
+     * @return The stack pane which contains the node and the number.
      * @author Noah Bastian Christiansen
      */
     public StackPane updateCanvasClick(Pane gamePane) {
         // Get edge
         Shape newEdge = model.getNewestEdge();
-
         // Get node
         Node newNode = model.getNewestNode();
-
         // Animate edge
         legalEdgeAnimation(gamePane, newEdge);
-
         // Add new node to view
         StackPane newStackPane = addNumberOnNode(newNode);
         gamePane.getChildren().add(newStackPane);
         return newStackPane;
     }
+
     /**
      * Adds the number on the node in case of a successful drawing.
      * @author Noah Bastian Christiansen & Sebastian Lund Jensen
@@ -128,8 +125,23 @@ public class View {
             timeline.getKeyFrames().add(kf);
             timeline.play();
         } else {
+//            legalSmartEdgeAnimation(gamePane);
+            shape.setStroke(Color.BLUE);
             gamePane.getChildren().add(shape);
         }
+    }
+
+    public void legalSmartEdgeAnimation(Pane gamePane) {
+        Path path = model.getMostRecentlyDrawnPath();
+        gamePane.getChildren().add(path);
+        final PathTransition pathTransition = new PathTransition();
+        pathTransition.setDuration(Duration.seconds(8.0));
+        pathTransition.setDelay(Duration.seconds(.5));
+        pathTransition.setPath(path);
+        pathTransition.setOrientation(PathTransition.OrientationType.ORTHOGONAL_TO_TANGENT);
+        pathTransition.setCycleCount(Timeline.INDEFINITE);
+        pathTransition.setAutoReverse(true);
+        pathTransition.play();
     }
 
     public void illegalNode(Circle circle) {
