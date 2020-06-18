@@ -50,6 +50,19 @@ public class SproutController extends Controller {
         }
     }
 
+    public void attemptDrawSmartEdgeBetweenNodes(int startNodeName, int endNodeName) throws IllegalNodesChosenException, GameOverException, CollisionException, NoValidEdgeException {
+        if (!(sproutModel.hasNode(startNodeName) && sproutModel.hasNode(endNodeName))) {
+            outputExceptionMessage = "One or both nodes does not exist";
+            throw new IllegalNodesChosenException(outputExceptionMessage);
+        } else {
+            Circle startNode = sproutModel.getNodeFromId(startNodeName);
+            Circle endNode = sproutModel.getNodeFromId(endNodeName);
+            attemptDrawSmartEdgeBetweenNodes(startNode, endNode);
+            gameOnGoing = false;
+        }
+    }
+
+
     /**
      * @param mousePressed
      * @author Noah Bastian Christiansen
