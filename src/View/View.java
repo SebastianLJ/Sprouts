@@ -125,20 +125,18 @@ public class View {
             timeline.getKeyFrames().add(kf);
             timeline.play();
         } else {
-//            legalSmartEdgeAnimation(gamePane);
-            shape.setStroke(Color.BLUE);
             gamePane.getChildren().add(shape);
+//            legalSmartEdgeAnimation(gamePane, shape);
         }
     }
 
-    public void legalSmartEdgeAnimation(Pane gamePane) {
-        Path path = model.getMostRecentlyDrawnPath();
-        gamePane.getChildren().add(path);
+    public void legalSmartEdgeAnimation(Pane gamePane, Shape shape) {
+
         final PathTransition pathTransition = new PathTransition();
         pathTransition.setDuration(Duration.seconds(8.0));
         pathTransition.setDelay(Duration.seconds(.5));
-        pathTransition.setPath(path);
-        pathTransition.setOrientation(PathTransition.OrientationType.ORTHOGONAL_TO_TANGENT);
+        pathTransition.setPath(shape);
+//        pathTransition.setOrientation(PathTransition.OrientationType.ORTHOGONAL_TO_TANGENT);
         pathTransition.setCycleCount(Timeline.INDEFINITE);
         pathTransition.setAutoReverse(true);
         pathTransition.play();
