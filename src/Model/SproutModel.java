@@ -173,6 +173,9 @@ public class SproutModel {
             nodes.set(nameOfStartNode, startNode);
             nodes.set(nameOfEndNode, endNode);
         } else {
+
+            // TODO: Send failedNodes list to pf instead of throwing exception underneath
+
             InvalidPath invalidPath = new InvalidPath("There is no space for a new node on this edge");
             invalidPath.setPath(path);
             throw invalidPath;

@@ -16,7 +16,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Circle;
 
-
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -35,6 +34,7 @@ public class GameController extends SproutController implements Initializable {
     private boolean dragged;
     private boolean isPathInit = false;
     public Label gameResponse;
+    private boolean smartGame;
 
     public GameController() {
         super();
@@ -122,7 +122,7 @@ public class GameController extends SproutController implements Initializable {
                 attemptDrawEdgeBetweenNodes(selectedNode, circle);
                 updateCanvasClick();
             } catch (IllegalNodesChosenException e) {
-                theUserHasSelectedANode = false;
+//                view.illegalEdgeAnimation(gamePane, getIllegalEdgeBetweenNodes(selectedNode, circle));
                 view.illegalNode(circle);
                 view.deselectNode(selectedNode);
                 view.showGameResponse(gameResponse, e.getMessage());
@@ -179,7 +179,11 @@ public class GameController extends SproutController implements Initializable {
     }
 
     public void attemptDrawEdgeBetweenNodes(Circle startNode, Circle endNode) throws IllegalNodesChosenException, GameOverException, CollisionException, NoValidEdgeException, InvalidPath {
-        super.attemptDrawEdgeBetweenNodes(startNode, endNode);
+        if (smartGame) {
+            super.attemptDrawSmartEdgeBetweenNodes(startNode, endNode);
+        } else {
+            super.attemptDrawEdgeBetweenNodes(startNode, endNode);
+        }
         view.deselectNode(startNode);
         theUserHasSelectedANode = false; // A edge has been drawn and the node i no longer primed
     }
@@ -296,4 +300,7 @@ public class GameController extends SproutController implements Initializable {
     }
 
 
+    public void setSmartGame(boolean smartGame) {
+        this.smartGame = smartGame;
+    }
 }

@@ -3,15 +3,9 @@ package Controller;
 
 import Exceptions.NumberOfInitialNodesException;
 import javafx.application.Application;
-import javafx.beans.binding.Bindings;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.layout.VBox;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -21,7 +15,6 @@ import java.util.Scanner;
 public class SproutLauncher extends Application {
 
     static SproutController controller = new SproutController();
-    private DoubleProperty fontSize = new SimpleDoubleProperty(10);
 
     /**
      * @author Emil Sommer Desler
@@ -33,20 +26,11 @@ public class SproutLauncher extends Application {
     public void start(Stage stage) throws IOException {
         stage.setTitle("Sprouts");
 
-        // Gets the screen size of the users computer
-       // Rectangle2D screenBounds = Screen.getPrimary().getBounds();
-
         FXMLLoader fxmlLoader = new FXMLLoader(Objects.requireNonNull(SproutLauncher.class.getClassLoader().getResource("MainMenu.fxml")));
 
         Parent root = fxmlLoader.load();
 
-        // Sets the scene to half of the width and height of the screen size
         Scene scene = new Scene(root, 800,600);
-
-        // TODO Make things scale-able
-        fontSize.bind(scene.widthProperty().add(scene.heightProperty()).divide(100));
-        VBox mainMenu = (VBox) fxmlLoader.getNamespace().get("mainMenu");
-        mainMenu.styleProperty().bind(Bindings.concat("-fx-font-size: ", fontSize.asString()));
 
         stage.setScene(scene);
         stage.setResizable(false);

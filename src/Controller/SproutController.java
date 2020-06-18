@@ -50,9 +50,22 @@ public class SproutController extends Controller {
         }
     }
 
+    public void attemptDrawSmartEdgeBetweenNodes(int startNodeName, int endNodeName) throws IllegalNodesChosenException, GameOverException, NoValidEdgeException, InvalidPath {
+        if (!(sproutModel.hasNode(startNodeName) && sproutModel.hasNode(endNodeName))) {
+            outputExceptionMessage = "One or both nodes does not exist";
+            throw new IllegalNodesChosenException(outputExceptionMessage);
+        } else {
+            Circle startNode = sproutModel.getNodeFromId(startNodeName);
+            Circle endNode = sproutModel.getNodeFromId(endNodeName);
+            attemptDrawSmartEdgeBetweenNodes(startNode, endNode);
+            gameOnGoing = false;
+        }
+    }
+
+
     /**
-     * @author Noah Bastian Christiansen
      * @param mousePressed
+     * @author Noah Bastian Christiansen
      */
     public void setupDrawing(MouseEvent mousePressed) throws InvalidNode {
         sproutModel.initializePath(mousePressed);
@@ -61,36 +74,39 @@ public class SproutController extends Controller {
 
     /**
      * This method communicates to the model's drawPath method that a drawing has started
-     * @author Noah Bastian Christiansen
+     *
      * @param mouseDragged The mousedrag that begins the drawing
+     * @author Noah Bastian Christiansen
      */
     public void beginDrawing(MouseEvent mouseDragged) throws PathForcedToEnd, InvalidPath, CollisionException {
         sproutModel.drawPath(mouseDragged);
     }
+
     /**
      * This method let's the model's finishPath method know that the path should now end.
-     * @author Noah Bastian Christiansen
+     *
      * @param mouseEvent The last mouseevent that ends the drawing.
+     * @author Noah Bastian Christiansen
      */
     public void completeDrawing(MouseEvent mouseEvent) throws InvalidNode, InvalidPath {
         sproutModel.finishPath(mouseEvent);
     }
+
     /**
      * This method tells the model to update itself since a new node needs to be generated on the line that was just drawn.
+     *
      * @author Noah Bastian Christiansen
      */
     public void addNodeOnValidLineDrag() throws InvalidPath {
         sproutModel.getNewNodeForPath();
     }
 
-//    public void addNodeOnValidSmartALine() throws NoValidEdgeException, InvalidPath {
-//        sproutModel.getNewNodeForSmartLine();
-//    }
     /**
      * This method let's the gameController know if a collision has occured by letting the sproutController ask the model.
+     *
      * @author Noah Bastian Christiansen
      */
-    public boolean isCollided(){
+    public boolean isCollided() {
         return sproutModel.hasNewestPathCollided();
     }
 
@@ -116,6 +132,22 @@ public class SproutController extends Controller {
     }
 
     public void attemptDrawEdgeBetweenNodes(Circle startNode, Circle endNode) throws IllegalNodesChosenException, GameOverException, CollisionException, NoValidEdgeException, InvalidPath {
+        checkIfNodesAreEligible(startNode, endNode);
+        sproutModel.drawEdgeBetweenNodes(startNode, endNode);
+        concludeTurn();
+    }
+
+    private void concludeTurn() throws GameOverException {
+        if (sproutModel.hasNoRemainingLegalMoves()) {
+            outputExceptionMessage = "There are no more legal moves. The winner is player " + sproutModel.getCurrentPlayer();
+            gameOnGoing = false;
+            throw new GameOverException(outputExceptionMessage);
+        } else {
+            sproutModel.changeTurns();
+        }
+    }
+
+    private void checkIfNodesAreEligible(Circle startNode, Circle endNode) throws IllegalNodesChosenException {
         if (!(sproutModel.hasNode(startNode) && sproutModel.hasNode(endNode))) {
             outputExceptionMessage = "One or both nodes does not exist";
             throw new IllegalNodesChosenException(outputExceptionMessage);
@@ -123,19 +155,13 @@ public class SproutController extends Controller {
                 (startNode == endNode && sproutModel.getNumberOfEdgesAtNode(startNode) > 1)) {
             outputExceptionMessage = "Nodes cannot have more than 3 connecting edges";
             throw new IllegalNodesChosenException(outputExceptionMessage);
-        } else {
-
-            sproutModel.drawSmartEdge(startNode, endNode);
-
-            if (sproutModel.hasNoRemainingLegalMoves()) {
-                outputExceptionMessage = "There are no more legal moves. The winner is player " + sproutModel.getCurrentPlayer();
-                gameOnGoing = false;
-                throw new GameOverException(outputExceptionMessage);
-            } else {
-                sproutModel.changeTurns();
-            }
-
         }
+    }
+
+    public void attemptDrawSmartEdgeBetweenNodes(Circle startNode, Circle endNode) throws IllegalNodesChosenException, GameOverException, NoValidEdgeException, InvalidPath {
+        checkIfNodesAreEligible(startNode, endNode);
+        sproutModel.drawSmartEdge(startNode, endNode);
+        concludeTurn();
     }
 
     public Shape getIllegalEdgeBetweenNodes(Circle startNode, Circle endNode) {
