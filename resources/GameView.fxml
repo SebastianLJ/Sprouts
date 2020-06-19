@@ -8,6 +8,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.TilePane?>
 
 <BorderPane fx:id="borderPane" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.GameController">
    <bottom>
@@ -44,4 +45,23 @@
          <Pane fx:id="gamePane" layoutX="30.0" layoutY="23.0" minHeight="438.0" minWidth="680.0" onMouseDragged="#mouseDraggedHandler" onMousePressed="#mousePressedHandler" onMouseReleased="#mouseReleasedHandler" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
       </AnchorPane>
    </center>
+   <top>
+      <TilePane prefWidth="479.0" BorderPane.alignment="TOP_LEFT">
+         <BorderPane.margin>
+            <Insets left="380.0" right="20.0" />
+         </BorderPane.margin>
+         <children>
+            <Label text="Now Playing:">
+               <TilePane.margin>
+                  <Insets left="103.0" />
+               </TilePane.margin>
+            </Label>
+            <Label fx:id="currentPlayerNameLabel" alignment="CENTER_RIGHT" contentDisplay="RIGHT" prefHeight="17.0" prefWidth="153.0" textAlignment="RIGHT">
+               <TilePane.margin>
+                  <Insets />
+               </TilePane.margin>
+            </Label>
+         </children>
+      </TilePane>
+   </top>
 </BorderPane>

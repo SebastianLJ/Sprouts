@@ -204,6 +204,11 @@ public class View {
         toolTip.setShowDuration(Duration.INDEFINITE);
         toolTip.setHideDelay(Duration.ZERO);
     }
+
+    public void showCurrentPlayerName(Label playerNameLabel, String playerName) {
+        playerNameLabel.setText(playerName);
+    }
+
     /**
      *
      * This method numerates the nodes but creating a stack pane with the node's shape (a circle) and some text (the node's number) on it.

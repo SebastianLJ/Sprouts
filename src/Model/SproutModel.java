@@ -727,25 +727,34 @@ public class SproutModel {
         }
     }
 
+    /**
+     * Analyzes if there is at least one legal move left in the game by making draw edge simulations.
+     * Used to update the game flow.
+     * @author Thea Birk Berger
+     * @param smartMode : True if the game is dynamic or drag-to-draw, false otherwise
+     * @return true if there is at least one legal move left in the game, false otherwise
+     */
     private boolean atLeastOneRemainingLegalMove(boolean smartMode) {
 
+        // Collect all nodes with less than 3 connecting edges
         List<Node> availableNodes = new ArrayList<>();
-
         for (Node node : nodes) {
             if (node.getNumberOfConnectingEdges() < 3) { availableNodes.add(node); }
             System.out.println("available node: " + node.getId());
         }
 
+        // Examine the connect possibility between any two available nodes
         for (Node node1 : availableNodes) {
             for (Node node2 : availableNodes) {
                 if (node1 != node2 || node1.getNumberOfConnectingEdges() <= 1) {
-
                     try {
+                        // Simulation a drawing between the two edges
                         if (smartMode) {
                             drawSmartEdge(node1.getShape(), node2.getShape(), true);
                         } else {
                             drawEdgeBetweenNodes(node1.getId() - 1, node2.getId() - 1, true);
                         }
+                        // If no exception is cast => a legal move is found
                         System.out.println("There is a valid edge between node " + node1.getId() + " and node " + node2.getId());
                         return true;
                     } catch (CollisionException | GameEndedException | InvalidPath | NoValidEdgeException ignore) {}
@@ -899,6 +908,10 @@ public class SproutModel {
 
     public double getWidth() {
         return width;
+    }
+
+    public String getCurrentPlayerName() {
+        return gameFlow.getCurrentPlayer();
     }
 
 }

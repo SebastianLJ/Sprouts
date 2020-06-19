@@ -9,7 +9,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -24,7 +23,8 @@ import java.util.ResourceBundle;
 public class GameController extends SproutController implements Initializable {
     @FXML
     Pane gamePane;
-
+    public Label gameResponse;
+    public Label currentPlayerNameLabel;
     private int gameMode; // 0 is clickToDraw and 1 is dragToDraw
     private int numberOfInitialNodes;
     private final int CLICK_TO_DRAW_MODE = 0;
@@ -34,7 +34,6 @@ public class GameController extends SproutController implements Initializable {
     private Circle selectedNode;
     private boolean dragged;
     private boolean isPathInit = false;
-    public Label gameResponse;
     private boolean smartGame;
 
     public GameController() {
@@ -78,7 +77,7 @@ public class GameController extends SproutController implements Initializable {
                     ex.printStackTrace();
                 }
             }
-
+            view.showCurrentPlayerName(currentPlayerNameLabel, super.getCurrentPlayerName());
             view.initializeNodes(gamePane);
             initializeListenerForStackPane();
         });
@@ -189,6 +188,7 @@ public class GameController extends SproutController implements Initializable {
         } else {
             super.attemptDrawEdgeBetweenNodes(startNode, endNode);
         }
+        view.showCurrentPlayerName(currentPlayerNameLabel, super.getCurrentPlayerName());
         view.deselectNode(startNode);
         theUserHasSelectedANode = false; // A edge has been drawn and the node i no longer primed
     }
@@ -287,6 +287,7 @@ public class GameController extends SproutController implements Initializable {
         try {
             completeDrawing(mouseEvent);
             updateCanvasDrag();
+            view.showCurrentPlayerName(currentPlayerNameLabel, super.getCurrentPlayerName());
             dragged = false;
             isPathInit = false;
             view.setUpSuccessfulPathSettings(mouseEvent);

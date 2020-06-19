@@ -11,9 +11,9 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.ChooseDrawModeAndNodeController">
    <children>
-      <VBox layoutX="167.0" layoutY="157.0" prefHeight="87.0" prefWidth="267.0">
+      <VBox layoutX="222.0" layoutY="257.0" prefHeight="87.0" prefWidth="356.0">
          <children>
-            <Label prefHeight="27.0" prefWidth="422.0" text="Enter number of starting nodes">
+            <Label contentDisplay="CENTER" prefHeight="27.0" prefWidth="422.0" text="Enter number of starting nodes" textAlignment="CENTER">
                <VBox.margin>
                   <Insets bottom="4.0" left="8.0" right="8.0" top="8.0" />
                </VBox.margin>
@@ -21,7 +21,7 @@
                   <Font size="18.0" />
                </font>
             </Label>
-            <TextField fx:id="numberOfNodesTextField" prefWidth="344.0" promptText="Enter a number from 2-99">
+            <TextField fx:id="numberOfNodesTextField" prefWidth="344.0" promptText="A number from 2 to 99">
                <VBox.margin>
                   <Insets left="8.0" right="8.0" />
                </VBox.margin>

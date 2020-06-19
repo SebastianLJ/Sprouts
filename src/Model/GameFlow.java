@@ -1,12 +1,5 @@
 package Model;
 
-import Exceptions.CollisionException;
-import Exceptions.GameEndedException;
-import javafx.scene.shape.Line;
-
-import java.util.ArrayList;
-import java.util.List;
-
 public class GameFlow {
 
     private boolean player1sTurn;
@@ -15,6 +8,8 @@ public class GameFlow {
 
     public GameFlow() {
         this.player1sTurn = true;
+        player1Name = "Player 1";
+        player2Name = "Player 2";
     }
 
     public void changeTurn() {
@@ -27,13 +22,8 @@ public class GameFlow {
 
     public void restartWithDefaultPlayerNames() {
         player1sTurn = true;
-    }
-
-    public boolean atLeastOneLegalMoveDynamicGame() {
-
-
-
-        return true;
+        player1Name = "Player 1";
+        player2Name = "Player 2";
     }
 
     public String getGameResponseText() {
@@ -42,9 +32,7 @@ public class GameFlow {
 
 
     public String getCurrentPlayer() {
-        return  player1sTurn ?
-                (player1Name == null ? "Player 1" : player1Name) :
-                (player2Name == null ? "Player 2" : player2Name);
+        return  player1sTurn ? player1Name : player2Name;
     }
 
     public String getPlayer1Name() {
