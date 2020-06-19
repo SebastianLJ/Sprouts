@@ -13,34 +13,40 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 
+
 <SplitPane dividerPositions="0.7" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.FileSimulationController">
-    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="442.0" prefWidth="450.0">
-        <AnchorPane prefHeight="483.0" prefWidth="523.0" style="-fx-background-color: antiquewhite, white; -fx-background-insets: 0,20; -fx-padding: 20;" AnchorPane.bottomAnchor="99.0" AnchorPane.leftAnchor="16.0" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="16.0">
-            <Pane fx:id="gamePane" layoutX="168.0" layoutY="55.0" prefWidth="378.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-        </AnchorPane>
-        <HBox layoutX="7.0" layoutY="540.0" prefHeight="55.0" prefWidth="556.0" spacing="4.0" AnchorPane.bottomAnchor="16.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
-            <VBox alignment="TOP_CENTER" minHeight="75.0" prefHeight="74.0" prefWidth="378.0" spacing="8.0">
-                <HBox.margin>
-                    <Insets left="18.0" />
-                </HBox.margin>
-                <Button mnemonicParsing="false" onAction="#runFile" text="Run Simulation!">
-               <VBox.margin>
-                  <Insets top="5.0" />
-               </VBox.margin>
-            </Button>
-                <Label fx:id="gameResponseLabel" alignment="CENTER" contentDisplay="CENTER" prefHeight="39.0" prefWidth="378.0" textAlignment="CENTER" />
-            </VBox>
-            <VBox alignment="CENTER_LEFT" prefHeight="54.0" prefWidth="139.0">
-                <Label text="Choose draw mode" />
-                <RadioButton mnemonicParsing="false" selected="true" text="Strict">
-                    <toggleGroup>
-                        <ToggleGroup fx:id="drawMode" />
-                    </toggleGroup>
-                </RadioButton>
-                <RadioButton mnemonicParsing="false" text="Dynamic" toggleGroup="$drawMode" />
-            </VBox>
-        </HBox>
-    </AnchorPane>
+   <VBox>
+      <children>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="670.0" prefWidth="555.0">
+              <AnchorPane layoutY="38.0" prefHeight="461.0" prefWidth="523.0" style="-fx-background-color: antiquewhite, white; -fx-background-insets: 0,20; -fx-padding: 20;" AnchorPane.bottomAnchor="99.0" AnchorPane.leftAnchor="16.0" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="38.0">
+                  <Pane fx:id="gamePane" layoutX="168.0" layoutY="55.0" prefWidth="378.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+              </AnchorPane>
+              <HBox layoutX="7.0" layoutY="540.0" prefHeight="55.0" prefWidth="556.0" spacing="4.0" AnchorPane.bottomAnchor="16.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                  <VBox alignment="TOP_CENTER" minHeight="75.0" prefHeight="74.0" prefWidth="378.0" spacing="8.0">
+                      <HBox.margin>
+                          <Insets left="18.0" />
+                      </HBox.margin>
+                      <Button mnemonicParsing="false" onAction="#runFile" text="Run Simulation!">
+                     <VBox.margin>
+                        <Insets top="5.0" />
+                     </VBox.margin>
+                  </Button>
+                      <Label fx:id="gameResponseLabel" alignment="CENTER" contentDisplay="CENTER" prefHeight="39.0" prefWidth="378.0" textAlignment="CENTER" />
+                  </VBox>
+                  <VBox alignment="CENTER_LEFT" prefHeight="54.0" prefWidth="139.0">
+                      <Label text="Choose draw mode" />
+                      <RadioButton mnemonicParsing="false" selected="true" text="Strict">
+                          <toggleGroup>
+                              <ToggleGroup fx:id="drawMode" />
+                          </toggleGroup>
+                      </RadioButton>
+                      <RadioButton mnemonicParsing="false" text="Dynamic" toggleGroup="$drawMode" />
+                  </VBox>
+              </HBox>
+            <Label fx:id="currentPlayerNameLabel" alignment="TOP_RIGHT" contentDisplay="RIGHT" layoutX="35.0" layoutY="14.0" prefHeight="17.0" prefWidth="483.0" textAlignment="RIGHT" />
+          </AnchorPane>
+      </children>
+   </VBox>
     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="216.0">
         <ScrollPane layoutX="-2.0" prefHeight="326.0" prefWidth="178.0" AnchorPane.bottomAnchor="72.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="523.0" prefWidth="233.0">

@@ -26,6 +26,7 @@ public class FileSimulationController extends SproutController implements Initia
     public Pane gamePane;
     public Label gameResponseLabel;
     public ToggleGroup drawMode;
+    public Label currentPlayerNameLabel;
 
     public ListView<String> moveList;
     private String filename;
@@ -150,6 +151,7 @@ public class FileSimulationController extends SproutController implements Initia
             @Override
             public void handle(ActionEvent event) {
                 if (legalGame) {
+                    view.showCurrentPlayerName(currentPlayerNameLabel, getCurrentPlayerName());
                     //init starting points
                     String[] move = {"-1", "-1"};
                     try {

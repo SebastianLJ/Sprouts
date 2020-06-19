@@ -206,7 +206,7 @@ public class View {
     }
 
     public void showCurrentPlayerName(Label playerNameLabel, String playerName) {
-        playerNameLabel.setText(playerName);
+        playerNameLabel.setText("Now playing:\t" + playerName);
     }
 
     /**

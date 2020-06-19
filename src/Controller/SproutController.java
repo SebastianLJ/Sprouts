@@ -134,7 +134,7 @@ public class SproutController extends Controller {
         return sproutModel.getIllegalEdgeBetweenNodes(startNode, endNode);
     }
 
-    public String getCurrentPlayerName() {
+    String getCurrentPlayerName() {
         return sproutModel.getCurrentPlayerName();
     }
 

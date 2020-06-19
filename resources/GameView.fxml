@@ -8,7 +8,6 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
-<?import javafx.scene.layout.TilePane?>
 
 <BorderPane fx:id="borderPane" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.GameController">
    <bottom>
@@ -46,22 +45,10 @@
       </AnchorPane>
    </center>
    <top>
-      <TilePane prefWidth="479.0" BorderPane.alignment="TOP_LEFT">
+      <Label fx:id="currentPlayerNameLabel" alignment="CENTER_RIGHT" contentDisplay="RIGHT" prefHeight="17.0" prefWidth="695.0" textAlignment="RIGHT" BorderPane.alignment="TOP_RIGHT">
          <BorderPane.margin>
-            <Insets left="380.0" right="20.0" />
+            <Insets right="38.0" />
          </BorderPane.margin>
-         <children>
-            <Label text="Now Playing:">
-               <TilePane.margin>
-                  <Insets left="103.0" />
-               </TilePane.margin>
-            </Label>
-            <Label fx:id="currentPlayerNameLabel" alignment="CENTER_RIGHT" contentDisplay="RIGHT" prefHeight="17.0" prefWidth="153.0" textAlignment="RIGHT">
-               <TilePane.margin>
-                  <Insets />
-               </TilePane.margin>
-            </Label>
-         </children>
-      </TilePane>
+      </Label>
    </top>
 </BorderPane>
