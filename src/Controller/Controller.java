@@ -12,6 +12,9 @@ import java.util.Objects;
 
 public class Controller {
 
+    String player1Name;
+    String player2Name;
+
     void changeScene(ActionEvent event, String fxmlFile) throws IOException {
         Parent enterFileNameParent = FXMLLoader.load(
                 Objects.requireNonNull(SproutLauncher.class.getClassLoader().getResource(
@@ -46,6 +49,7 @@ public class Controller {
         Parent gameViewParent = loader.load();
         GameController controller = loader.getController();
         Scene gameViewScene = new Scene(gameViewParent, SettingsController.width, SettingsController.height);
+
 
         window.setScene(gameViewScene);
         window.setResizable(false);

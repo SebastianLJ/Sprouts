@@ -77,6 +77,7 @@ public class GameController extends SproutController implements Initializable {
                     ex.printStackTrace();
                 }
             }
+
             view.showCurrentPlayerName(currentPlayerNameLabel, super.getCurrentPlayerName());
             view.initializeNodes(gamePane);
             initializeListenerForStackPane();

@@ -39,15 +39,13 @@ public class GameFlow {
         return player1Name;
     }
 
-    public void setPlayer1Name(String player1Name) {
-        this.player1Name = player1Name;
-    }
-
     public String getPlayer2Name() {
         return player2Name;
     }
 
-    public void setPlayer2Name(String player2Name) {
-        this.player2Name = player2Name;
+    void setPlayerNames(String player1Name, String player2Name) {
+        System.out.println(player1Name);
+        this.player1Name = player1Name == null ? "Player 1" : player1Name;
+        this.player2Name = player2Name == null ? "Player 2" : player2Name;
     }
 }

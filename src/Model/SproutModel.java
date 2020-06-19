@@ -914,5 +914,12 @@ public class SproutModel {
         return gameFlow.getCurrentPlayer();
     }
 
+    public void setPlayerNames(String player1Name, String player2Name) {
+        gameFlow.setPlayerNames(player1Name, player2Name);
+    }
+
+    public String[] getPlayerNames() {
+        return new String[]{gameFlow.getPlayer1Name(), gameFlow.getPlayer2Name()};
+    }
 }
 
