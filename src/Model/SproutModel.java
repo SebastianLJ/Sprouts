@@ -832,6 +832,7 @@ public class SproutModel {
     public void resetGame() {
         edges.clear();
         nodes.clear();
+        gameFlow.restartWithCurrentPlayerNames();
     }
 
     public List<Node> getNodes() {

@@ -21,6 +21,13 @@ public class GameFlow {
         this.player1sTurn = !player1sTurn;
     }
 
+    public void restartWithCurrentPlayerNames() {
+        player1sTurn = true;
+    }
+
+    public void restartWithDefaultPlayerNames() {
+        player1sTurn = true;
+    }
 
     public boolean atLeastOneLegalMoveDynamicGame() {
 
