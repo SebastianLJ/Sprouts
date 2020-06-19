@@ -33,7 +33,7 @@ public class SproutController extends Controller {
 
     public void attemptDrawEdgeBetweenNodes(int startNodeName, int endNodeName) throws IllegalNodesChosenException, CollisionException, NoValidEdgeException, InvalidPath, GameEndedException {
         if (!(sproutModel.hasNode(startNodeName) && sproutModel.hasNode(endNodeName))) {
-            outputExceptionMessage = "One or both nodes does not exist";
+            outputExceptionMessage = "One or both nodes chosen does not exist";
             throw new IllegalNodesChosenException(outputExceptionMessage);
         } else {
             Circle startNode = sproutModel.getNodeFromId(startNodeName);
@@ -44,7 +44,7 @@ public class SproutController extends Controller {
 
     public void attemptDrawSmartEdgeBetweenNodes(int startNodeName, int endNodeName) throws IllegalNodesChosenException, NoValidEdgeException, InvalidPath, GameEndedException {
         if (!(sproutModel.hasNode(startNodeName) && sproutModel.hasNode(endNodeName))) {
-            outputExceptionMessage = "One or both nodes does not exist";
+            outputExceptionMessage = "One or both nodes chosen does not exist";
             throw new IllegalNodesChosenException(outputExceptionMessage);
         } else {
             Circle startNode = sproutModel.getNodeFromId(startNodeName);

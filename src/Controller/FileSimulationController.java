@@ -171,7 +171,7 @@ public class FileSimulationController extends SproutController implements Initia
                                 attemptDrawEdgeBetweenNodes(startNodeName, endNodeName);
                             }
                             view.updateCanvasClick(gamePane);
-//                            gameResponse = "successfully executed move : from " + move[0] + " to " + move[1];
+                            toolTipMessage = "successfully executed move : from " + move[0] + " to " + move[1];
                         }
                         color = i % 2 == 0 ? "-fx-background-color: darkgreen": "-fx-background-color: green";
                     } catch (NumberOfInitialNodesException e) {
@@ -181,7 +181,7 @@ public class FileSimulationController extends SproutController implements Initia
                     } catch (IllegalNodesChosenException e) {
                         color = "-fx-background-color: red";
                         gameResponse = e.getMessage();
-                        toolTipMessage = "Failed at executing move : from " + move[0] + " to " + move[1] + "\n" + e.getMessage();
+                        toolTipMessage = "Failed to execute move from " + move[0] + " to " + move[1] + "\n" + e.getMessage();
                         legalGame = false;
                     } catch (CollisionException e) {
                         Circle startNode = getSproutModel().getNodeFromId(startNodeName);
@@ -193,8 +193,9 @@ public class FileSimulationController extends SproutController implements Initia
                         timeline.stop();
                     } catch (GameEndedException e) {
                         gameResponse = e.getMessage();
-                        timeline.stop();
                         toolTipMessage = "Successfully executed move from " + move[0] + " to " + move[1];
+                        view.updateCanvasClick(gamePane);
+                        timeline.stop();
                     } catch (InvalidPath invalidPath) {
                         color = "-fx-background-color: red";
                         gameResponse = invalidPath.getMessage();
@@ -204,7 +205,7 @@ public class FileSimulationController extends SproutController implements Initia
                     } catch (NoValidEdgeException e) {
                         color = "-fx-background-color: red";
                         gameResponse = e.getMessage();
-                        toolTipMessage = "Failed to execute move : from " + move[0] + " to " + move[1];
+                        toolTipMessage = "Failed to execute move from " + move[0] + " to " + move[1];
                         timeline.stop();
                     }
                     i++;

@@ -150,9 +150,9 @@ public class SproutModel {
 
         // If edge is invalid
         if (newEdgeCollidesWithExistingEdges(newLine)) {
-            throw new CollisionException("The line collided with another line");
+            throw new CollisionException("The new line collided with another line");
         } else if (collidingNodeId != -1) {
-            throw new CollisionException("The line collided with node " + collidingNodeId);
+            throw new CollisionException("The new line collided with node " + collidingNodeId);
         } else if (newNode == null) {
             throw new CollisionException("There is no space for a new node on this edge");
         // If edge is valid
@@ -215,10 +215,10 @@ public class SproutModel {
             throw new CollisionException("The new line collided with another line");
         } else if (collidingNodeId != -1) {
             throw new CollisionException("The new line collided with node " + collidingNodeId);
-        } else if (newNode == null) {
-            throw new CollisionException("There is no space for a new node on this line");
         } else if (circleExceedsGameFrame(newCircle)) {
-            throw new CollisionException("The line exceeds the game frame");
+            throw new CollisionException("The new line exceeds the game frame");
+        }  else if (newNode == null) {
+            throw new CollisionException("There is no space for a new node on this line");
         // If edge is valid
         } else if (!simulation) {
             // Add edge to gameboard
@@ -644,7 +644,7 @@ public class SproutModel {
 
             // Set and throw exception
             Path exceptionPath = new Path(List.copyOf(path.getElements()));
-            CollisionException collisionException = new CollisionException(selfCollision ? "The line cannot cross itself" : "The line collided with another line");
+            CollisionException collisionException = new CollisionException(selfCollision ? "The line cannot cross itself" : "The new line collided with another line");
             collisionException.setPath(exceptionPath);
             throw collisionException;
         // If temporary path does not collide and has not yet reached an end node
