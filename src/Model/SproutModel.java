@@ -738,12 +738,10 @@ public class SproutModel {
 
         for (Node node1 : availableNodes) {
             for (Node node2 : availableNodes) {
-                System.out.println("nodes:" + node1.getId() + " and " + node2.getId());
                 if (node1 != node2 || node1.getNumberOfConnectingEdges() <= 1) {
 
                     try {
                         if (smartMode) {
-                            System.out.println("SIMULATION STARTS HERE");
                             drawSmartEdge(node1.getShape(), node2.getShape(), true);
                         } else {
                             drawEdgeBetweenNodes(node1.getId() - 1, node2.getId() - 1, true);

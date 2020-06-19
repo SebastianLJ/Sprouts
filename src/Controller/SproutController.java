@@ -70,12 +70,7 @@ public class SproutController extends Controller {
      * @author Noah Bastian Christiansen
      */
     public void beginDrawing(MouseEvent mouseDragged) throws InvalidPath, CollisionException, GameEndedException, PathForcedToEnd {
-
          sproutModel.drawPath(mouseDragged);
-//        catch (PathForcedToEnd pathForcedToEnd) {
-//            sproutModel.updateGameState(true);
-//            throw pathForcedToEnd;
-//        }
     }
 
     /**
