@@ -293,6 +293,7 @@ public class PathFinder {
      * @author Sebastian Lund Jensen
      */
     public ArrayList<Point> BFS(Node startNode, Node endNode) throws NoValidEdgeException {
+
         initGrid(startNode, endNode);
 
         Point[][] parent = new Point[gridSizeY][gridSizeX];
@@ -302,6 +303,11 @@ public class PathFinder {
                                 {Operator.UNARY, Operator.ADDITION},
                                 {Operator.SUBTRACTION, Operator.UNARY},
                                 {Operator.ADDITION, Operator.UNARY}};
+
+        System.out.println("Y: " + endNode.getY());
+        System.out.println("X: " + endNode.getX());
+        System.out.println("down Y: " + downScaleY(endNode.getY()));
+        System.out.println("down X: " + downScaleX(endNode.getX()));
 
         //mark end node as false
         grid[downScaleY(endNode.getY())][downScaleX(endNode.getX())] = false;
@@ -333,6 +339,7 @@ public class PathFinder {
                 }
             }
         }
+
         throw new NoValidEdgeException("No valid line found between nodes " + startNode.getId()
                 + " and " + endNode.getId());
 
@@ -391,9 +398,7 @@ public class PathFinder {
 
         pathHolder[0].getElements().addAll(pathHolder[1].getElements());
 
-
         return pathHolder[0];
-
 
     }
 

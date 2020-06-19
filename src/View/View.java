@@ -126,20 +126,12 @@ public class View {
             timeline.play();
         } else {
             gamePane.getChildren().add(shape);
-//            legalSmartEdgeAnimation(gamePane, shape);
+            legalSmartEdgeAnimation(gamePane, shape);
         }
     }
 
     public void legalSmartEdgeAnimation(Pane gamePane, Shape shape) {
-
-        final PathTransition pathTransition = new PathTransition();
-        pathTransition.setDuration(Duration.seconds(8.0));
-        pathTransition.setDelay(Duration.seconds(.5));
-        pathTransition.setPath(shape);
-//        pathTransition.setOrientation(PathTransition.OrientationType.ORTHOGONAL_TO_TANGENT);
-        pathTransition.setCycleCount(Timeline.INDEFINITE);
-        pathTransition.setAutoReverse(true);
-        pathTransition.play();
+        // TODO: draw edge slowly
     }
 
     public void illegalNode(Circle circle) {
@@ -166,7 +158,6 @@ public class View {
     }
 
     public void showGameResponse(Label gameResponseLabel, String text) {
-
         gameResponseLabel.setText(text);
         FadeTransition fadeTransition = new FadeTransition(Duration.seconds(1), gameResponseLabel);
         blinkAnimation(fadeTransition, 2);
@@ -179,6 +170,10 @@ public class View {
         fadeTransition.setToValue(0.4);
         fadeTransition.setCycleCount(times);
         fadeTransition.setAutoReverse(true);
+    }
+
+    public void showWinnerAnimation(Label labelForText, String text) {
+        labelForText.setText(text);
     }
 
     public void resetGameView(Pane gamePane) {

@@ -9,6 +9,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -122,22 +123,26 @@ public class GameController extends SproutController implements Initializable {
                 attemptDrawEdgeBetweenNodes(selectedNode, circle);
                 updateCanvasClick();
             } catch (IllegalNodesChosenException e) {
-//                view.illegalEdgeAnimation(gamePane, getIllegalEdgeBetweenNodes(selectedNode, circle));
+                theUserHasSelectedANode = false;
                 view.illegalNode(circle);
+//                view.illegalEdgeAnimation(gamePane, getIllegalEdgeBetweenNodes(selectedNode, circle));
                 view.deselectNode(selectedNode);
                 view.showGameResponse(gameResponse, e.getMessage());
                 System.out.println(e.getMessage());
-            } catch (GameOverException e) {
+            } catch (GameEndedException e) {
                 updateCanvasClick();
-                System.out.println("Game Over!");
+                view.showWinnerAnimation(gameResponse, e.getMessage());
+                // TODO: make sure no clicks are received
+                System.out.println(e.getMessage());
             } catch (CollisionException e) {
                 theUserHasSelectedANode = false;
                 view.illegalEdgeAnimation(gamePane, getIllegalEdgeBetweenNodes(selectedNode, circle));
                 view.deselectNode(selectedNode);
                 view.showGameResponse(gameResponse, e.getMessage());
-                System.out.println("Collision!");
+                System.out.println(e.getMessage());
             } catch (NoValidEdgeException e) {
                 theUserHasSelectedANode = false;
+//                view.illegalEdgeAnimation(gamePane, getIllegalEdgeBetweenNodes(selectedNode, circle));
                 view.deselectNode(selectedNode);
                 view.showGameResponse(gameResponse, e.getMessage());
                 System.out.println(e.getMessage());
@@ -178,7 +183,7 @@ public class GameController extends SproutController implements Initializable {
         view.updateCanvasDrag(gamePane);
     }
 
-    public void attemptDrawEdgeBetweenNodes(Circle startNode, Circle endNode) throws IllegalNodesChosenException, GameOverException, CollisionException, NoValidEdgeException, InvalidPath {
+    public void attemptDrawEdgeBetweenNodes(Circle startNode, Circle endNode) throws IllegalNodesChosenException, GameEndedException, CollisionException, NoValidEdgeException, InvalidPath {
         if (smartGame) {
             super.attemptDrawSmartEdgeBetweenNodes(startNode, endNode);
         } else {
@@ -249,6 +254,9 @@ public class GameController extends SproutController implements Initializable {
                     } catch (CollisionException e) {
                         view.illegalPath(gamePane, e.getPath());
                         view.showGameResponse(gameResponse, e.getMessage());
+                    } catch (GameEndedException e) {
+                        // TODO put stuff here
+                        view.showGameResponse(gameResponse, e.getMessage());
                     }
                     if (isCollided()) {
                         view.setUpCollisionSettings(mouseDragged);
@@ -292,6 +300,12 @@ public class GameController extends SproutController implements Initializable {
             isPathInit = false;
             view.illegalNode(e.getNode().getShape());
             view.showGameResponse(gameResponse, e.getMessage());
+        } catch (GameEndedException e) {
+            updateCanvasDrag();
+            view.showGameResponse(gameResponse, e.getMessage());
+            dragged = false;
+            isPathInit = false;
+            view.setUpSuccessfulPathSettings(mouseEvent);
         }
     }
 

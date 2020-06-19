@@ -13,21 +13,19 @@
    <bottom>
       <HBox alignment="BOTTOM_LEFT" prefHeight="27.0" prefWidth="632.0" BorderPane.alignment="BOTTOM_CENTER">
          <BorderPane.margin>
-            <Insets left="15.0" right="15.0" top="10.0"/>
+            <Insets left="15.0" right="15.0" top="10.0" />
          </BorderPane.margin>
-         <Button fx:id="backButton" alignment="CENTER_RIGHT" contentDisplay="CENTER" mnemonicParsing="false"
-                 onAction="#goToMainMenu" text="Back" textAlignment="RIGHT">
+         <Button fx:id="backButton" alignment="CENTER_RIGHT" contentDisplay="CENTER" mnemonicParsing="false" onAction="#goToMainMenu" text="Back" textAlignment="RIGHT">
             <rotationAxis>
-               <Point3D/>
+               <Point3D />
             </rotationAxis>
             <HBox.margin>
-               <Insets left="20.0"/>
+               <Insets left="20.0" />
             </HBox.margin>
          </Button>
-         <Label fx:id="gameResponse" alignment="BOTTOM_CENTER" contentDisplay="CENTER" prefHeight="17.0"
-                prefWidth="515.0" textAlignment="CENTER">
+         <Label fx:id="gameResponse" alignment="BOTTOM_CENTER" contentDisplay="CENTER" minHeight="32.0" prefHeight="17.0" prefWidth="515.0" textAlignment="CENTER">
             <HBox.margin>
-               <Insets left="50.0" right="50.0"/>
+               <Insets left="50.0" right="50.0" />
             </HBox.margin>
          </Label>
       </HBox>

@@ -131,7 +131,6 @@ public class FileSimulationController extends SproutController implements Initia
         // Reset simulator
         timeline.stop();
         legalGame = true;
-        setGameOnGoing(false);
         i = 0;
         timeline.setCycleCount(moves.size());
         timeline.play();
@@ -158,7 +157,7 @@ public class FileSimulationController extends SproutController implements Initia
                             int n = Integer.parseInt(moves.get(0));
                             attemptInitializeGame(n);
                             view.initializeNodes(gamePane);
-                            message = "successfully initialized game";
+//                            message = "successfully initialized game";
                         } else {
                             //execute moves
                             move = moves.get(i).split("\\s");
@@ -169,43 +168,42 @@ public class FileSimulationController extends SproutController implements Initia
                                 attemptDrawEdgeBetweenNodes(Integer.parseInt(move[0]) - 1, Integer.parseInt(move[1]) - 1);
                             }
                             view.updateCanvasClick(gamePane);
-                            message = "successfully executed move : from " + move[0] + " to " + move[1];
+//                            message = "successfully executed move : from " + move[0] + " to " + move[1];
                         }
                         color = i % 2 == 0 ? "-fx-background-color: darkgreen": "-fx-background-color: green";
                     } catch (NumberOfInitialNodesException e) {
                         color = "-fx-background-color: red";
-                        message = e.getMessage();
                         legalGame = false;
-                        view.showGameResponse(gameResponseLabel, e.getMessage());
+                        view.prepareTooltip(e.getMessage(), cells.get(i+1));
                     } catch (IllegalNodesChosenException e) {
                         color = "-fx-background-color: red";
-                        message = "Failed at executing move : from " + move[0] + " to " + move[1] + "\n" + e.getMessage();
+//                        message = "Failed at executing move : from " + move[0] + " to " + move[1] + "\n" + e.getMessage();
+//                        view.showGameResponse(gameResponseLabel, e.getMessage());
                         legalGame = false;
-                        view.showGameResponse(gameResponseLabel, e.getMessage());
-                    } catch (GameOverException e) {
-                        color = "-fx-background-color: yellow";
-                        message = e.getMessage();
-                        timeline.stop();
-                        view.showGameResponse(gameResponseLabel, e.getMessage());
-                    } catch (CollisionException | NoValidEdgeException | InvalidPath e) {
+                        view.prepareTooltip("Failed at executing move : from " + move[0] + " to " + move[1] + "\n" + e.getMessage(), cells.get(i+1));
+                    } catch (CollisionException | NoValidEdgeException e) {
                         color = "-fx-background-color: red";
-                        message = "Failed at executing move : from " + move[0] + " to " + move[1];
+                        view.prepareTooltip("Failed at executing move : from " + move[0] + " to " + move[1], cells.get(i+1));
                         timeline.stop();
-                        view.showGameResponse(gameResponseLabel, e.getMessage());
+                    } catch (GameEndedException e) {
+                        view.setGameResponseLabelText(gameResponseLabel, e.getMessage());
+                        timeline.stop();
+                    } catch (InvalidPath invalidPath) {
+                        color = "-fx-background-color: red";
+                        view.illegalPath(gamePane, invalidPath.getPath());
+                        view.prepareTooltip("Failed at executing move : from " + move[0] + " to " + move[1], cells.get(i+1));
+                        timeline.stop();
                     }
-
-                    i++;
-                    view.setColorForCell(color, cells.get(i));
-                    view.prepareTooltip(message, cells.get(i));
+                    view.setColorForCell(color, cells.get(i+1));
 
                     if (legalGame && i == moves.size()) {
                         System.out.println("Legal game - File successfully simulated");
-                        view.setGameResponseLabelText(gameResponseLabel, "Game is incomplete.");
                     } else if (!legalGame) {
                         System.out.println("Illegal game - File unsuccessfully simulated");
                         view.setGameResponseLabelText(gameResponseLabel, "Game stopped prematurely.");
                         timeline.stop();
                     }
+                    i++;
                 }
             }
         }));
