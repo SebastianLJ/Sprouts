@@ -1,6 +1,7 @@
 package Controller;
 
 import Exceptions.*;
+import Model.Node;
 import Model.SproutModel;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Circle;
@@ -174,5 +175,9 @@ public class SproutController extends Controller {
 
     public void setGameOnGoing(boolean value) {
         gameOnGoing = value;
+    }
+
+    protected Node getNodeFromCircle(Circle circle) {
+        return sproutModel.getNodes().get(sproutModel.findNameOfNode(circle));
     }
 }

@@ -116,7 +116,12 @@ public class GameController extends SproutController implements Initializable {
         }
 
         if (!theUserHasSelectedANode) {
-            primeNodeToDrawEdgeFrom(circle);
+            if (super.getNodeFromCircle(circle).getNumberOfConnectingEdges() == 3) {
+                view.illegalNode(circle);
+                view.showGameResponse(gameResponse, "Nodes cannot have more than 3 connecting edges");
+            } else {
+                primeNodeToDrawEdgeFrom(circle);
+            }
         } else {
             try {
                 attemptDrawEdgeBetweenNodes(selectedNode, circle);
@@ -124,29 +129,25 @@ public class GameController extends SproutController implements Initializable {
             } catch (IllegalNodesChosenException e) {
 //                view.illegalEdgeAnimation(gamePane, getIllegalEdgeBetweenNodes(selectedNode, circle));
                 view.illegalNode(circle);
-                view.deselectNode(selectedNode);
                 view.showGameResponse(gameResponse, e.getMessage());
                 System.out.println(e.getMessage());
             } catch (GameOverException e) {
                 updateCanvasClick();
                 System.out.println("Game Over!");
             } catch (CollisionException e) {
-                theUserHasSelectedANode = false;
                 view.illegalEdgeAnimation(gamePane, getIllegalEdgeBetweenNodes(selectedNode, circle));
-                view.deselectNode(selectedNode);
                 view.showGameResponse(gameResponse, e.getMessage());
                 System.out.println("Collision!");
             } catch (NoValidEdgeException e) {
-                theUserHasSelectedANode = false;
-                view.deselectNode(selectedNode);
                 view.showGameResponse(gameResponse, e.getMessage());
                 System.out.println(e.getMessage());
             } catch (InvalidPath e) {
-                theUserHasSelectedANode = false;
+
                 view.illegalEdgeAnimation(gamePane, getIllegalEdgeBetweenNodes(selectedNode, circle));
-                view.deselectNode(selectedNode);
                 view.showGameResponse(gameResponse, e.getMessage());
             }
+            theUserHasSelectedANode = false;
+            view.deselectNode(selectedNode); // A edge has been drawn and the node is no longer primed
         }
     }
 
@@ -184,8 +185,6 @@ public class GameController extends SproutController implements Initializable {
         } else {
             super.attemptDrawEdgeBetweenNodes(startNode, endNode);
         }
-        view.deselectNode(startNode);
-        theUserHasSelectedANode = false; // A edge has been drawn and the node i no longer primed
     }
 
     /**
