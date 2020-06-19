@@ -1,6 +1,7 @@
 package Controller;
 
 import Exceptions.*;
+import Model.Node;
 import Model.SproutModel;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Circle;
@@ -47,14 +48,12 @@ public class SproutController extends Controller {
         }
     }
 
-
     /**
      * @param mousePressed
      * @author Noah Bastian Christiansen
      */
     public void setupDrawing(MouseEvent mousePressed) throws InvalidNode {
         sproutModel.initializePath(mousePressed);
-
     }
 
     /**
@@ -81,7 +80,7 @@ public class SproutController extends Controller {
      * @author Noah Bastian Christiansen
      */
     public void addNodeOnValidLineDrag() throws InvalidPath {
-        sproutModel.getNewNodeForPath();
+        //sproutModel.getNewNodeForPath();
     }
 
     /**
@@ -117,7 +116,7 @@ public class SproutController extends Controller {
 
     public void attemptDrawSmartEdgeBetweenNodes(Circle startNode, Circle endNode) throws IllegalNodesChosenException, NoValidEdgeException, InvalidPath, GameEndedException {
         checkIfNodesAreEligible(startNode, endNode);
-        sproutModel.drawSmartEdge(startNode, endNode, false);
+        sproutModel.drawSmartLine(startNode, endNode, false);
         sproutModel.updateGameState(true);
     }
 
@@ -138,4 +137,7 @@ public class SproutController extends Controller {
         return sproutModel.getCurrentPlayerName();
     }
 
+    protected Node getNodeFromCircle(Circle circle) {
+        return sproutModel.getNodes().get(sproutModel.findNameOfNode(circle));
+    }
 }

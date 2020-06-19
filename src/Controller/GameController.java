@@ -117,16 +117,18 @@ public class GameController extends SproutController implements Initializable {
         }
 
         if (!theUserHasSelectedANode) {
-            primeNodeToDrawEdgeFrom(circle);
+            if (super.getNodeFromCircle(circle).getNumberOfConnectingEdges() == 3) {
+                view.illegalNode(circle);
+                view.showGameResponse(gameResponse, "Nodes cannot have more than 3 connecting edges");
+            } else {
+                primeNodeToDrawEdgeFrom(circle);
+            }
         } else {
             try {
                 attemptDrawEdgeBetweenNodes(selectedNode, circle);
                 updateCanvasClick();
             } catch (IllegalNodesChosenException e) {
-                theUserHasSelectedANode = false;
                 view.illegalNode(circle);
-//                view.illegalEdgeAnimation(gamePane, getIllegalEdgeBetweenNodes(selectedNode, circle));
-                view.deselectNode(selectedNode);
                 view.showGameResponse(gameResponse, e.getMessage());
                 System.out.println(e.getMessage());
             } catch (GameEndedException e) {
@@ -135,23 +137,18 @@ public class GameController extends SproutController implements Initializable {
                 // TODO: make sure no clicks are received
                 System.out.println(e.getMessage());
             } catch (CollisionException e) {
-                theUserHasSelectedANode = false;
                 view.illegalEdgeAnimation(gamePane, getIllegalEdgeBetweenNodes(selectedNode, circle));
-                view.deselectNode(selectedNode);
                 view.showGameResponse(gameResponse, e.getMessage());
                 System.out.println(e.getMessage());
             } catch (NoValidEdgeException e) {
-                theUserHasSelectedANode = false;
-//                view.illegalEdgeAnimation(gamePane, getIllegalEdgeBetweenNodes(selectedNode, circle));
-                view.deselectNode(selectedNode);
                 view.showGameResponse(gameResponse, e.getMessage());
                 System.out.println(e.getMessage());
             } catch (InvalidPath e) {
-                theUserHasSelectedANode = false;
                 view.illegalEdgeAnimation(gamePane, getIllegalEdgeBetweenNodes(selectedNode, circle));
-                view.deselectNode(selectedNode);
                 view.showGameResponse(gameResponse, e.getMessage());
             }
+            theUserHasSelectedANode = false;
+            view.deselectNode(selectedNode); // A edge has been drawn and the node is no longer primed
         }
     }
 
@@ -256,7 +253,7 @@ public class GameController extends SproutController implements Initializable {
                         view.illegalPath(gamePane, e.getPath());
                         view.showGameResponse(gameResponse, e.getMessage());
                     } catch (GameEndedException e) {
-                        // TODO put stuff here
+                        // TODO make sure no more clicks are received
                         view.showGameResponse(gameResponse, e.getMessage());
                     }
                     if (isCollided()) {

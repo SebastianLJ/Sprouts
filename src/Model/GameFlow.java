@@ -8,7 +8,7 @@ public class GameFlow {
 
     public GameFlow() {
         this.player1sTurn = true;
-        player1Name = "Player 1HH";
+        player1Name = "Player 1";
         player2Name = "Player 2";
     }
 
@@ -44,7 +44,7 @@ public class GameFlow {
     }
 
     void setPlayerNames(String player1Name, String player2Name) {
-        this.player1Name = player1Name == null ? "Player 1dfasdfsd" : player1Name;
+        this.player1Name = player1Name == null ? "Player 1" : player1Name;
         this.player2Name = player2Name == null ? "Player 2" : player2Name;
     }
 }
