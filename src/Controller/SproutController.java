@@ -98,7 +98,7 @@ public class SproutController extends Controller {
      * @author Noah Bastian Christiansen
      */
     public void addNodeOnValidLineDrag() throws InvalidPath {
-        sproutModel.getNewNodeForPath();
+        //sproutModel.getNewNodeForPath();
     }
 
     /**
@@ -160,7 +160,7 @@ public class SproutController extends Controller {
 
     public void attemptDrawSmartEdgeBetweenNodes(Circle startNode, Circle endNode) throws IllegalNodesChosenException, GameOverException, NoValidEdgeException, InvalidPath {
         checkIfNodesAreEligible(startNode, endNode);
-        sproutModel.drawSmartEdge(startNode, endNode);
+        sproutModel.drawSmartLine(startNode, endNode);
         concludeTurn();
     }
 
