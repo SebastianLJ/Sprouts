@@ -18,7 +18,7 @@
          <VBox alignment="CENTER" prefHeight="100.0" prefWidth="214.0">
             <children>
                <Label alignment="CENTER" text="Player 1" />
-               <TextField fx:id="player1NameLabel" alignment="CENTER" onKeyPressed="#player1NameAltered" promptText="Insert name">
+               <TextField fx:id="player1NameLabel" alignment="CENTER" focusTraversable="false" onKeyTyped="#player1NameAltered" promptText="Insert name">
                   <VBox.margin>
                      <Insets left="10.0" right="10.0" top="10.0" />
                   </VBox.margin>
@@ -31,7 +31,7 @@
          <VBox alignment="CENTER" prefHeight="100.0" prefWidth="214.0">
             <children>
                <Label alignment="CENTER" text="Player 2" />
-               <TextField fx:id="player2NameLabel" alignment="CENTER" onKeyPressed="#player2NameAltered" promptText="Insert name">
+               <TextField fx:id="player2NameLabel" alignment="CENTER" focusTraversable="false" onKeyTyped="#player2NameAltered" promptText="Insert name">
                   <VBox.margin>
                      <Insets left="10.0" right="10.0" top="10.0" />
                   </VBox.margin>
@@ -52,7 +52,7 @@
             <Insets bottom="4.0" left="4.0" right="4.0" />
          </VBox.margin>
       </Label>
-      <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#startClickToDrawGame" text="Click To Draw" wrapText="true">
+      <Button focusTraversable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#startClickToDrawGame" text="Click To Draw" wrapText="true">
          <font>
             <Font size="16.0" />
          </font>
@@ -63,7 +63,7 @@
             <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
          </VBox.margin>
       </Button>
-      <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#startDragToDrawGame" text="Drag To Draw" wrapText="true">
+      <Button focusTraversable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#startDragToDrawGame" text="Drag To Draw" wrapText="true">
          <font>
             <Font size="16.0" />
          </font>
@@ -79,7 +79,7 @@
             <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
          </padding>
       </Separator>
-      <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#startEnterFileName" text="Simulate From File" wrapText="true">
+      <Button focusTraversable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#startEnterFileName" text="Simulate From File" wrapText="true">
          <font>
             <Font size="16.0" />
          </font>
@@ -90,7 +90,7 @@
             <Insets bottom="8.0" left="8.0" right="8.0" top="16.0" />
          </VBox.margin>
       </Button>
-      <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#changeSettings" text="Settings" wrapText="true">
+      <Button focusTraversable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#changeSettings" text="Settings" wrapText="true">
          <font>
             <Font size="16.0" />
          </font>

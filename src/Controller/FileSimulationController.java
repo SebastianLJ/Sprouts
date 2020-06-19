@@ -128,6 +128,9 @@ public class FileSimulationController extends SproutController implements Initia
         // Reset GameResponseLabel
         view.setGameResponseLabelText(gameResponseLabel, "");
 
+        // Reset player name display
+        view.showCurrentPlayerName(currentPlayerNameLabel, "");
+
         // Reset simulator
         timeline.stop();
         legalGame = true;
@@ -151,7 +154,6 @@ public class FileSimulationController extends SproutController implements Initia
             @Override
             public void handle(ActionEvent event) {
                 if (legalGame) {
-                    view.showCurrentPlayerName(currentPlayerNameLabel, getCurrentPlayerName());
                     //init starting points
                     String[] move = {"-1", "-1"};
                     try {
@@ -166,6 +168,7 @@ public class FileSimulationController extends SproutController implements Initia
 
                             startNodeName = Integer.parseInt(move[0]) - 1;
                             endNodeName = Integer.parseInt(move[1]) - 1;
+                            view.showCurrentPlayerName(currentPlayerNameLabel, getCurrentPlayerName());
 
                             if (smartGame) {
                                 attemptDrawSmartEdgeBetweenNodes(startNodeName, endNodeName);
