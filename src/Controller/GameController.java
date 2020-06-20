@@ -23,7 +23,8 @@ import java.util.ResourceBundle;
 public class GameController extends SproutController implements Initializable {
     @FXML
     Pane gamePane;
-
+    public Label gameResponse;
+    public Label currentPlayerNameLabel;
     private int gameMode; // 0 is clickToDraw and 1 is dragToDraw
     private int numberOfInitialNodes;
     private final int CLICK_TO_DRAW_MODE = 0;
@@ -33,7 +34,6 @@ public class GameController extends SproutController implements Initializable {
     private Circle selectedNode;
     private boolean dragged;
     private boolean isPathInit = false;
-    public Label gameResponse;
     private boolean smartGame;
 
     public GameController() {
@@ -78,6 +78,7 @@ public class GameController extends SproutController implements Initializable {
                 }
             }
 
+            view.showCurrentPlayerName(currentPlayerNameLabel, super.getCurrentPlayerName());
             view.initializeNodes(gamePane);
             initializeListenerForStackPane();
         });
@@ -116,37 +117,38 @@ public class GameController extends SproutController implements Initializable {
         }
 
         if (!theUserHasSelectedANode) {
-            primeNodeToDrawEdgeFrom(circle);
+            if (super.getNodeFromCircle(circle).getNumberOfConnectingEdges() == 3) {
+                view.illegalNode(circle);
+                view.showGameResponse(gameResponse, "Nodes cannot have more than 3 connecting edges");
+            } else {
+                primeNodeToDrawEdgeFrom(circle);
+            }
         } else {
             try {
                 attemptDrawEdgeBetweenNodes(selectedNode, circle);
                 updateCanvasClick();
             } catch (IllegalNodesChosenException e) {
-//                view.illegalEdgeAnimation(gamePane, getIllegalEdgeBetweenNodes(selectedNode, circle));
                 view.illegalNode(circle);
-                view.deselectNode(selectedNode);
                 view.showGameResponse(gameResponse, e.getMessage());
                 System.out.println(e.getMessage());
-            } catch (GameOverException e) {
+            } catch (GameEndedException e) {
                 updateCanvasClick();
-                System.out.println("Game Over!");
+                view.showWinnerAnimation(gameResponse, e.getMessage());
+                // TODO: make sure no clicks are received
+                System.out.println(e.getMessage());
             } catch (CollisionException e) {
-                theUserHasSelectedANode = false;
                 view.illegalEdgeAnimation(gamePane, getIllegalEdgeBetweenNodes(selectedNode, circle));
-                view.deselectNode(selectedNode);
                 view.showGameResponse(gameResponse, e.getMessage());
-                System.out.println("Collision!");
+                System.out.println(e.getMessage());
             } catch (NoValidEdgeException e) {
-                theUserHasSelectedANode = false;
-                view.deselectNode(selectedNode);
                 view.showGameResponse(gameResponse, e.getMessage());
                 System.out.println(e.getMessage());
             } catch (InvalidPath e) {
-                theUserHasSelectedANode = false;
                 view.illegalEdgeAnimation(gamePane, getIllegalEdgeBetweenNodes(selectedNode, circle));
-                view.deselectNode(selectedNode);
                 view.showGameResponse(gameResponse, e.getMessage());
             }
+            theUserHasSelectedANode = false;
+            view.deselectNode(selectedNode); // A edge has been drawn and the node is no longer primed
         }
     }
 
@@ -178,12 +180,13 @@ public class GameController extends SproutController implements Initializable {
         view.updateCanvasDrag(gamePane);
     }
 
-    public void attemptDrawEdgeBetweenNodes(Circle startNode, Circle endNode) throws IllegalNodesChosenException, GameOverException, CollisionException, NoValidEdgeException, InvalidPath {
+    public void attemptDrawEdgeBetweenNodes(Circle startNode, Circle endNode) throws IllegalNodesChosenException, GameEndedException, CollisionException, NoValidEdgeException, InvalidPath {
         if (smartGame) {
             super.attemptDrawSmartEdgeBetweenNodes(startNode, endNode);
         } else {
             super.attemptDrawEdgeBetweenNodes(startNode, endNode);
         }
+        view.showCurrentPlayerName(currentPlayerNameLabel, super.getCurrentPlayerName());
         view.deselectNode(startNode);
         theUserHasSelectedANode = false; // A edge has been drawn and the node i no longer primed
     }
@@ -249,6 +252,9 @@ public class GameController extends SproutController implements Initializable {
                     } catch (CollisionException e) {
                         view.illegalPath(gamePane, e.getPath());
                         view.showGameResponse(gameResponse, e.getMessage());
+                    } catch (GameEndedException e) {
+                        // TODO make sure no more clicks are received
+                        view.showGameResponse(gameResponse, e.getMessage());
                     }
                     if (isCollided()) {
                         view.setUpCollisionSettings(mouseDragged);
@@ -279,6 +285,7 @@ public class GameController extends SproutController implements Initializable {
         try {
             completeDrawing(mouseEvent);
             updateCanvasDrag();
+            view.showCurrentPlayerName(currentPlayerNameLabel, super.getCurrentPlayerName());
             dragged = false;
             isPathInit = false;
             view.setUpSuccessfulPathSettings(mouseEvent);
@@ -292,6 +299,12 @@ public class GameController extends SproutController implements Initializable {
             isPathInit = false;
             view.illegalNode(e.getNode().getShape());
             view.showGameResponse(gameResponse, e.getMessage());
+        } catch (GameEndedException e) {
+            updateCanvasDrag();
+            view.showGameResponse(gameResponse, e.getMessage());
+            dragged = false;
+            isPathInit = false;
+            view.setUpSuccessfulPathSettings(mouseEvent);
         }
     }
 

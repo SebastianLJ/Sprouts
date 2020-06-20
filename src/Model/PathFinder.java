@@ -8,16 +8,21 @@ import java.util.*;
 
 public class PathFinder {
     private SproutModel model;
-    private int gridSizeX = 248;
-    private int gridSizeY = 120;
+    private int gridSizeX = 348;
+    private int gridSizeY = 236;
     private boolean[][] grid = new boolean[gridSizeY][gridSizeX];
     private int counter = 0;
 
     private double scalingFactorX;
     private double scalingFactorY;
 
+    private List<Node> failedNodes;
+    private List<Node> permanentlyFailedNodes;
+
     public PathFinder(SproutModel model) {
         this.model = model;
+        this.failedNodes = new ArrayList<>();
+        permanentlyFailedNodes = new ArrayList<>();
     }
 
     /**
@@ -36,35 +41,87 @@ public class PathFinder {
         List<Shape> edges = model.getEdges();
         List<Node> nodes = model.getNodes();
 
-        initNodes(nodes, startNode, endNode);
-       //  initEdges(edges);
-         // initEdges2(edges);
+        initFailedNodes();
+        initNodes(nodes);
+        //System.out.println(this);
+        removeStartAndEndNodeCoverage(startNode.getX(), startNode.getY(), startNode);
+        removeStartAndEndNodeCoverage(endNode.getX(), endNode.getY(), endNode);
+        //System.out.println(this);
+        //  initEdges(edges);
+        // initEdges2(edges);
         // initEdges3(edges);
         initEdges4(edges);
     }
 
-    private void initNodes(List<Node> nodes, Node startNode, Node endNode) {
+    private void initNodes(List<Node> nodes) {
         for (Node node : nodes) {
-            findNodeCoverage(node.getX(), node.getY(), startNode, endNode);
+            findNodeCoverage(node.getX(), node.getY());
         }
     }
 
-    private void findNodeCoverage(double x, double y, Node startNode, Node endNode) {
+    private void initFailedNodes() {
+        for (Node failedNode : failedNodes) {
+            findNodeCoverageOfFailedNode(failedNode.getX(), failedNode.getY(), failedNode);
+        }
+
+        for (Node permanentlyFailedNode : permanentlyFailedNodes) {
+            findNodeCoverageOfFailedNode(permanentlyFailedNode.getX(), permanentlyFailedNode.getY(), permanentlyFailedNode);
+        }
+    }
+
+    private void findNodeCoverageOfFailedNode(double x, double y, Node failedNode) {
         int nX = downScaleX(x);
         int nY = downScaleY(y);
 
         Point p = new Point((int) x, (int) y);
 
-        if (nX < gridSizeX && nY < gridSizeY && model.isPointInsideNode(p) && !model.isPointInsideNode(p, startNode)
-                && !model.isPointInsideNode(p, endNode) && !grid[nY][nX]) {
+        if (nX < gridSizeX && nY < gridSizeY && model.isPointInsideNode(p, failedNode) && !grid[nY][nX]) {
             grid[nY][nX] = true;
-            findNodeCoverage(x + scalingFactorX, y, startNode, endNode);
-            findNodeCoverage(x - scalingFactorX, y, startNode, endNode);
-            findNodeCoverage(x, y + scalingFactorY, startNode, endNode);
-            findNodeCoverage(x, y - scalingFactorY, startNode, endNode);
-        } else if (!model.isPointInsideNode(p, startNode) && !model.isPointInsideNode(p, endNode)) {
-            if (nY < gridSizeY && nX < gridSizeX) grid[nY][nX] = true;
+            findNodeCoverageOfFailedNode(x + scalingFactorX, y, failedNode);
+            findNodeCoverageOfFailedNode(x - scalingFactorX, y, failedNode);
+            findNodeCoverageOfFailedNode(x, y + scalingFactorY, failedNode);
+            findNodeCoverageOfFailedNode(x, y - scalingFactorY, failedNode);
         }
+    }
+
+    private void findNodeCoverage(double x, double y) {
+        int nX = downScaleX(x);
+        int nY = downScaleY(y);
+
+        Point p = new Point((int) x, (int) y);
+
+        if (nX < gridSizeX && nY < gridSizeY && model.isPointInsideNode(p) && !grid[nY][nX]) {
+            grid[nY][nX] = true;
+            findNodeCoverage(x + scalingFactorX, y);
+            findNodeCoverage(x - scalingFactorX, y);
+            findNodeCoverage(x, y + scalingFactorY);
+            findNodeCoverage(x, y - scalingFactorY);
+        } else if (nY < gridSizeY && nX < gridSizeX) grid[nY][nX] = true;
+    }
+
+    private void removeStartAndEndNodeCoverage(double x, double y, Node node) {
+        int nX = downScaleX(x);
+        int nY = downScaleY(y);
+
+        Point p = new Point((int) x, (int) y);
+
+        if (nX < gridSizeX && nY < gridSizeY && model.isPointInsideNode(p, node) && grid[nY][nX] && !isPointInsideFailedNode(p)) {
+            grid[nY][nX] = false;
+            removeStartAndEndNodeCoverage(x + scalingFactorX, y, node);
+            removeStartAndEndNodeCoverage(x - scalingFactorX, y, node);
+            removeStartAndEndNodeCoverage(x, y + scalingFactorY, node);
+            removeStartAndEndNodeCoverage(x, y - scalingFactorY, node);
+        } else if (nY < gridSizeY && nX < gridSizeX) grid[nY][nX] = false;
+    }
+
+    private boolean isPointInsideFailedNode(Point p) {
+        for (Node failedNode : failedNodes) {
+            if (failedNode.isPointInsideNode(p)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private void initEdges(List<Shape> edges) {
@@ -98,12 +155,10 @@ public class PathFinder {
             findPathCoverage2(startVec0.getX(), startVec0.getY(), startVec1.getX(), startVec1.getY());
 
 
-            if (tmp.getElements().get(size-2) instanceof MoveTo){
+            if (tmp.getElements().get(size - 2) instanceof MoveTo) {
                 MoveTo endVec0 = (MoveTo) tmp.getElements().get(size - 2);
                 findPathCoverage2(endVec0.getX(), endVec0.getY(), endVec1.getX(), endVec1.getY());
-            }
-            else
-            {
+            } else {
                 LineTo endVec0 = (LineTo) tmp.getElements().get(size - 2);
                 findPathCoverage2(endVec0.getX(), endVec0.getY(), endVec1.getX(), endVec1.getY());
             }
@@ -111,7 +166,7 @@ public class PathFinder {
         }
     }
 
-    private void initEdges4(List<Shape> edges){
+    private void initEdges4(List<Shape> edges) {
         String pathElemString1;
         String pathElemString2;
 
@@ -293,15 +348,17 @@ public class PathFinder {
      * @author Sebastian Lund Jensen
      */
     public ArrayList<Point> BFS(Node startNode, Node endNode) throws NoValidEdgeException {
+
         initGrid(startNode, endNode);
+        //System.out.println(this);
 
         Point[][] parent = new Point[gridSizeY][gridSizeX];
         boolean[][] visited = new boolean[gridSizeY][gridSizeX];
         Queue<Point> queue = new LinkedList<>();
         Operator[][] opCombs = {{Operator.UNARY, Operator.SUBTRACTION},
-                                {Operator.UNARY, Operator.ADDITION},
-                                {Operator.SUBTRACTION, Operator.UNARY},
-                                {Operator.ADDITION, Operator.UNARY}};
+                {Operator.UNARY, Operator.ADDITION},
+                {Operator.SUBTRACTION, Operator.UNARY},
+                {Operator.ADDITION, Operator.UNARY}};
 
         //mark end node as false
         grid[downScaleY(endNode.getY())][downScaleX(endNode.getX())] = false;
@@ -333,6 +390,7 @@ public class PathFinder {
                 }
             }
         }
+
         throw new NoValidEdgeException("No valid line found between nodes " + startNode.getId()
                 + " and " + endNode.getId());
 
@@ -349,9 +407,43 @@ public class PathFinder {
      * @author Noah Bastian Christiansen
      * @author Sebastian Lund Jensen
      */
-    public Path getPath(Node startNode, Node endNode) throws NoValidEdgeException {
-
+    public Path findPath(Node startNode, Node endNode) throws NoValidEdgeException {
+        failedNodes.clear();
+        permanentlyFailedNodes.clear();
         ArrayList<Point> pathListReversed = BFS(startNode, endNode);
+        Path pathToTest = generatePathFromPoints(startNode, endNode, pathListReversed);
+
+        while (model.getNewNodeForPath(pathToTest) == null) {
+            for (Node failedNode : model.getFailedNodesForMostRecentPath()) {
+                pathListReversed = searchForLargerLegalPath(startNode, endNode, failedNode);
+                if (pathListReversed == null) {
+                    continue;
+                }
+
+                pathToTest = generatePathFromPoints(startNode, endNode, pathListReversed);
+                // why not (model.getNewNodeForPath(pathToTest) != null) ?
+                if (model.isThereRoomForNewNodeOnPath(pathToTest)) {
+                    System.out.println("There's room! " + pathToTest);
+                    return pathToTest;
+                }
+            }
+            permanentlyFailedNodes.addAll(model.getFailedNodesForMostRecentPath());
+            pathToTest = generatePathFromPoints(startNode, endNode, BFS(startNode, endNode));
+        }
+        return pathToTest;
+    }
+
+    private ArrayList<Point> searchForLargerLegalPath(Node startNode, Node endNode, Node failedNode) {
+        failedNodes.clear();
+        failedNodes.add(failedNode);
+        try {
+            return BFS(startNode, endNode);
+        } catch (NoValidEdgeException e) {
+            return null;
+        }
+    }
+
+    private Path generatePathFromPoints(Node startNode, Node endNode, ArrayList<Point> pathListReversed) {
         Path path = new Path();
         path.getElements().add(new MoveTo(startNode.getX(), startNode.getY()));
 
@@ -364,16 +456,14 @@ public class PathFinder {
         return path;
     }
 
-
-
     public Path getLoopPath(Node startNode) throws NoValidEdgeException {
         boolean validPath = false;
         Path[] pathHolder = null;
         Operator[][] opCombs = {{Operator.ADDITION, Operator.ADDITION}, {Operator.ADDITION, Operator.SUBTRACTION},
                 {Operator.SUBTRACTION, Operator.ADDITION}, {Operator.SUBTRACTION, Operator.SUBTRACTION}};
         outerloop:
-        for (int i = 15; i < gridSizeY*16; i++) {
-            for (int j = 15; j < gridSizeX*16; j++) {
+        for (int i = 15; i < gridSizeY * 16; i++) {
+            for (int j = 15; j < gridSizeX * 16; j++) {
                 for (Operator[] opComb : opCombs) {
                     pathHolder = selfLoopTestNode(startNode, i, j, opComb);
                     if (pathHolder[0] != null && pathHolder[1] != null) {
@@ -391,9 +481,7 @@ public class PathFinder {
 
         pathHolder[0].getElements().addAll(pathHolder[1].getElements());
 
-
         return pathHolder[0];
-
 
     }
 
@@ -402,8 +490,8 @@ public class PathFinder {
         Node tempEndNode = new Node(ops[0].apply(startNode.getX(), i), ops[1].apply(startNode.getY(), j), 0, -2);
         if (tempEndNode.getX() < model.getWidth() && tempEndNode.getY() < model.getHeight() && !model.nodeCollides(tempEndNode)) {
             try {
-                pathToTemp = getPath(startNode, tempEndNode);
-                pathToStart = getPath(tempEndNode, startNode);
+                pathToTemp = findPath(startNode, tempEndNode);
+                pathToStart = findPath(tempEndNode, startNode);
             } catch (NoValidEdgeException e) {
             }
 

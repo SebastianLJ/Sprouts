@@ -6,13 +6,12 @@ import View.View;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
+import javafx.scene.shape.Circle;
 import javafx.util.Duration;
 
 import java.io.BufferedReader;
@@ -27,6 +26,7 @@ public class FileSimulationController extends SproutController implements Initia
     public Pane gamePane;
     public Label gameResponseLabel;
     public ToggleGroup drawMode;
+    public Label currentPlayerNameLabel;
 
     public ListView<String> moveList;
     private String filename;
@@ -128,10 +128,12 @@ public class FileSimulationController extends SproutController implements Initia
         // Reset GameResponseLabel
         view.setGameResponseLabelText(gameResponseLabel, "");
 
+        // Reset player name display
+        view.showCurrentPlayerName(currentPlayerNameLabel, "");
+
         // Reset simulator
         timeline.stop();
         legalGame = true;
-        setGameOnGoing(false);
         i = 0;
         timeline.setCycleCount(moves.size());
         timeline.play();
@@ -145,8 +147,9 @@ public class FileSimulationController extends SproutController implements Initia
     private Timeline createTimeline() {
         return new Timeline(new KeyFrame(Duration.seconds(0.5), new EventHandler<>() {
 
-            String message;
+            String gameResponse, toolTipMessage;
             String color;
+            int startNodeName, endNodeName;
 
             @Override
             public void handle(ActionEvent event) {
@@ -157,53 +160,69 @@ public class FileSimulationController extends SproutController implements Initia
                         if (i == 0) {
                             int n = Integer.parseInt(moves.get(0));
                             attemptInitializeGame(n);
+                            view.setGameResponseLabelText(gameResponseLabel, "");
                             view.initializeNodes(gamePane);
-                            message = "successfully initialized game";
                         } else {
                             //execute moves
                             move = moves.get(i).split("\\s");
 
+                            startNodeName = Integer.parseInt(move[0]) - 1;
+                            endNodeName = Integer.parseInt(move[1]) - 1;
+                            view.showCurrentPlayerName(currentPlayerNameLabel, getCurrentPlayerName());
+
                             if (smartGame) {
-                                attemptDrawSmartEdgeBetweenNodes(Integer.parseInt(move[0]) - 1, Integer.parseInt(move[1]) - 1);
+                                attemptDrawSmartEdgeBetweenNodes(startNodeName, endNodeName);
                             } else {
-                                attemptDrawEdgeBetweenNodes(Integer.parseInt(move[0]) - 1, Integer.parseInt(move[1]) - 1);
+                                attemptDrawEdgeBetweenNodes(startNodeName, endNodeName);
                             }
                             view.updateCanvasClick(gamePane);
-                            message = "successfully executed move : from " + move[0] + " to " + move[1];
+                            toolTipMessage = "successfully executed move : from " + move[0] + " to " + move[1];
                         }
                         color = i % 2 == 0 ? "-fx-background-color: darkgreen": "-fx-background-color: green";
                     } catch (NumberOfInitialNodesException e) {
                         color = "-fx-background-color: red";
-                        message = e.getMessage();
                         legalGame = false;
-                        view.showGameResponse(gameResponseLabel, e.getMessage());
+                        view.prepareTooltip(e.getMessage(), cells.get(i+1));
                     } catch (IllegalNodesChosenException e) {
                         color = "-fx-background-color: red";
-                        message = "Failed at executing move : from " + move[0] + " to " + move[1] + "\n" + e.getMessage();
+                        gameResponse = e.getMessage();
+                        toolTipMessage = "Failed to execute move from " + move[0] + " to " + move[1] + "\n" + e.getMessage();
                         legalGame = false;
-                        view.showGameResponse(gameResponseLabel, e.getMessage());
-                    } catch (GameOverException e) {
-                        color = "-fx-background-color: yellow";
-                        message = e.getMessage();
-                        timeline.stop();
-                        view.showGameResponse(gameResponseLabel, e.getMessage());
-                    } catch (CollisionException | NoValidEdgeException | InvalidPath e) {
+                    } catch (CollisionException e) {
+                        Circle startNode = getSproutModel().getNodeFromId(startNodeName);
+                        Circle endNode = getSproutModel().getNodeFromId(endNodeName);
                         color = "-fx-background-color: red";
-                        message = "Failed at executing move : from " + move[0] + " to " + move[1];
+                        view.illegalEdgeAnimation(gamePane, getIllegalEdgeBetweenNodes(startNode, endNode));
+                        gameResponse = e.getMessage();
+                        toolTipMessage = "Failed to execute move from " + move[0] + " to " + move[1];
                         timeline.stop();
-                        view.showGameResponse(gameResponseLabel, e.getMessage());
+                    } catch (GameEndedException e) {
+                        gameResponse = e.getMessage();
+                        toolTipMessage = "Successfully executed move from " + move[0] + " to " + move[1];
+                        view.updateCanvasClick(gamePane);
+                        timeline.stop();
+                    } catch (InvalidPath invalidPath) {
+                        color = "-fx-background-color: red";
+                        gameResponse = invalidPath.getMessage();
+                        toolTipMessage = "Failed to execute move from " + move[0] + " to " + move[1];
+                        view.illegalPath(gamePane, invalidPath.getPath());
+                        timeline.stop();
+                    } catch (NoValidEdgeException e) {
+                        color = "-fx-background-color: red";
+                        gameResponse = e.getMessage();
+                        toolTipMessage = "Failed to execute move from " + move[0] + " to " + move[1];
+                        timeline.stop();
                     }
-
                     i++;
                     view.setColorForCell(color, cells.get(i));
-                    view.prepareTooltip(message, cells.get(i));
+                    view.prepareTooltip(toolTipMessage,cells.get(i));
+                    view.setGameResponseLabelText(gameResponseLabel, gameResponse);
 
                     if (legalGame && i == moves.size()) {
                         System.out.println("Legal game - File successfully simulated");
-                        view.setGameResponseLabelText(gameResponseLabel, "Game is incomplete.");
+                        view.setGameResponseLabelText(gameResponseLabel, "The game is incomplete");
                     } else if (!legalGame) {
                         System.out.println("Illegal game - File unsuccessfully simulated");
-                        view.setGameResponseLabelText(gameResponseLabel, "Game stopped prematurely.");
                         timeline.stop();
                     }
                 }

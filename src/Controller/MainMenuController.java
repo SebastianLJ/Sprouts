@@ -1,7 +1,10 @@
 package Controller;
 
 import javafx.event.ActionEvent;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 
 import java.io.IOException;
@@ -11,6 +14,10 @@ import java.util.ResourceBundle;
 public class MainMenuController extends Controller implements Initializable {
 
     public VBox mainMenu;
+    public TextField player1NameLabel;
+    public TextField player2NameLabel;
+    public static String player1Name;
+    public static String player2Name;
 
     public void startClickToDrawGame(ActionEvent event) throws IOException {
         changeScene(event, "ChooseDrawModeAndNumberOfNodesView.fxml");
@@ -37,5 +44,15 @@ public class MainMenuController extends Controller implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        if (player1Name != null) { player1NameLabel.setText(player1Name); }
+        if (player2Name != null) { player2NameLabel.setText(player2Name); }
+    }
+
+    public void player1NameAltered() {
+        player1Name = player1NameLabel.getText();
+    }
+
+    public void player2NameAltered() {
+        player2Name = player2NameLabel.getText();
     }
 }
