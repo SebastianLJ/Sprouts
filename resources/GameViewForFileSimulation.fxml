@@ -18,7 +18,7 @@
       <children>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="670.0" prefWidth="555.0">
               <AnchorPane layoutX="41.0" layoutY="46.0" prefHeight="493.0" prefWidth="736.0" style="-fx-background-color: antiquewhite, white; -fx-background-insets: 0,20; -fx-padding: 20;" AnchorPane.bottomAnchor="99.0" AnchorPane.leftAnchor="41.0" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="46.0">
-                  <Pane fx:id="gamePane" layoutX="49.0" layoutY="27.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="343.0" minWidth="624.0" prefHeight="391.0" prefWidth="658.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
+                  <Pane fx:id="gamePane" layoutX="49.0" layoutY="27.0" minHeight="434.0" minWidth="624.0" prefHeight="434.0" prefWidth="624.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
               </AnchorPane>
               <HBox layoutX="7.0" layoutY="540.0" prefHeight="55.0" prefWidth="556.0" spacing="4.0" AnchorPane.bottomAnchor="16.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
                   <VBox alignment="TOP_CENTER" minHeight="75.0" prefHeight="75.0" prefWidth="605.0" spacing="8.0">
@@ -42,14 +42,14 @@
                       <RadioButton mnemonicParsing="false" text="Dynamic" toggleGroup="$drawMode" />
                   </VBox>
               </HBox>
-            <Label fx:id="currentPlayerNameLabel" alignment="TOP_RIGHT" contentDisplay="RIGHT" layoutX="62.0" layoutY="11.0" prefHeight="35.0" prefWidth="695.0" textAlignment="RIGHT" />
+            <Label fx:id="currentPlayerNameLabel" alignment="TOP_RIGHT" contentDisplay="RIGHT" layoutX="62.0" layoutY="11.0" prefHeight="27.0" prefWidth="695.0" textAlignment="RIGHT" />
           </AnchorPane>
       </children>
    </VBox>
     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="216.0">
         <ScrollPane layoutX="-2.0" prefHeight="326.0" prefWidth="178.0" AnchorPane.bottomAnchor="72.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="554.0" prefWidth="237.0">
-                <ListView fx:id="moveList" layoutX="-13.0" layoutY="62.0" prefHeight="566.0" prefWidth="247.0" AnchorPane.bottomAnchor="-43.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="-14.0" AnchorPane.topAnchor="0.0" />
+                <ListView fx:id="moveList" layoutX="30.0" layoutY="23.0" prefHeight="566.0" prefWidth="247.0" AnchorPane.bottomAnchor="-43.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="-14.0" AnchorPane.topAnchor="0.0" />
             </AnchorPane>
         </ScrollPane>
         <Button layoutX="33.0" layoutY="334.0" mnemonicParsing="false" onAction="#goToEnterFileToSimulate" text="Simulate New File" AnchorPane.bottomAnchor="39.0" AnchorPane.leftAnchor="33.0" AnchorPane.rightAnchor="33.0" />

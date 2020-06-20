@@ -62,10 +62,7 @@ public class GameController extends SproutController implements Initializable {
         // Create connection to view that updates view with information from the model
         view = new View(getSproutModel());
 
-
         Platform.runLater(() -> {
-
-
             updateSize(gamePane.getWidth(), gamePane.getHeight());
 
             try {

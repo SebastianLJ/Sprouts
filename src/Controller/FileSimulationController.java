@@ -131,11 +131,11 @@ public class FileSimulationController extends SproutController implements Initia
         // Reset player name display
         view.showCurrentPlayerName(currentPlayerNameLabel, "");
 
-        // Reset simulator and run file
-        resetAndRunSimulator();
+        // Reset simulator
+        resetSimulator();
     }
 
-    public void resetAndRunSimulator() {
+    public void resetSimulator() {
         timeline.stop();
         legalGame = true;
         i = 0;
@@ -234,9 +234,4 @@ public class FileSimulationController extends SproutController implements Initia
         }));
     }
 
-    // For testing
-
-    public boolean fileRanCompletely() {
-        return legalGame && i == moves.size();
-    }
 }
