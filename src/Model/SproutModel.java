@@ -714,8 +714,8 @@ public class SproutModel {
     }
 
     /**
-     * Checks if drawing has left the start node, and starts the path with its first path element if is has.
-     * Checks if drawing has reached an end node, and ends the path with the final path element if is has.
+     * Checks if drawing has left the start node, and starts the path with its first path element if it has.
+     * Checks if drawing has reached an end node, and ends the path with the final path element if it has.
      *
      * @param mouseIsInsideANode : True if mouse is currently on a node
      * @throws InvalidPath     if the mouse has exceeded the canvas frame
@@ -747,12 +747,14 @@ public class SproutModel {
      * @author Noah Bastian Christiansen & Sebastian Lund Jensen & Thea Birk Berger
      */
     public void finishPath(MouseEvent mouseEvent) throws InvalidPath, InvalidNode {
+        if (path.getElements().size() == 0) return;
         Point point = new Point((int) mouseEvent.getX(), (int) mouseEvent.getY());
         Node endNode = findNodeFromPoint(point);
         pathStartNode.incNumberOfConnectingEdges(1);
         Node newNode = getNewNodeForPath(path);
         if (leftStartNode && endNode != null && endNode.getNumberOfConnectingEdges() < 3 && newNode != null) {
             endNode.incNumberOfConnectingEdges(1);
+            System.out.println("path added");
             edges.add(path);
             nodes.add(newNode);
         } else if (endNode == null || newNode == null) {
