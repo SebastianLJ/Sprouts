@@ -536,6 +536,7 @@ public class SproutModel {
             // If there is collision => chose new path element for the node position
             if (newNodeCollidesWithExistingNodes(newNode) || newNodeCollidesWithExistingEdges(newNode)) {
                 nodeCollision = true;
+                // TODO: Add out of canvas check -> dont add them to failedNodes
                 failedNodes.add(newNode);
 
                 // If the new node has reached the end of path => place node on path beginning
@@ -787,7 +788,6 @@ public class SproutModel {
         List<Node> availableNodes = new ArrayList<>();
         for (Node node : nodes) {
             if (node.getNumberOfConnectingEdges() < 3) { availableNodes.add(node); }
-            System.out.println("available node: " + node.getId());
         }
 
         // Examine the connect possibility between any two available nodes
