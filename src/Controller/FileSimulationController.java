@@ -145,7 +145,7 @@ public class FileSimulationController extends SproutController implements Initia
      * @return The created timeline
      */
     private Timeline createTimeline() {
-        return new Timeline(new KeyFrame(Duration.seconds(0.5), new EventHandler<>() {
+        return new Timeline(new KeyFrame(Duration.seconds(1), new EventHandler<>() {
 
             String gameResponse, toolTipMessage;
             String color;
