@@ -112,14 +112,14 @@ public class SproutModel {
      *
      * @param startNode : Start node shape
      * @param endNode : End node shape
-     * @param simulation
+     * @param validEdgeCheck
      * @throws CollisionException If the line drawn collides with itself or existing lines
      * @author Thea Birk Berger
      */
-    public void drawEdgeBetweenNodes(Circle startNode, Circle endNode, boolean simulation) throws CollisionException, GameEndedException {
+    public void drawEdgeBetweenNodes(Circle startNode, Circle endNode, boolean validEdgeCheck) throws CollisionException, GameEndedException {
         int nameOfStartNode = findNameOfNode(startNode);
         int nameOfEndNode = findNameOfNode(endNode);
-        drawEdgeBetweenNodes(nameOfStartNode, nameOfEndNode, simulation);
+        drawEdgeBetweenNodes(nameOfStartNode, nameOfEndNode, validEdgeCheck);
     }
 
     /**
@@ -142,11 +142,11 @@ public class SproutModel {
      *
      * @param startNodeName
      * @param endNodeName
-     * @param simulation
+     * @param validEdgeCheck
      * @throws CollisionException If the line drawn collides with itself or existing lines
      * @author Thea Birk Berger
      */
-    public void drawLineBetweenNodes(int startNodeName, int endNodeName, boolean simulation) throws CollisionException {
+    public void drawLineBetweenNodes(int startNodeName, int endNodeName, boolean validEdgeCheck) throws CollisionException {
         Node startNode = nodes.get(startNodeName);
         Node endNode = nodes.get(endNodeName);
         Line newLine = edgeTools.createLineBetweenNodeContours(startNode, endNode);
@@ -161,7 +161,7 @@ public class SproutModel {
         } else if (newNode == null) {
             throw new CollisionException("There is no space for a new node on this edge");
         // If edge is valid
-        } else if (!simulation) {
+        } else if (!validEdgeCheck) {
             // Add new edge to gameboard
             edges.add(newLine);
             // Add new node to gameboard
@@ -174,7 +174,7 @@ public class SproutModel {
         }
     }
 
-    public void drawSmartLine(Circle startNodeCircle, Circle endNodeCircle, boolean simulation) throws NoValidEdgeException, InvalidPath, GameEndedException {
+    public void drawSmartEdge(Circle startNodeCircle, Circle endNodeCircle, boolean validEdgeCheck) throws NoValidEdgeException, InvalidPath, GameEndedException {
         int nameOfStartNode = findNameOfNode(startNodeCircle);
         int nameOfEndNode = findNameOfNode(endNodeCircle);
 
@@ -190,7 +190,7 @@ public class SproutModel {
             invalidPath.setPath(path);
             throw invalidPath;
         // If edge is valid => add to model
-        } else if (!simulation) {
+        } else if (!validEdgeCheck) {
             // Update model
             edges.add(path);
             nodes.add(newNode);
@@ -206,10 +206,10 @@ public class SproutModel {
          * Adds a circular edge to the gameboard - connecting a node to itself
          *
          * @param nodeName
-         * @param simulation
+         * @param validEdgeCheck
          * @author Thea Birk Berger
          */
-    public void drawCircleFromNodeToItself(int nodeName, boolean simulation) throws CollisionException {
+    public void drawCircleFromNodeToItself(int nodeName, boolean validEdgeCheck) throws CollisionException {
         Node node = nodes.get(nodeName);
         Circle newCircle = edgeTools.createCircleToDraw(node);
         Node newNode = getNewNodeForCircle(newCircle);
@@ -225,7 +225,7 @@ public class SproutModel {
         }  else if (newNode == null) {
             throw new CollisionException("There is no space for a new node on this line");
         // If edge is valid
-        } else if (!simulation) {
+        } else if (!validEdgeCheck) {
             // Add edge to gameboard
             edges.add(newCircle);
             // Add new node to gameboard
@@ -793,11 +793,13 @@ public class SproutModel {
         // Examine the connect possibility between any two available nodes
         for (Node node1 : availableNodes) {
             for (Node node2 : availableNodes) {
+
+                System.out.println("Trying to connect to " + node1.getId() + " and " + node2.getId());
                 if (node1 != node2 || node1.getNumberOfConnectingEdges() <= 1) {
                     try {
                         // Simulation a drawing between the two edges
                         if (smartMode) {
-                            drawSmartLine(node1.getShape(), node2.getShape(), true);
+                            drawSmartEdge(node1.getShape(), node2.getShape(), true);
                         } else {
                             drawEdgeBetweenNodes(node1.getId() - 1, node2.getId() - 1, true);
                         }
