@@ -75,13 +75,13 @@ public class PathFinder {
 
         Point p = new Point((int) x, (int) y);
 
-        if (nX < gridSizeX && nY < gridSizeY && model.isPointInsideNode(p, failedNode) && !grid[nY][nX]) {
+        if (0 < nX && nX < gridSizeX && 0 < nY && nY < gridSizeY && failedNode.isPointInsideNode(p) && !grid[nY][nX]) {
             grid[nY][nX] = true;
             findNodeCoverageOfFailedNode(x + scalingFactorX, y, failedNode);
             findNodeCoverageOfFailedNode(x - scalingFactorX, y, failedNode);
             findNodeCoverageOfFailedNode(x, y + scalingFactorY, failedNode);
             findNodeCoverageOfFailedNode(x, y - scalingFactorY, failedNode);
-        }
+        } else if (0 < nX && nX < gridSizeX && 0 < nY && nY < gridSizeY) grid[nY][nX] = true;
     }
 
     private void findNodeCoverage(double x, double y) {
@@ -90,13 +90,13 @@ public class PathFinder {
 
         Point p = new Point((int) x, (int) y);
 
-        if (nX < gridSizeX && nY < gridSizeY && model.isPointInsideNode(p) && !grid[nY][nX]) {
+        if (0 < nX && nX < gridSizeX && 0 < nY && nY < gridSizeY && model.isPointInsideNode(p) && !grid[nY][nX]) {
             grid[nY][nX] = true;
             findNodeCoverage(x + scalingFactorX, y);
             findNodeCoverage(x - scalingFactorX, y);
             findNodeCoverage(x, y + scalingFactorY);
             findNodeCoverage(x, y - scalingFactorY);
-        } else if (nY < gridSizeY && nX < gridSizeX) grid[nY][nX] = true;
+        } else if (0 < nX && nX < gridSizeX && 0 < nY && nY < gridSizeY) grid[nY][nX] = true;
     }
 
     private void removeStartAndEndNodeCoverage(double x, double y, Node node) {
@@ -105,13 +105,13 @@ public class PathFinder {
 
         Point p = new Point((int) x, (int) y);
 
-        if (nX < gridSizeX && nY < gridSizeY && model.isPointInsideNode(p, node) && grid[nY][nX] && !isPointInsideFailedNode(p)) {
+        if (0 < nX && nX < gridSizeX && 0 < nY && nY < gridSizeY && node.isPointInsideNode(p) && grid[nY][nX] && !isPointInsideFailedNode(p)) {
             grid[nY][nX] = false;
             removeStartAndEndNodeCoverage(x + scalingFactorX, y, node);
             removeStartAndEndNodeCoverage(x - scalingFactorX, y, node);
             removeStartAndEndNodeCoverage(x, y + scalingFactorY, node);
             removeStartAndEndNodeCoverage(x, y - scalingFactorY, node);
-        } else if (nY < gridSizeY && nX < gridSizeX) grid[nY][nX] = false;
+        } else if (0 < nX && nX < gridSizeX && 0 < nY && nY < gridSizeY) grid[nY][nX] = false;
     }
 
     private boolean isPointInsideFailedNode(Point p) {

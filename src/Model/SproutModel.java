@@ -936,10 +936,6 @@ public class SproutModel {
         return findNodeFromPoint(point) != null;
     }
 
-    public boolean isPointInsideNode(Point point, Node node) {
-        return node.isPointInsideNode(point);
-    }
-
     public Node getNewestNode() {
         return nodes.get(nodes.size() - 1);
     }
