@@ -169,8 +169,6 @@ public class SproutModel {
             // Update number of connecting edges for the two nodes
             startNode.incNumberOfConnectingEdges(1);
             endNode.incNumberOfConnectingEdges(1);
-            nodes.set(startNodeName, startNode);
-            nodes.set(endNodeName, endNode);
         }
     }
 
@@ -196,8 +194,6 @@ public class SproutModel {
             nodes.add(newNode);
             startNode.incNumberOfConnectingEdges(1);
             endNode.incNumberOfConnectingEdges(1);
-            nodes.set(nameOfStartNode, startNode);
-            nodes.set(nameOfEndNode, endNode);
             System.out.println("node and edge added!");
         }
     }
@@ -940,10 +936,6 @@ public class SproutModel {
      */
     public boolean isPointInsideNode(Point point) {
         return findNodeFromPoint(point) != null;
-    }
-
-    public boolean isPointInsideNode(Point point, Node node) {
-        return node.isPointInsideNode(point);
     }
 
     public Node getNewestNode() {

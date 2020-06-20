@@ -15,6 +15,7 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Paths;
 import java.util.ResourceBundle;
 
 public class EnterFileNameController extends Controller implements Initializable {
@@ -84,7 +85,10 @@ public class EnterFileNameController extends Controller implements Initializable
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open Resource File");
         Stage window = (Stage)((Node) event.getSource()).getScene().getWindow();
+        String currentPath = Paths.get("./gameTestFiles").toAbsolutePath().normalize().toString();
+        fileChooser.setInitialDirectory(new File(currentPath));
         File chosenFile = fileChooser.showOpenDialog(window);
+
         try {
             filenameInputField.setText(chosenFile.getAbsolutePath());
         }
