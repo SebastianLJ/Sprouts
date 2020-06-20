@@ -169,8 +169,6 @@ public class SproutModel {
             // Update number of connecting edges for the two nodes
             startNode.incNumberOfConnectingEdges(1);
             endNode.incNumberOfConnectingEdges(1);
-            nodes.set(startNodeName, startNode);
-            nodes.set(endNodeName, endNode);
         }
     }
 
@@ -196,8 +194,6 @@ public class SproutModel {
             nodes.add(newNode);
             startNode.incNumberOfConnectingEdges(1);
             endNode.incNumberOfConnectingEdges(1);
-            nodes.set(nameOfStartNode, startNode);
-            nodes.set(nameOfEndNode, endNode);
             System.out.println("node and edge added!");
         }
     }

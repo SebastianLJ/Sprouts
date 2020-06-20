@@ -134,6 +134,7 @@ public class GameController extends SproutController implements Initializable {
             } catch (GameEndedException e) {
                 updateCanvasClick();
                 view.showWinnerAnimation(gameResponse, e.getMessage());
+                gamePane.setDisable(true);
                 // TODO: make sure no clicks are received
                 System.out.println(e.getMessage());
             } catch (CollisionException e) {
@@ -255,6 +256,8 @@ public class GameController extends SproutController implements Initializable {
                     } catch (GameEndedException e) {
                         // TODO make sure no more clicks are received
                         view.showGameResponse(gameResponse, e.getMessage());
+                        gamePane.setDisable(true);
+
                     }
                     if (isCollided()) {
                         view.setUpCollisionSettings(mouseDragged);
@@ -305,6 +308,7 @@ public class GameController extends SproutController implements Initializable {
             dragged = false;
             isPathInit = false;
             view.setUpSuccessfulPathSettings(mouseEvent);
+            gamePane.setDisable(true);
         }
     }
 
