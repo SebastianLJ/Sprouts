@@ -341,10 +341,10 @@ public class SproutModel {
     }
 
     public boolean circleExceedsGameFrame(Circle edge) {
-        return (edge.getCenterX() - edge.getRadius() < 0 ||
-                edge.getCenterY() - edge.getRadius() < 0 ||
-                edge.getCenterX() + edge.getRadius() > width ||
-                edge.getCenterY() + edge.getRadius() > height);
+        return (edge.getCenterX() - edge.getRadius() <= 0 ||
+                edge.getCenterY() - edge.getRadius() <= 0 ||
+                edge.getCenterX() + edge.getRadius() >= width ||
+                edge.getCenterY() + edge.getRadius() >= height);
     }
 
     /**
@@ -530,10 +530,10 @@ public class SproutModel {
             nodeCollision = false;
 
             // If there is collision => chose new path element for the node position
-            if (newNodeCollidesWithExistingNodes(newNode) || newNodeCollidesWithExistingEdges(newNode)) {
+            if (newNodeCollidesWithExistingNodes(newNode) ||
+                    newNodeCollidesWithExistingEdges(newNode) ||
+                        circleExceedsGameFrame(newNode.getShape())) {
                 nodeCollision = true;
-                // TODO: Add out of canvas check -> dont add them to failedNodes
-                failedNodes.add(newNode);
 
                 // If the new node has reached the end of path => place node on path beginning
                 d = d + 1 < pathSize ? d + 1 : 1;
@@ -541,6 +541,10 @@ public class SproutModel {
                 // If the new node is back on the middle of the line
                 if (d == path.getElements().size() / 2) {
                     return null;
+                }
+                // Add failed node to a list, in order to find a new path if necessary in dynamic node
+                if (!circleExceedsGameFrame(newNode.getShape())) {
+                    failedNodes.add(newNode);
                 }
             }
 

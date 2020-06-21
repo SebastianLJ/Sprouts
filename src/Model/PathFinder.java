@@ -360,9 +360,6 @@ public class PathFinder {
                 {Operator.SUBTRACTION, Operator.UNARY},
                 {Operator.ADDITION, Operator.UNARY}};
 
-        System.out.println(downScaleY(endNode.getY()));
-        System.out.println(downScaleX(endNode.getX()));
-
         //mark end node as false
         grid[downScaleY(endNode.getY())][downScaleX(endNode.getX())] = false;
 
