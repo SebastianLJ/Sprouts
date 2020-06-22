@@ -79,10 +79,12 @@ public class FileSimulationController extends SproutController implements Initia
     }
 
     public void goToMainMenu(ActionEvent event) throws IOException {
+        timeline.stop();
         changeScene(event, "MainMenu.fxml");
     }
 
     public void goToEnterFileToSimulate(ActionEvent event) throws IOException {
+        timeline.stop();
         changeScene(event, "EnterFileName.fxml");
     }
 
