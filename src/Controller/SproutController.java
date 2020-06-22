@@ -119,12 +119,6 @@ public class SproutController extends Controller {
     }
 
     public void attemptDrawSmartEdgeBetweenNodes(Circle startNode, Circle endNode) throws IllegalNodesChosenException, NoValidEdgeException, InvalidPath, GameEndedException {
-        Node start = sproutModel.getNodes().get(sproutModel.findNameOfNode(startNode));
-        Node end = sproutModel.getNodes().get(sproutModel.findNameOfNode(endNode));
-        System.out.println("startnode " + start.getId() + " edges: " + start.getNumberOfConnectingEdges());
-        System.out.println("endNode " + end.getId() + " edges: " + start.getNumberOfConnectingEdges());
-
-
         checkIfNodesAreEligible(startNode, endNode);
         sproutModel.drawSmartEdge(startNode, endNode, false);
         sproutModel.updateGameState(true);
