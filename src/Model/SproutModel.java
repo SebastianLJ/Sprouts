@@ -194,7 +194,6 @@ public class SproutModel {
             nodes.add(newNode);
             startNode.incNumberOfConnectingEdges(1);
             endNode.incNumberOfConnectingEdges(1);
-            System.out.println("node and edge added!");
         }
     }
 
@@ -799,23 +798,36 @@ public class SproutModel {
         // Examine the connect possibility between any two available nodes
         for (Node node1 : availableNodes) {
             for (Node node2 : availableNodes) {
-
-                if (node1 != node2 || node1.getNumberOfConnectingEdges() <= 1) {
-                System.out.println("Trying to connect to " + node1.getId() + " and " + node2.getId());
-                    try {
-                        // Simulation a drawing between the two edges
-                        if (smartMode) {
-                            drawSmartEdge(node1.getShape(), node2.getShape(), true);
-                        } else {
-                            drawEdgeBetweenNodes(node1.getId() - 1, node2.getId() - 1, true);
-                        }
-                        // If no exception is cast => a legal move is found
-                        System.out.println("There is a valid edge between node " + node1.getId() + " and node " + node2.getId());
-                        return true;
-                    } catch (CollisionException | GameEndedException | InvalidPath | NoValidEdgeException ignore) {}
+                if (node1 != node2) {
+                    if (isThereALegalLine(smartMode, node1, node2)) return true;
                 }
             }
         }
+
+        for (Node node1 : availableNodes) {
+            for (Node node2 : availableNodes) {
+                if (node1 == node2 && node1.getNumberOfConnectingEdges() <= 1) {
+                    if (isThereALegalLine(smartMode, node1, node2)) return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private boolean isThereALegalLine(boolean smartMode, Node node1, Node node2) {
+        System.out.println("Trying to connect to " + node1.getId() + " and " + node2.getId());
+        try {
+            // Simulation a drawing between the two edges
+            if (smartMode) {
+                drawSmartEdge(node1.getShape(), node2.getShape(), true);
+            } else {
+                drawEdgeBetweenNodes(node1.getId() - 1, node2.getId() - 1, true);
+            }
+            // If no exception is cast => a legal move is found
+            System.out.println("There is a valid edge between node " + node1.getId() + " and node " + node2.getId());
+            return true;
+        } catch (CollisionException | GameEndedException | InvalidPath | NoValidEdgeException ignore) {}
         return false;
     }
 
