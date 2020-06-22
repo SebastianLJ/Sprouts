@@ -194,7 +194,6 @@ public class SproutModel {
             nodes.add(newNode);
             startNode.incNumberOfConnectingEdges(1);
             endNode.incNumberOfConnectingEdges(1);
-            System.out.println("node and edge added!");
         }
     }
 
