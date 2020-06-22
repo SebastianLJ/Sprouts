@@ -201,6 +201,7 @@ public class FileSimulationController extends SproutController implements Initia
                         toolTipMessage = "Failed to execute move from " + move[0] + " to " + move[1];
                         timeline.stop();
                     } catch (GameEndedException e) {
+                        color = color.equals("-fx-background-color: green") ? "-fx-background-color: darkgreen" : "-fx-background-color: green";
                         gameResponse = e.getMessage();
                         toolTipMessage = "Successfully executed move from " + move[0] + " to " + move[1];
                         view.updateCanvasClick(gamePane);

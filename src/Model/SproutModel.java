@@ -492,7 +492,7 @@ public class SproutModel {
             // If there is collision => change angle to relocate new node
             if (newNodeCollidesWithExistingNodes(newNode)
                     || newNodeCollidesWithExistingEdges(newNode)
-                    || circleExceedsGameFrame(newNode.getShape())) {
+                        || circleExceedsGameFrame(newNode.getShape())) {
                 nodeCollision = true;
                 // Increment angle
                 angle += newNode.getNodeRadius() + (newNode.getNodeRadius() / 10);
@@ -537,6 +537,10 @@ public class SproutModel {
                 // Add failed node to a list, in order to find a new path if necessary in dynamic node
                 if (!circleExceedsGameFrame(newNode.getShape())) {
                     failedNodes.add(newNode);
+                }
+
+                if (circleExceedsGameFrame(newNode.getShape())) {
+                    System.out.println("Exceeded frame");
                 }
 
                 // If the new node has reached the end of path => place node on path beginning

@@ -13,7 +13,7 @@
    <center>
       <VBox alignment="CENTER" spacing="8.0" BorderPane.alignment="CENTER">
          <children>
-            <Label text="Change resolution">
+            <Label text="Change game size">
                <font>
                   <Font size="18.0" />
                </font>
