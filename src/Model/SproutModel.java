@@ -797,7 +797,7 @@ public class SproutModel {
         for (Node node1 : availableNodes) {
             for (Node node2 : availableNodes) {
                 if (node1 != node2) {
-                    return name(smartMode, node1, node2);
+                    if (isThereALegalLine(smartMode, node1, node2)) return true;
                 }
             }
         }
@@ -805,7 +805,7 @@ public class SproutModel {
         for (Node node1 : availableNodes) {
             for (Node node2 : availableNodes) {
                 if (node1 == node2 && node1.getNumberOfConnectingEdges() <= 1) {
-                    return name(smartMode, node1, node2);
+                    if (isThereALegalLine(smartMode, node1, node2)) return true;
                 }
             }
         }
@@ -813,7 +813,7 @@ public class SproutModel {
         return false;
     }
 
-    private boolean name(boolean smartMode, Node node1, Node node2) {
+    private boolean isThereALegalLine(boolean smartMode, Node node1, Node node2) {
         System.out.println("Trying to connect to " + node1.getId() + " and " + node2.getId());
         try {
             // Simulation a drawing between the two edges
