@@ -189,11 +189,11 @@ public class PathFinder {
                 {Operator.SUBTRACTION, Operator.UNARY},
                 {Operator.ADDITION, Operator.UNARY}};
 
-
         //mark end node as false
         grid[downScaleY(endNode.getY())][downScaleX(endNode.getX())] = false;
 
         visited[downScaleY(startNode.getY())][downScaleX(startNode.getX())] = true;
+
         queue.add(new Point(downScaleX(startNode.getX()), downScaleY(startNode.getY())));
 
         while (queue.size() != 0) {
@@ -238,6 +238,7 @@ public class PathFinder {
     public Path findPath(Node startNode, Node endNode) throws NoValidEdgeException {
         failedNodes.clear();
         permanentlyFailedNodes.clear();
+
         ArrayList<Point> pathListReversed = BFS(startNode, endNode);
         Path pathToTest = generatePathFromPoints(startNode, endNode, pathListReversed);
 
@@ -256,6 +257,7 @@ public class PathFinder {
             permanentlyFailedNodes.addAll(model.getFailedNodesForMostRecentPath());
             pathToTest = generatePathFromPoints(startNode, endNode, BFS(startNode, endNode));
         }
+
         return pathToTest;
     }
 
@@ -270,8 +272,6 @@ public class PathFinder {
     }
 
     private Path generatePathFromPoints(Node startNode, Node endNode, ArrayList<Point> pathListReversed) {
-        System.out.println(pathListReversed.size());
-
         Path path = new Path();
         path.getElements().add(new MoveTo(startNode.getX(), startNode.getY()));
 
@@ -313,14 +313,14 @@ public class PathFinder {
 
     }
 
-    public Path[] selfLoopTestNode(Node startNode, int i, int j, Operator[] ops) throws NoValidEdgeException {
+    public Path[] selfLoopTestNode(Node startNode, int i, int j, Operator[] ops) {
         Path pathToTemp = null, pathToStart = null;
         Node tempEndNode = new Node(ops[0].apply(startNode.getX(), i), ops[1].apply(startNode.getY(), j), 0, -2);
-        if (tempEndNode.getX() < model.getWidth() && tempEndNode.getY() < model.getHeight() && !model.nodeCollides(tempEndNode)) {
+        if (0 < tempEndNode.getX() && 0 < tempEndNode.getY() && tempEndNode.getX() < model.getWidth() && tempEndNode.getY() < model.getHeight() && !model.nodeCollides(tempEndNode)) {
             try {
                 pathToTemp = findPath(startNode, tempEndNode);
                 pathToStart = findPath(tempEndNode, startNode);
-            } catch (NoValidEdgeException e) {
+            } catch (NoValidEdgeException ignored) {
             }
 
         }
