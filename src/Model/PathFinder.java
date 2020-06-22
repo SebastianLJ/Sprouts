@@ -315,7 +315,7 @@ public class PathFinder {
 
     public Path[] selfLoopTestNode(Node startNode, int i, int j, Operator[] ops) {
         Path pathToTemp = null, pathToStart = null;
-        Node tempEndNode = new Node(ops[0].apply(startNode.getX(), i), ops[1].apply(startNode.getY(), j), 0, -2);
+        Node tempEndNode = new Node(ops[0].apply(startNode.getX(), j), ops[1].apply(startNode.getY(), i), 0, -2);
         if (0 < tempEndNode.getX() && 0 < tempEndNode.getY() && tempEndNode.getX() < model.getWidth() && tempEndNode.getY() < model.getHeight() && !model.nodeCollides(tempEndNode)) {
             try {
                 pathToTemp = findPath(startNode, tempEndNode);
