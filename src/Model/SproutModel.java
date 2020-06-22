@@ -650,6 +650,8 @@ public class SproutModel {
             InvalidNode invalidNode = new InvalidNode("Node " + pathStartNode.getId() + " already has 3 connecting lines");
             invalidNode.setNode(pathStartNode);
             throw invalidNode;
+        } else {
+            throw new InvalidNode("No node selected");
         }
     }
 

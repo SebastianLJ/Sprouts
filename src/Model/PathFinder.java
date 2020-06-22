@@ -512,11 +512,11 @@ public class PathFinder {
     }
 
     private int upScaleX(int coord) {
-        return (int) (coord * scalingFactorX);
+        return (int) (coord * scalingFactorX) + 1;
     }
 
     private int upScaleY(int coord) {
-        return (int) (coord * scalingFactorY);
+        return (int) (coord * scalingFactorY) + 1;
     }
 
     public String toString() {
