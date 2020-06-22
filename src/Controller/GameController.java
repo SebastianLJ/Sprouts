@@ -104,49 +104,54 @@ public class GameController extends SproutController implements Initializable {
      * @author Emil Sommer Desler & Noah Bastian Christiansen
      */
     private void clickToDraw(MouseEvent mouseEvent) {
-        StackPane test;
-        Circle circle = new Circle();
-        if (mouseEvent.getSource() instanceof StackPane) {
-            test = (StackPane) mouseEvent.getSource();
-            circle = (Circle) test.getChildren().get(0);
-        } else {
-            onMouseClicked(mouseEvent);
-        }
-
-        if (!theUserHasSelectedANode) {
-            if (super.getNodeFromCircle(circle).getNumberOfConnectingEdges() == 3) {
-                view.illegalNode(circle);
-                view.showGameResponse(gameResponse, "Nodes cannot have more than 3 connecting edges");
-            } else {
-                primeNodeToDrawEdgeFrom(circle);
-            }
-        } else {
-            try {
-                attemptDrawEdgeBetweenNodes(selectedNode, circle);
-                updateCanvasClick();
-            } catch (IllegalNodesChosenException e) {
-                view.illegalNode(circle);
-                view.showGameResponse(gameResponse, e.getMessage());
-                System.out.println(e.getMessage());
-            } catch (GameEndedException e) {
-                updateCanvasClick();
-                view.showWinnerAnimation(gameResponse, e.getMessage());
-                gamePane.setDisable(true);
-                // TODO: make sure no clicks are received
-                System.out.println(e.getMessage());
-            } catch (CollisionException e) {
-                view.illegalEdgeAnimation(gamePane, getIllegalEdgeBetweenNodes(selectedNode, circle));
-                view.showGameResponse(gameResponse, e.getMessage());
-                System.out.println(e.getMessage());
-            } catch (NoValidEdgeException e) {
-                view.showGameResponse(gameResponse, e.getMessage());
-                System.out.println(e.getMessage());
-            } catch (InvalidPath e) {
-                view.illegalEdgeAnimation(gamePane, getIllegalEdgeBetweenNodes(selectedNode, circle));
-                view.showGameResponse(gameResponse, e.getMessage());
-            }
+        if (mouseEvent.getButton() == MouseButton.SECONDARY && theUserHasSelectedANode) {
+            view.deselectNode(selectedNode);
             theUserHasSelectedANode = false;
-            view.deselectNode(selectedNode); // A edge has been drawn and the node is no longer primed
+        } else if (mouseEvent.getButton() == MouseButton.PRIMARY) {
+            StackPane test;
+            Circle circle = new Circle();
+            if (mouseEvent.getSource() instanceof StackPane) {
+                test = (StackPane) mouseEvent.getSource();
+                circle = (Circle) test.getChildren().get(0);
+            } else {
+                onMouseClicked(mouseEvent);
+            }
+
+            if (!theUserHasSelectedANode) {
+                if (super.getNodeFromCircle(circle).getNumberOfConnectingEdges() == 3) {
+                    view.illegalNode(circle);
+                    view.showGameResponse(gameResponse, "Nodes cannot have more than 3 connecting edges");
+                } else {
+                    primeNodeToDrawEdgeFrom(circle);
+                }
+            } else {
+                try {
+                    attemptDrawEdgeBetweenNodes(selectedNode, circle);
+                    updateCanvasClick();
+                } catch (IllegalNodesChosenException e) {
+                    view.illegalNode(circle);
+                    view.showGameResponse(gameResponse, e.getMessage());
+                    System.out.println(e.getMessage());
+                } catch (GameEndedException e) {
+                    updateCanvasClick();
+                    view.showWinnerAnimation(gameResponse, e.getMessage());
+                    gamePane.setDisable(true);
+                    // TODO: make sure no clicks are received
+                    System.out.println(e.getMessage());
+                } catch (CollisionException e) {
+                    view.illegalEdgeAnimation(gamePane, getIllegalEdgeBetweenNodes(selectedNode, circle));
+                    view.showGameResponse(gameResponse, e.getMessage());
+                    System.out.println(e.getMessage());
+                } catch (NoValidEdgeException e) {
+                    view.showGameResponse(gameResponse, e.getMessage());
+                    System.out.println(e.getMessage());
+                } catch (InvalidPath e) {
+                    view.illegalEdgeAnimation(gamePane, getIllegalEdgeBetweenNodes(selectedNode, circle));
+                    view.showGameResponse(gameResponse, e.getMessage());
+                }
+                theUserHasSelectedANode = false;
+                view.deselectNode(selectedNode); // A edge has been drawn and the node is no longer primed
+            }
         }
     }
 
