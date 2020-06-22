@@ -21,7 +21,7 @@ public class SproutController extends Controller {
     }
 
     public void attemptInitializeGame(int noOfInitialNodes) throws NumberOfInitialNodesException {
-        if (noOfInitialNodes > 1 && noOfInitialNodes < 100) {
+        if (noOfInitialNodes >= 1 && noOfInitialNodes < 100) {
             sproutModel.addRandomNodes(noOfInitialNodes);
         } else {
             throw new NumberOfInitialNodesException("You must start the game with at least 2 nodes and at most 99 nodes");

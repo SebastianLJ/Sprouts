@@ -646,7 +646,7 @@ public class SproutModel {
         pathStartNode = findNodeFromPoint(mousePosition);
         if (pathStartNode != null && pathStartNode.getNumberOfConnectingEdges() < 3) {
             path = new Path();
-        } else {
+        } else if (pathStartNode != null) {
             InvalidNode invalidNode = new InvalidNode("Node " + pathStartNode.getId() + " already has 3 connecting lines");
             invalidNode.setNode(pathStartNode);
             throw invalidNode;
