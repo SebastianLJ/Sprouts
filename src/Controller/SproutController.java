@@ -20,15 +20,16 @@ public class SproutController extends Controller {
         sproutModel.setPlayerNames(MainMenuController.player1Name, MainMenuController.player2Name);
     }
 
-    public void attemptInitializeGame(int noOfInitialNodes) throws NumberOfInitialNodesException {
+    public boolean attemptInitializeGame(int noOfInitialNodes) throws NumberOfInitialNodesException {
         if (noOfInitialNodes > 1 && noOfInitialNodes < 100) {
             sproutModel.addRandomNodes(noOfInitialNodes);
+            return true;
         } else {
             throw new NumberOfInitialNodesException("You must start the game with at least 2 nodes and at most 99 nodes");
         }
     }
 
-    public void attemptDrawEdgeBetweenNodes(int startNodeName, int endNodeName) throws IllegalNodesChosenException, CollisionException, NoValidEdgeException, InvalidPath, GameEndedException {
+    public boolean attemptDrawEdgeBetweenNodes(int startNodeName, int endNodeName) throws IllegalNodesChosenException, CollisionException, NoValidEdgeException, InvalidPath, GameEndedException {
         if (!(sproutModel.hasNode(startNodeName) && sproutModel.hasNode(endNodeName))) {
             throw new IllegalNodesChosenException("One or both nodes chosen does not exist");
         } else {
@@ -36,15 +37,17 @@ public class SproutController extends Controller {
             Circle endNode = sproutModel.getNodeFromId(endNodeName);
             attemptDrawEdgeBetweenNodes(startNode, endNode);
         }
+        return true;
     }
 
-    public void attemptDrawSmartEdgeBetweenNodes(int startNodeName, int endNodeName) throws IllegalNodesChosenException, NoValidEdgeException, InvalidPath, GameEndedException {
+    public boolean attemptDrawSmartEdgeBetweenNodes(int startNodeName, int endNodeName) throws IllegalNodesChosenException, NoValidEdgeException, InvalidPath, GameEndedException {
         if (!(sproutModel.hasNode(startNodeName) && sproutModel.hasNode(endNodeName))) {
             throw new IllegalNodesChosenException("One or both nodes chosen does not exist");
         } else {
             Circle startNode = sproutModel.getNodeFromId(startNodeName);
             Circle endNode = sproutModel.getNodeFromId(endNodeName);
             attemptDrawSmartEdgeBetweenNodes(startNode, endNode);
+            return true;
         }
     }
 

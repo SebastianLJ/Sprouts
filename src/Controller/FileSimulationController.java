@@ -35,26 +35,28 @@ public class FileSimulationController extends SproutController implements Initia
     private ArrayList<ListCell<String>> cells = new ArrayList<>();
 
     private View view;
-    private boolean legalGame;
+    private boolean running;
     private Timeline timeline = createTimeline();
     private int i = 0;
 
     private boolean smartGame;
+    private boolean readyForNewMove;
 
     public FileSimulationController() {
         super();
     }
 
     public void setFileName(String filename) {
-        this.filename=filename;
+        this.filename = filename;
     }
 
     /**
      * Initialize the scene connecting it you the view class that handles the visual updates to the scene
      * Also sets up the cell factory that allow to create custom cells for the list showing the moves in the simulated files.
-     * @author Emil Sommer Desler
-     * @param url Required - Not used.
+     *
+     * @param url            Required - Not used.
      * @param resourceBundle Required - Not used.
+     * @author Emil Sommer Desler
      */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -70,7 +72,9 @@ public class FileSimulationController extends SproutController implements Initia
 
         drawMode.selectedToggleProperty().addListener((ov, old_toggle, new_toggle) -> {
             smartGame = !smartGame;
-            runFile();
+            if (running) {
+                runFile();
+            }
         });
     }
 
@@ -84,9 +88,10 @@ public class FileSimulationController extends SproutController implements Initia
 
     /**
      * Checks file for invalid syntax using regex.
-     * @author Sebastian Lund
+     *
      * @return 0 if file is valid / linenumber of invalid syntax if file is invalid.
      * @throws IOException file reader exception.
+     * @author Sebastian Lund
      */
     public int validateFile() throws IOException {
         File file = new File(filename);
@@ -113,9 +118,13 @@ public class FileSimulationController extends SproutController implements Initia
 
     /**
      * Runs the simulation of the given file when the user clicks the button.
+     *
      * @author Sebastian Lund & Emil Sommer Desler
      */
     public void runFile() {
+        readyForNewMove = true;
+        running = true;
+
         // Reset model
         resetGame();
 
@@ -137,7 +146,6 @@ public class FileSimulationController extends SproutController implements Initia
 
     public void resetSimulator() {
         timeline.stop();
-        legalGame = true;
         i = 0;
         timeline.setCycleCount(moves.size());
         timeline.play();
@@ -145,8 +153,9 @@ public class FileSimulationController extends SproutController implements Initia
 
     /**
      * Creates the timeline object that handles the simulation of the text file.
-     * @author Sebastian Lund & Emil Sommer Desler
+     *
      * @return The created timeline
+     * @author Sebastian Lund & Emil Sommer Desler
      */
     private Timeline createTimeline() {
         return new Timeline(new KeyFrame(Duration.seconds(1), new EventHandler<>() {
@@ -157,15 +166,23 @@ public class FileSimulationController extends SproutController implements Initia
 
             @Override
             public void handle(ActionEvent event) {
-                if (legalGame) {
+                if (readyForNewMove) {
+                    readyForNewMove = false;
+
+                    if (!running) {
+                        System.out.println("Illegal game - File unsuccessfully simulated");
+                        timeline.stop();
+                    }
+
                     //init starting points
                     String[] move = {"-1", "-1"};
                     try {
                         if (i == 0) {
                             int n = Integer.parseInt(moves.get(0));
-                            attemptInitializeGame(n);
+                            readyForNewMove = attemptInitializeGame(n);
                             view.setGameResponseLabelText(gameResponseLabel, "");
                             view.initializeNodes(gamePane);
+                            toolTipMessage = "Successfully initialized game with " + n + " nodes";
                         } else {
                             //execute moves
                             move = moves.get(i).split("\\s");
@@ -175,62 +192,67 @@ public class FileSimulationController extends SproutController implements Initia
                             view.showCurrentPlayerName(currentPlayerNameLabel, getCurrentPlayerName());
 
                             if (smartGame) {
-                                attemptDrawSmartEdgeBetweenNodes(startNodeName, endNodeName);
+                                readyForNewMove = attemptDrawSmartEdgeBetweenNodes(startNodeName, endNodeName);
                             } else {
-                                attemptDrawEdgeBetweenNodes(startNodeName, endNodeName);
+                                readyForNewMove = attemptDrawEdgeBetweenNodes(startNodeName, endNodeName);
                             }
                             view.updateCanvasClick(gamePane);
                             toolTipMessage = "successfully executed move : from " + move[0] + " to " + move[1];
                         }
-                        color = i % 2 == 0 ? "-fx-background-color: darkgreen": "-fx-background-color: green";
+                        color = i % 2 == 0 ? "-fx-background-color: darkgreen" : "-fx-background-color: green";
                     } catch (NumberOfInitialNodesException e) {
                         color = "-fx-background-color: red";
-                        legalGame = false;
-                        view.prepareTooltip(e.getMessage(), cells.get(i+1));
+                        running = false;
+                        view.prepareTooltip(e.getMessage(), cells.get(i + 1));
+                        timeline.stop();
                     } catch (IllegalNodesChosenException e) {
                         color = "-fx-background-color: red";
-                        gameResponse = e.getMessage();
-                        toolTipMessage = "Failed to execute move from " + move[0] + " to " + move[1] + "\n" + e.getMessage();
-                        legalGame = false;
+                        setGameResponseTextAndToolTip(e.getMessage(), "Failed to execute move from "
+                                + move[0] + " to " + move[1] + "\n" + e.getMessage());
+                        stop();
                     } catch (CollisionException e) {
                         Circle startNode = getSproutModel().getNodeFromId(startNodeName);
                         Circle endNode = getSproutModel().getNodeFromId(endNodeName);
                         color = "-fx-background-color: red";
                         view.illegalEdgeAnimation(gamePane, getIllegalEdgeBetweenNodes(startNode, endNode));
-                        gameResponse = e.getMessage();
-                        toolTipMessage = "Failed to execute move from " + move[0] + " to " + move[1];
-                        timeline.stop();
+                        setGameResponseTextAndToolTip(e.getMessage(), "Failed to execute move from " + move[0] + " to " + move[1]);
+                        stop();
                     } catch (GameEndedException e) {
-                        color = color.equals("-fx-background-color: green") ? "-fx-background-color: darkgreen" : "-fx-background-color: green";
-                        gameResponse = e.getMessage();
-                        toolTipMessage = "Successfully executed move from " + move[0] + " to " + move[1];
+                        color = "-fx-background-color: yellow";
+                        setGameResponseTextAndToolTip(e.getMessage(), "Failed to execute move from " + move[0] + " to " + move[1]);
                         view.updateCanvasClick(gamePane);
-                        timeline.stop();
+                        stop();
                     } catch (InvalidPath invalidPath) {
                         color = "-fx-background-color: red";
-                        gameResponse = invalidPath.getMessage();
-                        toolTipMessage = "Failed to execute move from " + move[0] + " to " + move[1];
+                        setGameResponseTextAndToolTip(invalidPath.getMessage(), "Failed to execute move from " + move[0] + " to " + move[1]);
                         view.illegalPath(gamePane, invalidPath.getPath());
-                        timeline.stop();
+                        stop();
                     } catch (NoValidEdgeException e) {
                         color = "-fx-background-color: red";
-                        gameResponse = e.getMessage();
-                        toolTipMessage = "Failed to execute move from " + move[0] + " to " + move[1];
-                        timeline.stop();
+                        setGameResponseTextAndToolTip(e.getMessage(), "Failed to execute move from " + move[0] + " to " + move[1]);
+                        stop();
                     }
                     i++;
                     view.setColorForCell(color, cells.get(i));
-                    view.prepareTooltip(toolTipMessage,cells.get(i));
+                    view.prepareTooltip(toolTipMessage, cells.get(i));
                     view.setGameResponseLabelText(gameResponseLabel, gameResponse);
+                    gameResponse = "";
 
-                    if (legalGame && i == moves.size()) {
+                    if (running && i == moves.size()) {
                         System.out.println("Legal game - File successfully simulated");
                         view.setGameResponseLabelText(gameResponseLabel, "The game is incomplete");
-                    } else if (!legalGame) {
-                        System.out.println("Illegal game - File unsuccessfully simulated");
-                        timeline.stop();
                     }
                 }
+            }
+
+            private void setGameResponseTextAndToolTip(String gameResponse, String toolTipMessage) {
+                this.gameResponse = gameResponse;
+                this.toolTipMessage = toolTipMessage;
+            }
+
+            private void stop() {
+                running = false;
+                timeline.stop();
             }
         }));
     }

@@ -14,38 +14,36 @@
 <?import javafx.scene.layout.VBox?>
 
 <SplitPane dividerPositions="0.7605210420841684" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="640.0" prefWidth="1050.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.FileSimulationController">
-   <VBox prefWidth="697.0">
-      <children>
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="670.0" prefWidth="555.0">
-              <AnchorPane layoutX="41.0" layoutY="46.0" prefHeight="493.0" prefWidth="736.0" style="-fx-background-color: antiquewhite, white; -fx-background-insets: 0,20; -fx-padding: 20;" AnchorPane.bottomAnchor="99.0" AnchorPane.leftAnchor="41.0" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="46.0">
-                  <Pane fx:id="gamePane" layoutX="49.0" layoutY="27.0" minHeight="434.0" minWidth="624.0" prefHeight="434.0" prefWidth="624.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-              </AnchorPane>
-              <HBox layoutX="7.0" layoutY="540.0" prefHeight="55.0" prefWidth="556.0" spacing="4.0" AnchorPane.bottomAnchor="16.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
-                  <VBox alignment="TOP_CENTER" minHeight="75.0" prefHeight="75.0" prefWidth="605.0" spacing="8.0">
-                      <HBox.margin>
-                          <Insets left="18.0" />
-                      </HBox.margin>
-                      <Button mnemonicParsing="false" onAction="#runFile" text="Run Simulation!">
-                     <VBox.margin>
-                        <Insets top="5.0" />
-                     </VBox.margin>
-                  </Button>
-                      <Label fx:id="gameResponseLabel" alignment="CENTER" contentDisplay="CENTER" prefHeight="39.0" prefWidth="378.0" textAlignment="CENTER" />
-                  </VBox>
-                  <VBox alignment="CENTER_LEFT" prefHeight="54.0" prefWidth="139.0">
-                      <Label text="Choose draw mode" />
-                      <RadioButton mnemonicParsing="false" selected="true" text="Strict">
-                          <toggleGroup>
-                              <ToggleGroup fx:id="drawMode" />
-                          </toggleGroup>
-                      </RadioButton>
-                      <RadioButton mnemonicParsing="false" text="Dynamic" toggleGroup="$drawMode" />
-                  </VBox>
-              </HBox>
-            <Label fx:id="currentPlayerNameLabel" alignment="TOP_RIGHT" contentDisplay="RIGHT" layoutX="62.0" layoutY="11.0" prefHeight="27.0" prefWidth="695.0" textAlignment="RIGHT" />
-          </AnchorPane>
-      </children>
-   </VBox>
+    <VBox prefWidth="696.0">
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="670.0" prefWidth="555.0">
+            <AnchorPane layoutX="41.0" layoutY="46.0" style="-fx-background-color: antiquewhite, white; -fx-background-insets: 0,20; -fx-padding: 10;" AnchorPane.bottomAnchor="99.0" AnchorPane.leftAnchor="41.0" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="46.0">
+                <Pane fx:id="gamePane" layoutX="49.0" layoutY="27.0" maxHeight="438.0" maxWidth="680.0" minHeight="438.0" minWidth="680.0" prefHeight="438.0" prefWidth="680.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
+            </AnchorPane>
+            <HBox layoutX="7.0" layoutY="540.0" prefHeight="55.0" prefWidth="556.0" spacing="4.0" AnchorPane.bottomAnchor="16.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                <VBox alignment="TOP_CENTER" minHeight="75.0" prefHeight="75.0" prefWidth="605.0" spacing="8.0">
+                    <HBox.margin>
+                        <Insets left="18.0" />
+                    </HBox.margin>
+                    <Button mnemonicParsing="false" onAction="#runFile" text="Run Simulation!">
+                        <VBox.margin>
+                            <Insets top="5.0" />
+                        </VBox.margin>
+                    </Button>
+                    <Label fx:id="gameResponseLabel" alignment="CENTER" contentDisplay="CENTER" prefHeight="39.0" prefWidth="378.0" textAlignment="CENTER" />
+                </VBox>
+                <VBox alignment="CENTER_LEFT" prefHeight="54.0" prefWidth="139.0">
+                    <Label text="Choose draw mode" />
+                    <RadioButton mnemonicParsing="false" selected="true" text="Strict">
+                        <toggleGroup>
+                            <ToggleGroup fx:id="drawMode" />
+                        </toggleGroup>
+                    </RadioButton>
+                    <RadioButton mnemonicParsing="false" text="Dynamic" toggleGroup="$drawMode" />
+                </VBox>
+            </HBox>
+          <Label fx:id="currentPlayerNameLabel" alignment="TOP_RIGHT" contentDisplay="RIGHT" layoutX="62.0" layoutY="11.0" prefHeight="27.0" prefWidth="695.0" textAlignment="RIGHT" />
+        </AnchorPane>
+    </VBox>
     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="216.0">
         <ScrollPane layoutX="-2.0" prefHeight="326.0" prefWidth="178.0" AnchorPane.bottomAnchor="72.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="554.0" prefWidth="237.0">
