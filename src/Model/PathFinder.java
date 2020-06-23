@@ -333,6 +333,14 @@ public class PathFinder {
         return path;
     }
 
+    /**
+     * It will use a helper point for the BFS method and then use BFS back to the start point
+     * @param startNode node to make self loop for
+     * @return elf looping path for the start node
+     * @throws NoValidEdgeException
+     * @author Noah Bastian Christiansen
+     * @author Sebastian Lund Jensen
+     */
     public Path getLoopPath(Node startNode) throws NoValidEdgeException {
         boolean validPath = false;
         Path[] pathHolder = null;
@@ -362,6 +370,16 @@ public class PathFinder {
 
     }
 
+    /**
+     * Places a test node i,j away from the start node
+     * @param startNode start node for self loop
+     * @param i y-coordinate offset
+     * @param j x-coordinate offset
+     * @param ops operator pair
+     * @return 2 paths one from start node to test node, and one from
+     * @author Noah Bastian Christiansen
+     * @author Sebastian Lund Jensen
+     */
     public Path[] selfLoopTestNode(Node startNode, int i, int j, Operator[] ops) {
         Path pathToTemp = null, pathToStart = null;
         Node tempEndNode = new Node(ops[0].apply(startNode.getX(), j), ops[1].apply(startNode.getY(), i), 0, -2);
