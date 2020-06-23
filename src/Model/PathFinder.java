@@ -52,6 +52,11 @@ public class PathFinder {
         clearCenterOfNode(endNode);
     }
 
+    /**
+     * Clears the center of a node. This is used to make sure the center of the start node and end node is
+     * vacant to be visited by the BFS algorithm
+     * @param node start node and end node
+     */
     private void clearCenterOfNode(Node node) {
         int x = downScaleX(node.getX());
         int y = downScaleY(node.getY());
@@ -59,12 +64,21 @@ public class PathFinder {
         if (0 < x && x < gridSizeX && 0 < y && y < gridSizeY) grid[y][x] = false;
     }
 
+    /**
+     * Takes every node in the sproutModel and marks their location in the grid
+     * @param nodes every node in the game
+     */
     private void initNodes(List<Node> nodes) {
         for (Node node : nodes) {
-            findNodeCoverage(node.getX(), node.getY());
+            findNodeCoverage(node.getX(), node.getY(), node);
         }
     }
 
+    /**
+     * When we create a new line we want to ensure there is room for a point on it that does not visually collide with other
+     * game objects. This takes the points that has been put on the new line but failed and marks them in the grid.
+     * This forces the BFS to traverse around these in order to find a new path with room for a node.
+     */
     private void initFailedNodes() {
         for (Node failedNode : failedNodes) {
             findNodeCoverageOfFailedNode(failedNode.getX(), failedNode.getY(), failedNode);
@@ -75,6 +89,12 @@ public class PathFinder {
         }
     }
 
+    /**
+     * Recursively finds the area in the grid the point covers and marks it *true* in the grid
+     * @param x center x of point
+     * @param y center y of point
+     * @param failedNode the node to find coverage of
+     */
     private void findNodeCoverageOfFailedNode(double x, double y, Node failedNode) {
         int nX = downScaleX(x);
         int nY = downScaleY(y);
@@ -90,21 +110,33 @@ public class PathFinder {
         } else if (0 < nX && nX < gridSizeX && 0 < nY && nY < gridSizeY) grid[nY][nX] = true;
     }
 
-    private void findNodeCoverage(double x, double y) {
+    /**
+     * Recursively finds the area in the grid the point covers and marks it *true* in the grid
+     * @param x center x of point
+     * @param y center y of point
+     * @param node the node to find coverage of
+     */
+    private void findNodeCoverage(double x, double y, Node node) {
         int nX = downScaleX(x);
         int nY = downScaleY(y);
 
         Point p = new Point((int) x, (int) y);
 
-        if (0 < nX && nX < gridSizeX && 0 < nY && nY < gridSizeY && model.isPointInsideNode(p) && !grid[nY][nX]) {
+        if (0 < nX && nX < gridSizeX && 0 < nY && nY < gridSizeY && node.isPointInsideNode(p) && !grid[nY][nX]) {
             grid[nY][nX] = true;
-            findNodeCoverage(x + scalingFactorX, y);
-            findNodeCoverage(x - scalingFactorX, y);
-            findNodeCoverage(x, y + scalingFactorY);
-            findNodeCoverage(x, y - scalingFactorY);
+            findNodeCoverage(x + scalingFactorX, y, node);
+            findNodeCoverage(x - scalingFactorX, y, node);
+            findNodeCoverage(x, y + scalingFactorY, node);
+            findNodeCoverage(x, y - scalingFactorY, node);
         } else if (0 < nX && nX < gridSizeX && 0 < nY && nY < gridSizeY) grid[nY][nX] = true;
     }
 
+    /**
+     * Recursively finds the area in the grid the start and end point covers and marks it *false* in the grid
+     * @param x center x of point
+     * @param y center y of point
+     * @param node the node to find coverage of
+     */
     private void removeStartAndEndNodeCoverage(double x, double y, Node node) {
         int nX = downScaleX(x);
         int nY = downScaleY(y);
@@ -130,6 +162,10 @@ public class PathFinder {
         return false;
     }
 
+    /**
+     * Takes every element of the lines in the game and marks them as *true* in the grid
+     * @param edges every line in the game
+     */
     private void initEdges(List<Shape> edges) {
         for (Shape shape : edges) {
             for (PathElement pe : ((Path) shape).getElements()) {
@@ -152,8 +188,8 @@ public class PathFinder {
      * Takes parent list from BFS to backtrack path from start point to end point
      *
      * @param parent    list containing corresponding parent to each point
-     * @param startNode
-     * @param endNode
+     * @param startNode start node
+     * @param endNode goal node
      * @return reversed list of points in the path from the start node to the end node
      * @author Emil Sommer Desler
      * @author Noah Bastian Christiansen
@@ -171,8 +207,8 @@ public class PathFinder {
     /**
      * Breadth first search used for traversing the grid
      *
-     * @param startNode
-     * @param endNode
+     * @param startNode start node
+     * @param endNode goal node
      * @return reversed list of points in path from start node to end point or null if no such path exist
      * @author Emil Sommer Desler
      * @author Noah Bastian Christiansen
@@ -180,7 +216,6 @@ public class PathFinder {
      */
     public ArrayList<Point> BFS(Node startNode, Node endNode) throws NoValidEdgeException {
         initGrid(startNode, endNode);
-        //System.out.println(this);
         Point[][] parent = new Point[gridSizeY][gridSizeX];
         boolean[][] visited = new boolean[gridSizeY][gridSizeX];
         Queue<Point> queue = new LinkedList<>();
@@ -227,9 +262,9 @@ public class PathFinder {
     /**
      * Builds the Path object from the path list from BFS. The path will start at the non-scaled
      * start node, and end at the non-scaled end node, to make sure the path will connect to the points.
-     *
-     * @param startNode
-     * @param endNode
+     * Also ensures that the path returned has room for a new node that does not collide visually with other game objects
+     * @param startNode start node
+     * @param endNode goal node
      * @return Path from start node to end node
      * @author Emil Sommer Desler
      * @author Noah Bastian Christiansen
@@ -261,6 +296,13 @@ public class PathFinder {
         return pathToTest;
     }
 
+    /**
+     * Searches for a larger path around the points on a new line that overlapped other game objects
+     * @param startNode start node
+     * @param endNode goal node
+     * @param failedNode the node to find a path around
+     * @return a new path to test for legal point or null if no such path was found
+     */
     private ArrayList<Point> searchForLargerLegalPath(Node startNode, Node endNode, Node failedNode) {
         failedNodes.clear();
         failedNodes.add(failedNode);
@@ -271,6 +313,13 @@ public class PathFinder {
         }
     }
 
+    /**
+     * Generates the Path object by going through the points found by BFS and scaling them back to real coordinates and putting them together
+     * @param startNode start node
+     * @param endNode goal node
+     * @param pathListReversed list of coordinates found in BFS
+     * @return the new path between the start and end point
+     */
     private Path generatePathFromPoints(Node startNode, Node endNode, ArrayList<Point> pathListReversed) {
         Path path = new Path();
         path.getElements().add(new MoveTo(startNode.getX(), startNode.getY()));
@@ -330,18 +379,38 @@ public class PathFinder {
         return res;
     }
 
+    /**
+     * Takes a real coordinate of a game objects and return the downscaled or fitted value to the grid
+     * @param coord the actual coordinate
+     * @return the fitted coordinate
+     */
     private int downScaleX(Double coord) {
         return (int) (coord / scalingFactorX);
     }
 
+    /**
+     * Takes a real coordinate of a game objects and return the downscaled or fitted value to the grid
+     * @param coord the actual coordinate
+     * @return the fitted coordinate
+     */
     private int downScaleY(Double coord) {
         return (int) (coord / scalingFactorY);
     }
 
+    /**
+     * Takes a fitted coordinate of a game objects and return the upscaled or real value of the object
+     * @param coord the actual coordinate
+     * @return the fitted coordinate
+     */
     private int upScaleX(int coord) {
         return (int) (coord * scalingFactorX) + 1;
     }
 
+    /**
+     * Takes a fitted coordinate of a game objects and return the upscaled or real value of the object
+     * @param coord the actual coordinate
+     * @return the fitted coordinate
+     */
     private int upScaleY(int coord) {
         return (int) (coord * scalingFactorY) + 1;
     }
