@@ -16,7 +16,6 @@ public class SettingsController extends Controller implements Initializable {
 
     @FXML
     private ChoiceBox<String> resolutions = new ChoiceBox<>();
-    private Parent mainMenuParent;
     public static int width = 800;
     public static int height = 600;
 
@@ -45,7 +44,7 @@ public class SettingsController extends Controller implements Initializable {
      * This method ensures that the width and height of the game gets set.
      * @author Noah Bastian Christiansen
      */
-    public void applyResolutionChange() throws IOException {
+    public void applyResolutionChange() {
 
         String chosenResolution = resolutions.getValue();
         String[] resArr = chosenResolution.split("x");
@@ -64,7 +63,7 @@ public class SettingsController extends Controller implements Initializable {
                 SproutLauncher.class.getClassLoader().getResource(
                         "MainMenu.fxml")
         );
-        mainMenuParent = loader.load();
+        Parent mainMenuParent = loader.load();
         Scene mainMenu = new Scene(mainMenuParent);
         Stage window = (Stage) resolutions.getScene().getWindow();
         window.setScene(mainMenu);

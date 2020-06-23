@@ -1,6 +1,5 @@
 package Model;
 
-import Exceptions.CollisionException;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 
@@ -134,9 +133,7 @@ public class EdgeTools {
         double x = pe instanceof MoveTo ? ((MoveTo) pe).getX() : ((LineTo) pe).getX();
         double y = pe instanceof MoveTo ? ((MoveTo) pe).getY() : ((LineTo) pe).getY();
 
-        Node node = new Node(x,y,connectingEdges,numberOfNodes+1);
-
-        return node;
+        return new Node(x,y,connectingEdges,numberOfNodes+1);
     }
 
     /**

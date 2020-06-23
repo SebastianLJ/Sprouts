@@ -61,9 +61,7 @@ public class FileSimulationController extends SproutController implements Initia
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         view = new View(getSproutModel());
-        Platform.runLater(() -> {
-            updateSize(gamePane.getWidth(), gamePane.getHeight());
-        });
+        Platform.runLater(() -> updateSize(gamePane.getWidth(), gamePane.getHeight()));
         moveList.setCellFactory(listView -> {
             TooltipCell cell = new TooltipCell();
             cells.add(cell);

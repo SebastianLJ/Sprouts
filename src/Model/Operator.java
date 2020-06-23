@@ -1,28 +1,25 @@
 package Model;
 
 public enum Operator {
-    ADDITION('+') {
+    ADDITION() {
        @Override public double apply(double a, double b) {
            return a + b;
        }
     },
-    SUBTRACTION('-') {
+    SUBTRACTION() {
         @Override
         public double apply(double a, double b) {
             return a - b;
         }
     },
-    UNARY('U') {
+    UNARY() {
         @Override
         public double apply(double a, double b) {
             return a;
         }
     };
 
-    private final char op;
-
-    Operator(char op) {
-        this.op = op;
+    Operator() {
     }
 
     public abstract double apply(double a, double b);

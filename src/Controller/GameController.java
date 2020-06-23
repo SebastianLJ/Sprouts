@@ -231,13 +231,13 @@ public class GameController extends SproutController implements Initializable {
         }
     }
 
-    @SuppressWarnings("unused")
     /**
      * Repeatedly called when the user is dragging his mouse in order to draw.
      * Calls the model's method that draws path to mousevent's coordinates and the method that checks for intersections/collisions
      * @author Noah Bastian Christiansen & Sebastian Lund Jensen
      * @param mouseDragged the mouse drag the user performs. This MouseEvent contains coordinates.
      */
+    @SuppressWarnings("unused")
     public void mouseDraggedHandler(MouseEvent mouseDragged) {
         if (mouseDragged.getButton() == MouseButton.PRIMARY) {
             if (isPathInit) {
@@ -268,13 +268,13 @@ public class GameController extends SproutController implements Initializable {
         }
     }
 
-    @SuppressWarnings("unused")
     /**
      * This method is called when the user finishes a drawing in drag to draw. A path is finished, only if it ends in a node.
      * If the user had no collisions the path can be added to list of valid lines and a new node can be generated on the path.
      * @author Noah Bastian Christiansen & Sebastian Lund Jensen
      * @param mouseReleased The mouse release the user performs.
      */
+    @SuppressWarnings("unused")
     public void mouseReleasedHandler(MouseEvent mouseReleased) {
         if (mouseReleased.getButton() == MouseButton.PRIMARY) {
             if (gameMode == DRAG_TO_DRAW_MODE && !getSproutModel().hasNewestPathCollided() && dragged && isPathInit) {

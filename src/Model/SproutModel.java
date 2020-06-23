@@ -46,7 +46,7 @@ public class SproutModel {
      * The method wil ensure the created nodes will have a certain edge from the border of the map
      * and a certain distance from each other.
      *
-     * @param amount
+     * @param amount number of nodes to create
      * @author Emil Sommer Desler
      */
     public void addRandomNodes(int amount) {
@@ -90,7 +90,7 @@ public class SproutModel {
      * @throws CollisionException If the line drawn collides with itself or existing lines
      * @author Thea Birk Berger
      */
-    public void drawEdgeBetweenNodes(int startNode, int endNode, boolean simulation) throws CollisionException, GameEndedException {
+    public void drawEdgeBetweenNodes(int startNode, int endNode, boolean simulation) throws CollisionException {
         if (startNode == endNode) {
             drawCircleFromNodeToItself(startNode, simulation);
         } else {
@@ -117,7 +117,7 @@ public class SproutModel {
      * @throws CollisionException If the line drawn collides with itself or existing lines
      * @author Thea Birk Berger
      */
-    public void drawEdgeBetweenNodes(Circle startNode, Circle endNode, boolean validEdgeCheck) throws CollisionException, GameEndedException {
+    public void drawEdgeBetweenNodes(Circle startNode, Circle endNode, boolean validEdgeCheck) throws CollisionException {
         int nameOfStartNode = findNameOfNode(startNode);
         int nameOfEndNode = findNameOfNode(endNode);
         drawEdgeBetweenNodes(nameOfStartNode, nameOfEndNode, validEdgeCheck);
@@ -173,7 +173,7 @@ public class SproutModel {
         }
     }
 
-    public void drawSmartEdge(Circle startNodeCircle, Circle endNodeCircle, boolean validEdgeCheck) throws NoValidEdgeException, InvalidPath, GameEndedException {
+    public void drawSmartEdge(Circle startNodeCircle, Circle endNodeCircle, boolean validEdgeCheck) throws NoValidEdgeException, InvalidPath {
         int nameOfStartNode = findNameOfNode(startNodeCircle);
         int nameOfEndNode = findNameOfNode(endNodeCircle);
 
@@ -329,7 +329,7 @@ public class SproutModel {
         return false;
     }
 
-    public boolean pathCollidesWithOtherEdges(Path tmpPath) {
+    public boolean pathCollidesWithOtherEdges() {
 
         // Check collision between existing canvas edges and most recently drawn path segment
         for (Shape edge : edges) {
@@ -345,30 +345,6 @@ public class SproutModel {
                 edge.getCenterY() - edge.getRadius() <= 0 ||
                 edge.getCenterX() + edge.getRadius() >= width ||
                 edge.getCenterY() + edge.getRadius() >= height);
-    }
-
-    /**
-     * Checks if shape collide with any edges or nodes
-     *
-     * @param shape object to collision check
-     * @return true if collision is detected else false
-     * @author Sebastian Lund Jensen
-     */
-    public boolean shapeCollides(Shape shape, Node startNode, Node endNode) {
-        //check collision with other nodes
-        for (Node node : nodes) {
-            if (shape.getBoundsInLocal().intersects(node.getShape().getBoundsInLocal()) &&
-                    !(node.getId() == startNode.getId() || node.getId() == endNode.getId())) {
-                return true;
-            }
-        }
-        //check collision with all paths
-        for (Shape edge : edges) {
-            if (shape.getBoundsInLocal().intersects(edge.getBoundsInLocal())) {
-                return true;
-            }
-        }
-        return false;
     }
 
     /**
@@ -392,29 +368,6 @@ public class SproutModel {
             }
         }
         return false;
-    }
-
-    public void addNodeOnLineDrag(Path path) {
-        int size = path.getElements().size();
-        LineTo test = (LineTo) (path.getElements().get(size / 2));
-        Node newNode = new Node(test.getX(), test.getY(), 2, nodes.size());
-        nodes.add(newNode);
-    }
-
-    public void addNodeOnSmartClickWithCollision() throws NoValidEdgeException {
-        double[] nodePercentPriority = {0.50, 0.40, 0.60, 0.30, 0.70};
-        path = (Path) (edges.get(edges.size() - 1));
-        int size = path.getElements().size();
-
-        for (double aNodePercentPriority : nodePercentPriority) {
-            LineTo test = (LineTo) (path.getElements().get((int) (size * aNodePercentPriority)));
-            Node newNode = new Node(test.getX(), test.getY(), 2, nodes.size());
-            if (!nodeCollides(newNode)) {
-                nodes.add(newNode);
-                return;
-            }
-        }
-        throw new NoValidEdgeException("There is no space for a new node on this line");
     }
 
     /**
@@ -664,7 +617,7 @@ public class SproutModel {
      * @param mouseDrag A mouse drag
      * @author Noah Bastian Christiansen & Sebastian Lund Jensen & Thea Birk Berger
      */
-    public void drawPath(MouseEvent mouseDrag) throws PathForcedToEnd, InvalidPath, CollisionException, GameEndedException {
+    public void drawPath(MouseEvent mouseDrag) throws PathForcedToEnd, InvalidPath, CollisionException {
 
         // Add mouse drag start-position to temporary path
         Path pathTmp = new Path();
@@ -682,7 +635,7 @@ public class SproutModel {
         pathTmp.getElements().add(new LineTo(mousePosition.getX(), mousePosition.getY()));
 
         boolean selfCollision = pathSelfCollides(pathTmp);
-        boolean edgeCollision = pathCollidesWithOtherEdges(pathTmp);
+        boolean edgeCollision = pathCollidesWithOtherEdges();
 
         // If temporary path collides with itself or other edges
         if (selfCollision || edgeCollision) {
@@ -727,7 +680,7 @@ public class SproutModel {
      * @throws PathForcedToEnd if the mouse has hit an end node
      * @author Noah Bastian Christiansen & Sebastian Lund Jensen
      */
-    private void startOrEndPath(boolean mouseIsInsideANode) throws InvalidPath, PathForcedToEnd, GameEndedException {
+    private void startOrEndPath(boolean mouseIsInsideANode) throws PathForcedToEnd {
 
         // If drawing has left the start node and has not yet reached an end node
         if (!mouseIsInsideANode && !leftStartNode) {
@@ -828,7 +781,7 @@ public class SproutModel {
             // If no exception is cast => a legal move is found
             System.out.println("There is a valid edge between node " + node1.getId() + " and node " + node2.getId());
             return true;
-        } catch (CollisionException | GameEndedException | InvalidPath | NoValidEdgeException ignore) {}
+        } catch (CollisionException | InvalidPath | NoValidEdgeException ignore) {}
         return false;
     }
 
@@ -946,10 +899,6 @@ public class SproutModel {
 
     public Circle getNodeFromId(int id) {
         return nodes.get(id).getShape();
-    }
-
-    public int getNumberOfEdgesAtNode(int id) {
-        return nodes.get(id).getNumberOfConnectingEdges();
     }
 
     /**

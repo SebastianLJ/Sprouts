@@ -20,12 +20,6 @@ public class GameFlow {
         player1sTurn = true;
     }
 
-    public void restartWithDefaultPlayerNames() {
-        player1sTurn = true;
-        player1Name = "Player 1";
-        player2Name = "Player 2";
-    }
-
     public String getGameResponseText() {
         return "There are no more legal moves.\n" + getCurrentPlayer() + " is the winner!";
     }
@@ -33,14 +27,6 @@ public class GameFlow {
 
     public String getCurrentPlayer() {
         return  player1sTurn ? player1Name : player2Name;
-    }
-
-    public String getPlayer1Name() {
-        return player1Name;
-    }
-
-    public String getPlayer2Name() {
-        return player2Name;
     }
 
     void setPlayerNames(String player1Name, String player2Name) {

@@ -417,9 +417,9 @@ public class PathFinder {
 
     public String toString() {
         StringBuilder res = new StringBuilder();
-        for (int i = 0; i < grid.length; i++) {
-            for (int j = 0; j < grid[i].length; j++) {
-                if (grid[i][j]) res.append(" 1 ");
+        for (boolean[] rows : grid) {
+            for (boolean cell : rows) {
+                if (cell) res.append(" 1 ");
                 else {
                     res.append(" 0 ");
                 }

@@ -214,7 +214,7 @@ public class View {
     private StackPane addNumberOnNode(Node node){
         final Text text = new Text(""+node.getId());
         text.setFill(Color.WHITE);
-        text.setStyle("-fx-font-weight: 900px" + ";-fx-font-size:" + (1.4*node.getNodeRadius()));
+        text.setStyle("-fx-font-weight: 900" + ";-fx-font-size:" + (1.4*node.getNodeRadius()));
         final StackPane stack = new StackPane();
         stack.getChildren().addAll(node.getShape(), text);
         stack.relocate(node.getX()-node.getNodeRadius(),node.getY()-node.getNodeRadius());

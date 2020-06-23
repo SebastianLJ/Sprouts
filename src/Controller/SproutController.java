@@ -79,14 +79,6 @@ public class SproutController extends Controller {
     }
 
     /**
-     * This method tells the model to update itself since a new node needs to be generated on the line that was just drawn.
-     * @author Noah Bastian Christiansen
-     */
-    public void addNodeOnValidLineDrag() throws InvalidPath {
-        //sproutModel.getNewNodeForPath();
-    }
-
-    /**
      * This method let's the gameController know if a collision has occured by letting the sproutController ask the model.
      * @author Noah Bastian Christiansen
      */
@@ -105,10 +97,6 @@ public class SproutController extends Controller {
 
     public void resetGame() {
         sproutModel.resetGame();
-    }
-
-    public List<Model.Node> getNodes() {
-        return sproutModel.getNodes();
     }
 
     public void attemptDrawEdgeBetweenNodes(Circle startNode, Circle endNode) throws IllegalNodesChosenException, CollisionException, NoValidEdgeException, InvalidPath, GameEndedException {
