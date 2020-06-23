@@ -1,4 +1,4 @@
-package Exceptions;
+package Utility.Exceptions;
 
 public class NoValidEdgeException extends Exception {
     public NoValidEdgeException(String msg) {super(msg);}

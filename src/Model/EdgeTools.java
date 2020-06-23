@@ -1,13 +1,18 @@
 package Model;
 
-import Exceptions.CollisionException;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 
 import java.util.List;
 
-public class EdgeTools {
+class EdgeTools {
 
+    /**
+     * @param circle1 : A circle shape
+     * @param circle2 : A circle shape
+     * @return distance between circle centers
+     * @Thea Birk Berger
+     */
     double distanceBetweenCircleCenter(Circle circle1, Circle circle2) {
 
         double x1 = circle1.getCenterX();
@@ -19,12 +24,13 @@ public class EdgeTools {
 
     /**
      * Creates a straight line between the centers of two given nodes
-     * @author Thea Birk Berger
-     * @param startNode
-     * @param endNode
+     *
+     * @param startNode : Start node
+     * @param endNode : End node
      * @return a Line object
+     * @author Thea Birk Berger
      */
-    Line createLineBetweenNodes(Node startNode, Node endNode) {
+    private Line createLineBetweenNodes(Node startNode, Node endNode) {
 
         Line newLine = new Line();
         newLine.setStartX(startNode.getX());
@@ -37,10 +43,11 @@ public class EdgeTools {
 
     /**
      * Creates a straight line between the contour of two given nodes
-     * @author Thea Birk Berger
+     *
      * @param startNode : The start node
      * @param endNode : The end node
      * @return a Line object
+     * @author Thea Birk Berger
      */
     Line createLineBetweenNodeContours(Node startNode, Node endNode) {
 
@@ -67,12 +74,13 @@ public class EdgeTools {
 
     /**
      * Calculates euclidean distance between two points in 2D
-     * @author Thea Birk Berger
+     *
      * @param x1 : 1st point x-coordinate
      * @param y1 : 1st point y-coordinate
      * @param x2 : 2nd point x-coordinate
      * @param y2 : 2nd point y-coordinate
-     * @return distance
+     * @return the distance between the two points
+     * @author Thea Birk Berger
      */
     double getDistanceBetweenTwoPoints(double x1, double y1, double x2, double y2) {
         return Math.sqrt(Math.pow(Math.abs(x1-x2),2) + Math.pow(y1-y2,2));
@@ -80,9 +88,10 @@ public class EdgeTools {
 
     /**
      * Creates a circular edge from a node to itself
-     * @author Thea Birk Berger
-     * @param node
+     *
+     * @param node : The node for which we want self-connection
      * @return a Circle object
+     * @author Thea Birk Berger
      */
     Circle createCircleToDraw(Node node) {
 
@@ -96,11 +105,19 @@ public class EdgeTools {
         newCircle.setFill(Color.TRANSPARENT);
         newCircle.setStroke(Color.BLACK);
 
-        // TODO: Remove part of edge that is held within the node?
-
         return newCircle;
     }
 
+    /**
+     * Finds the point on a line given a distance from the line's starting point in 1D
+     *
+     * @param startCoor : Start coordinate
+     * @param endCoor : End coordinate
+     * @param distance : Distance from start coordinate
+     * @param lineLength : Length og line
+     * @return : Coordinate on the line that is "distance" away from the line's starting point
+     * @author Thea Birk Berger
+     */
     double getPointOnLine(double startCoor, double endCoor, double distance, double lineLength) {
         if (distance >= lineLength) {
             return endCoor;
@@ -110,13 +127,14 @@ public class EdgeTools {
 
     /**
      * Finds the contour point of a node given a center and a nearby path element
-     * @author Thea Birk Berger
+     *
      * @param c1 : Node center x
      * @param c2 : Node center y
      * @param peX : Path element coordinate x
      * @param peY : Path element coordinate y
      * @param radius : Node radius
      * @return Contour point {x,y}
+     * @author Thea Birk Berger
      */
     double[] getContourPoint(double c1, double c2, double peX, double peY, double radius) {
         double gapDistance = getDistanceBetweenTwoPoints(c1,c2,peX,peY);
@@ -127,28 +145,29 @@ public class EdgeTools {
 
     /**
      * Gets path element (x,y) coordinates
+     *
      * @param pe : Path element of interest
      * @param numberOfNodes : Number of nodes on the gameboard
      * @return Node with center in (x,y)
+     * @author Thea Birk Berger
      */
-    public Node getCoordinates(PathElement pe, int connectingEdges, int numberOfNodes) {
+    Node getCoordinates(PathElement pe, int connectingEdges, int numberOfNodes) {
 
         double x = pe instanceof MoveTo ? ((MoveTo) pe).getX() : ((LineTo) pe).getX();
         double y = pe instanceof MoveTo ? ((MoveTo) pe).getY() : ((LineTo) pe).getY();
 
-        Node node = new Node(x,y,connectingEdges,numberOfNodes+1);
-
-        return node;
+        return new Node(x,y,connectingEdges,numberOfNodes+1);
     }
 
     /**
      * Gets line between two path elements
-     * @author Thea Birk Berger
+     *
      * @param pathElements : A list of the two path elements
      * @param numberOfNodes : Number of nodes on the gameboard
-     * @return
+     * @return a Line object
+     * @author Thea Birk Berger
      */
-    public Line getLineBetweenPathElements(List<PathElement> pathElements, int numberOfNodes) {
+    Line getLineBetweenPathElements(List<PathElement> pathElements, int numberOfNodes) {
         PathElement pe1 = pathElements.get(0);
         PathElement pe2 = pathElements.get(1);
 
@@ -159,11 +178,12 @@ public class EdgeTools {
 
     /**
      * Gets line equation (y = ax + b) coefficients
-     * @author Thea Birk Berger
+     *
      * @param line
      * @return double[] = {a,b}
+     * @author Thea Birk Berger
      */
-    double[] getLineCoefficients(Line line) {
+    private double[] getLineCoefficients(Line line) {
         double x1 = line.getStartX();
         double x2 = line.getEndX();
         double y1 = line.getStartY();
@@ -175,11 +195,12 @@ public class EdgeTools {
     }
 
     /**
-     * Determines if two Circle object collide on the gameboard
+     * Determines if two Circle object collides (hence overlap)
+     *
+     * @param circle1 : A circle object
+     * @param circle2 : A circle object
+     * @return true if the circle objects collide, false otherwise
      * @author Thea Birk Berger
-     * @param circle1
-     * @param circle2
-     * @return
      */
     boolean twoCirclesCollide(Circle circle1, Circle circle2) {
 
@@ -193,11 +214,12 @@ public class EdgeTools {
     }
 
     /**
-     * Determines if a Line and Circle object collides on the gameboard
+     * Determines if a Line and Circle object collides (hence overlap)
+     *
+     * @param line : A line object
+     * @param circle : A circle object
+     * @return true if the objects collide, false otherwise
      * @author Thea Birk Berger
-     * @param line
-     * @param circle
-     * @return
      */
     boolean lineAndCircleCollide(Shape line, Shape circle) {
 
@@ -226,10 +248,11 @@ public class EdgeTools {
     /**
      * Determines whether an automatically drawn edge should be a line or a circle
      * and initializes the creation
-     * @author Thea Birk Berger
+     *
      * @param startNode : Start node
      * @param endNode : End node
      * @return the new edge as a Shape object
+     * @author Thea Birk Berger
      */
     public Shape createEdgeBetweenNodes(Node startNode, Node endNode) {
         if (startNode.getId() == endNode.getId()) {

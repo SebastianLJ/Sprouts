@@ -1,4 +1,4 @@
-package Exceptions;
+package Utility.Exceptions;
 
 public class GameEndedException extends Exception {
 
@@ -13,6 +13,6 @@ public class GameEndedException extends Exception {
     }
 
     public String getWinner() {
-        return this.winner;
+        return winner;
     }
 }

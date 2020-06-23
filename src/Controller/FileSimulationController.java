@@ -1,6 +1,6 @@
 package Controller;
 
-import Exceptions.*;
+import Utility.Exceptions.*;
 import Utility.TooltipCell;
 import View.View;
 import javafx.animation.KeyFrame;
@@ -61,9 +61,7 @@ public class FileSimulationController extends SproutController implements Initia
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         view = new View(getSproutModel());
-        Platform.runLater(() -> {
-            updateSize(gamePane.getWidth(), gamePane.getHeight());
-        });
+        Platform.runLater(() -> updateSize(gamePane.getWidth(), gamePane.getHeight()));
         moveList.setCellFactory(listView -> {
             TooltipCell cell = new TooltipCell();
             cells.add(cell);
@@ -221,7 +219,7 @@ public class FileSimulationController extends SproutController implements Initia
                         stop();
                     } catch (GameEndedException e) {
                         color = "-fx-background-color: yellow";
-                        setGameResponseTextAndToolTip(e.getMessage(), "Failed to execute move from " + move[0] + " to " + move[1]);
+                        setGameResponseTextAndToolTip(e.getMessage(), e.getWinner() + " wins!");
                         view.updateCanvasClick(gamePane);
                         stop();
                     } catch (InvalidPath invalidPath) {

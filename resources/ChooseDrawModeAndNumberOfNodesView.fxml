@@ -59,18 +59,17 @@
          </font>
       </RadioButton>
    </VBox>
-   <HBox alignment="CENTER" layoutX="200.0" layoutY="356.0" prefHeight="30.0" prefWidth="200.0" spacing="18.0" AnchorPane.bottomAnchor="16.0" AnchorPane.leftAnchor="200.0" AnchorPane.rightAnchor="200.0">
-      <children>
-         <Button mnemonicParsing="false" onAction="#goBack" text="Back">
-            <font>
-               <Font size="14.0" />
-            </font>
-         </Button>
-         <Button mnemonicParsing="false" onAction="#startGame" text="Play">
-            <font>
-               <Font size="14.0" />
-            </font>
-         </Button>
-      </children>
+   <HBox alignment="CENTER" layoutX="200.0" layoutY="356.0" prefHeight="30.0" prefWidth="200.0" spacing="18.0"
+         AnchorPane.bottomAnchor="16.0" AnchorPane.leftAnchor="200.0" AnchorPane.rightAnchor="200.0">
+      <Button mnemonicParsing="false" onAction="#goBack" text="Back">
+         <font>
+            <Font size="14.0"/>
+         </font>
+      </Button>
+      <Button mnemonicParsing="false" onAction="#startGame" text="Play">
+         <font>
+            <Font size="14.0"/>
+         </font>
+      </Button>
    </HBox>
 </AnchorPane>

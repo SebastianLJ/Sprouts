@@ -38,10 +38,6 @@ public class Point implements Comparable {
         return "x=" + x + ", y=" + y;
     }
 
-    public Model.Point copyOf() {
-        return new Model.Point(x,y);
-    }
-
     @Override
     public int compareTo(Object o) {
         return 0;

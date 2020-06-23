@@ -16,7 +16,6 @@ public class SettingsController extends Controller implements Initializable {
 
     @FXML
     private ChoiceBox<String> resolutions = new ChoiceBox<>();
-    private Parent mainMenuParent;
     public static int width = 800;
     public static int height = 600;
 
@@ -45,10 +44,10 @@ public class SettingsController extends Controller implements Initializable {
      * This method ensures that the width and height of the game gets set.
      * @author Noah Bastian Christiansen
      */
-    public void applyResolutionChange() throws IOException {
+    public void applyResolutionChange() {
 
         String chosenResolution = resolutions.getValue();
-        String resArr[] = chosenResolution.split("x");
+        String[] resArr = chosenResolution.split("x");
         width=Integer.parseInt(resArr[0]);
         height=Integer.parseInt(resArr[1]);
 
@@ -57,6 +56,7 @@ public class SettingsController extends Controller implements Initializable {
     /**
      * When the user presses the back button this method is called.
      * This method returns the user to the main menu.
+     * @throws IOException Thrown by the FXMLLoader if the fxml document is not present.
      * @author Noah Bastian Christiansen
      */
     public void goToMainMenu() throws IOException {
@@ -64,7 +64,7 @@ public class SettingsController extends Controller implements Initializable {
                 SproutLauncher.class.getClassLoader().getResource(
                         "MainMenu.fxml")
         );
-        mainMenuParent = loader.load();
+        Parent mainMenuParent = loader.load();
         Scene mainMenu = new Scene(mainMenuParent);
         Stage window = (Stage) resolutions.getScene().getWindow();
         window.setScene(mainMenu);

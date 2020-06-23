@@ -9,13 +9,13 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 
-<BorderPane fx:id="borderPane" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.GameController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.GameController">
    <bottom>
       <HBox alignment="BOTTOM_LEFT" prefHeight="27.0" prefWidth="632.0" BorderPane.alignment="BOTTOM_CENTER">
          <BorderPane.margin>
             <Insets left="15.0" right="15.0" top="10.0" />
          </BorderPane.margin>
-         <Button fx:id="backButton" alignment="CENTER_RIGHT" contentDisplay="CENTER" mnemonicParsing="false" onAction="#goToMainMenu" text="Back" textAlignment="RIGHT">
+         <Button alignment="CENTER_RIGHT" contentDisplay="CENTER" mnemonicParsing="false" onAction="#goToMainMenu" text="Back" textAlignment="RIGHT">
             <rotationAxis>
                <Point3D />
             </rotationAxis>
@@ -37,7 +37,7 @@
       <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
    </padding>
    <center>
-      <AnchorPane fx:id="anchorPane" style="-fx-background-color: antiquewhite, white; -fx-background-insets: 0,20; -fx-padding: 10;" BorderPane.alignment="CENTER">
+      <AnchorPane style="-fx-background-color: antiquewhite, white; -fx-background-insets: 0,20; -fx-padding: 10;" BorderPane.alignment="CENTER">
          <BorderPane.margin>
             <Insets left="16.0" right="16.0" top="16.0" />
          </BorderPane.margin>

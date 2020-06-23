@@ -9,41 +9,39 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.ChooseDrawModeAndNodeController">
-   <children>
-      <VBox layoutX="222.0" layoutY="257.0" prefHeight="87.0" prefWidth="356.0">
-         <children>
-            <Label contentDisplay="CENTER" prefHeight="27.0" prefWidth="422.0" text="Enter number of starting nodes" textAlignment="CENTER">
-               <VBox.margin>
-                  <Insets bottom="4.0" left="8.0" right="8.0" top="8.0" />
-               </VBox.margin>
-               <font>
-                  <Font size="18.0" />
-               </font>
-            </Label>
-            <TextField fx:id="numberOfNodesTextField" prefWidth="344.0" promptText="A number from 2 to 99">
-               <VBox.margin>
-                  <Insets left="8.0" right="8.0" />
-               </VBox.margin>
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </TextField>
-         </children>
-      </VBox>
-      <HBox alignment="CENTER" layoutX="200.0" layoutY="357.0" prefHeight="43.0" prefWidth="200.0" spacing="16.0" AnchorPane.bottomAnchor="16.0" AnchorPane.leftAnchor="200.0" AnchorPane.rightAnchor="200.0">
-         <children>
-            <Button mnemonicParsing="false" onAction="#goBack" text="Back">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </Button>
-            <Button mnemonicParsing="false" onAction="#startGame" text="Play">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </Button>
-         </children>
-      </HBox>
-   </children>
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0"
+            prefWidth="800.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="Controller.ChooseDrawModeAndNodeController">
+   <VBox layoutX="222.0" layoutY="257.0" prefHeight="87.0" prefWidth="356.0">
+      <Label contentDisplay="CENTER" prefHeight="27.0" prefWidth="422.0" text="Enter number of starting nodes"
+             textAlignment="CENTER">
+         <VBox.margin>
+            <Insets bottom="4.0" left="8.0" right="8.0" top="8.0"/>
+         </VBox.margin>
+         <font>
+            <Font size="18.0"/>
+         </font>
+      </Label>
+      <TextField fx:id="numberOfNodesTextField" prefWidth="344.0" promptText="A number from 2 to 99">
+         <VBox.margin>
+            <Insets left="8.0" right="8.0"/>
+         </VBox.margin>
+         <font>
+            <Font size="14.0"/>
+         </font>
+      </TextField>
+   </VBox>
+   <HBox alignment="CENTER" layoutX="200.0" layoutY="357.0" prefHeight="43.0" prefWidth="200.0" spacing="16.0"
+         AnchorPane.bottomAnchor="16.0" AnchorPane.leftAnchor="200.0" AnchorPane.rightAnchor="200.0">
+      <Button mnemonicParsing="false" onAction="#goBack" text="Back">
+         <font>
+            <Font size="14.0"/>
+         </font>
+      </Button>
+      <Button mnemonicParsing="false" onAction="#startGame" text="Play">
+         <font>
+            <Font size="14.0"/>
+         </font>
+      </Button>
+   </HBox>
 </AnchorPane>

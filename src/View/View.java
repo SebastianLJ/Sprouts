@@ -29,6 +29,7 @@ public class View {
 
     /**
      * Generates numbers on the nodes upon game start.
+     *
      * @author Noah Bastian Christiansen & Sebastian Lund Jensen
      */
     public void initializeNodes(Pane gamePane) {
@@ -40,6 +41,7 @@ public class View {
     /**
      * Adds number on nodes in click-to-draw
      * @return The stack pane which contains the node and the number.
+     *
      * @author Noah Bastian Christiansen
      */
     public StackPane updateCanvasClick(Pane gamePane) {
@@ -57,6 +59,7 @@ public class View {
 
     /**
      * Adds the number on the node in case of a successful drawing.
+     *
      * @author Noah Bastian Christiansen & Sebastian Lund Jensen
      */
     public void updateCanvasDrag(Pane gamePane){
@@ -66,6 +69,7 @@ public class View {
 
     /**
      * Adds the path to the gamepane so it is visible and changes the cursor to a crosshair to indicate that the user has begun drawing.
+     *
      * @author Noah Bastian Christiansen
      */
     public void setUpDrawingSettings(MouseEvent mousePressed, Pane gamePane) {
@@ -76,6 +80,7 @@ public class View {
 
     /**
      * Changes the cursor back to default when the user collides with a line.
+     *
      * @author Noah Bastian Christiansen
      */
     public void setUpCollisionSettings(MouseEvent mouseDragged) {
@@ -83,7 +88,8 @@ public class View {
         scene.setCursor(Cursor.DEFAULT);
     }
     /**
-     * Changes the cursor from a crosshair to a normal cursor to indicate that the user has finished his drawing successfully.
+     * Changes the cursor from a cross hair to a normal cursor to indicate that the user has finished his drawing successfully.
+     *
      * @author Noah Bastian Christiansen
      */
     public void setUpSuccessfulPathSettings(MouseEvent mouseReleased) {
@@ -126,12 +132,7 @@ public class View {
             timeline.play();
         } else {
             gamePane.getChildren().add(shape);
-            legalSmartEdgeAnimation(gamePane, shape);
         }
-    }
-
-    public void legalSmartEdgeAnimation(Pane gamePane, Shape shape) {
-        // TODO: draw edge slowly
     }
 
     public void illegalNode(Circle circle) {
@@ -157,6 +158,15 @@ public class View {
         fadeTransition.play();
     }
 
+    /**
+     * Shows the game response text on the bottom of the screen.
+     * Game response includes reasons for collision and winner announcement.
+     * Belongs to the GameView.
+     *
+     * @param gameResponseLabel : Game response label
+     * @param text : Game response text
+     * @author Thea Birk Berger
+     */
     public void showGameResponse(Label gameResponseLabel, String text) {
         gameResponseLabel.setText(text);
         FadeTransition fadeTransition = new FadeTransition(Duration.seconds(1), gameResponseLabel);
@@ -165,15 +175,22 @@ public class View {
         fadeTransition.play();
     }
 
-    public void blinkAnimation(FadeTransition fadeTransition, int times) {
+    private void blinkAnimation(FadeTransition fadeTransition, int times) {
         fadeTransition.setFromValue(1.0);
         fadeTransition.setToValue(0.4);
         fadeTransition.setCycleCount(times);
         fadeTransition.setAutoReverse(true);
     }
 
-    public void showWinnerAnimation(Label labelForText, String text) {
-        labelForText.setText(text);
+    /**
+     * Shows the current player name on top of the screen
+     *
+     * @param playerNameLabel : The player name label
+     * @param currentPlayerName : The current player name
+     * @author Thea Birk Berger
+     */
+    public void showWinnerAnimation(Label playerNameLabel, String currentPlayerName) {
+        playerNameLabel.setText(currentPlayerName);
     }
 
     public void resetGameView(Pane gamePane) {
@@ -184,7 +201,7 @@ public class View {
         int i = 0;
         for (ListCell<String> cell : cells) {
             cells.get(i).setTooltip(null);
-            cell.setStyle(i++ % 2 == 0 ? "-fx-background-color: white;" : "-fx-background-color: GHOSTWHITE;");
+            cell.setStyle(i++ % 2 == 0 ? "-fx-background-color: 0xfafafaff;" : "-fx-background-color: 0xffffffff;");
         }
     }
 
@@ -212,9 +229,11 @@ public class View {
     /**
      *
      * This method numerates the nodes but creating a stack pane with the node's shape (a circle) and some text (the node's number) on it.
+     *
      * @return A stackpane consisting of the node's shape (a circle) and some text indicating the node's number.
      * @param node The node which needs an number added to it.
-     * @author Noah Bastian Christiansen & Sebastian Lund Jensen
+     * @author Noah Bastian Christiansen
+     * @author Sebastian Lund Jensen
      */
     private StackPane addNumberOnNode(Node node){
         final Text text = new Text(""+node.getId());
@@ -225,7 +244,15 @@ public class View {
         stack.relocate(node.getX()-node.getNodeRadius(),node.getY()-node.getNodeRadius());
         return stack;
     }
-
+    /**
+     * Shows the game response text on the bottom of the screen.
+     * Game response includes reasons for collision and winner announcement.
+     * Belongs to the GameViewForFileSimulation.
+     *
+     * @param gameResponseLabel : Game response label
+     * @param s : Game response text
+     * @author Thea Birk Berger
+     */
     public void setGameResponseLabelText(Label gameResponseLabel, String s) {
         gameResponseLabel.setText(s);
     }

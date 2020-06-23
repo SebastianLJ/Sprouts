@@ -1,9 +1,7 @@
 package Controller;
 
 import javafx.event.ActionEvent;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 
@@ -38,6 +36,13 @@ public class MainMenuController extends Controller implements Initializable {
         changeScene(event, "EnterFileName.fxml");
     }
 
+    /**
+     * This method is executed when the user presses on the button "Settings"
+     * It displays the settings scene and from here the SettingsController takes over.
+     * @author Noah
+     * @param event The mouse click on the button change settingss.
+     * @throws IOException Thrown by the FXMLLoader if the fxml document is not present.
+     */
     public void changeSettings(ActionEvent event) throws IOException {
         changeScene(event, "GameSettings.fxml");
     }
