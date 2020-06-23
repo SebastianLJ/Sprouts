@@ -136,7 +136,6 @@ public class GameController extends SproutController implements Initializable {
                     updateCanvasClick();
                     view.showWinnerAnimation(gameResponse, e.getMessage());
                     gamePane.setDisable(true);
-                    // TODO: make sure no clicks are received
                     System.out.println(e.getMessage());
                 } catch (CollisionException e) {
                     view.illegalEdgeAnimation(gamePane, getIllegalEdgeBetweenNodes(selectedNode, circle));
