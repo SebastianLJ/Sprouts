@@ -7,13 +7,9 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Shape;
 
-import java.util.List;
 
 public class SproutController extends Controller {
-
-    // private SproutView sproutView;
     private SproutModel sproutModel;
-
 
     public SproutController() {
         sproutModel = new SproutModel();
@@ -64,7 +60,7 @@ public class SproutController extends Controller {
      * @param mouseDragged The mousedrag that begins the drawing
      * @author Noah Bastian Christiansen
      */
-    public void beginDrawing(MouseEvent mouseDragged) throws InvalidPath, CollisionException, GameEndedException, PathForcedToEnd {
+    public void beginDrawing(MouseEvent mouseDragged) throws InvalidPath, CollisionException, PathForcedToEnd {
          sproutModel.drawPath(mouseDragged);
     }
 

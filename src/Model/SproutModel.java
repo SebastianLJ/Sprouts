@@ -676,7 +676,6 @@ public class SproutModel {
      * Checks if drawing has reached an end node, and ends the path with the final path element if it has.
      *
      * @param mouseIsInsideANode : True if mouse is currently on a node
-     * @throws InvalidPath     if the mouse has exceeded the canvas frame
      * @throws PathForcedToEnd if the mouse has hit an end node
      * @author Noah Bastian Christiansen & Sebastian Lund Jensen
      */
@@ -770,7 +769,6 @@ public class SproutModel {
     }
 
     private boolean isThereALegalLine(boolean smartMode, Node node1, Node node2) {
-        System.out.println("Trying to connect to " + node1.getId() + " and " + node2.getId());
         try {
             // Simulation a drawing between the two edges
             if (smartMode) {
@@ -778,9 +776,8 @@ public class SproutModel {
             } else {
                 drawEdgeBetweenNodes(node1.getId() - 1, node2.getId() - 1, true);
             }
-            // If no exception is cast => a legal move is found
-            System.out.println("There is a valid edge between node " + node1.getId() + " and node " + node2.getId());
             return true;
+            // If no exception is cast => a legal move is found
         } catch (CollisionException | InvalidPath | NoValidEdgeException ignore) {}
         return false;
     }

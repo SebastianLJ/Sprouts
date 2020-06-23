@@ -219,7 +219,7 @@ public class FileSimulationController extends SproutController implements Initia
                         stop();
                     } catch (GameEndedException e) {
                         color = "-fx-background-color: yellow";
-                        setGameResponseTextAndToolTip(e.getMessage(), "Failed to execute move from " + move[0] + " to " + move[1]);
+                        setGameResponseTextAndToolTip(e.getMessage(), e.getWinner() + " wins!");
                         view.updateCanvasClick(gamePane);
                         stop();
                     } catch (InvalidPath invalidPath) {
