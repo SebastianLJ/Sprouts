@@ -27,7 +27,6 @@ public class GameController extends SproutController implements Initializable {
     public Label currentPlayerNameLabel;
     private int gameMode; // 0 is clickToDraw and 1 is dragToDraw
     private int numberOfInitialNodes;
-    private final int CLICK_TO_DRAW_MODE = 0;
     private final int DRAG_TO_DRAW_MODE = 1;
     private View view;
     private boolean theUserHasSelectedANode;
@@ -88,6 +87,7 @@ public class GameController extends SproutController implements Initializable {
      * @author Noah Bastian Christiansen
      */
     private void initializeListenerForStackPane() {
+        int CLICK_TO_DRAW_MODE = 0;
         if (gameMode == CLICK_TO_DRAW_MODE) {
             for (Node stackPane : gamePane.getChildren()) {
                 if (stackPane instanceof StackPane) {
@@ -255,7 +255,6 @@ public class GameController extends SproutController implements Initializable {
                         view.illegalPath(gamePane, e.getPath());
                         view.showGameResponse(gameResponse, e.getMessage());
                     } catch (GameEndedException e) {
-                        // TODO make sure no more clicks are received
                         view.showGameResponse(gameResponse, e.getMessage());
                         gamePane.setDisable(true);
 

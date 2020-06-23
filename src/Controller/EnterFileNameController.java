@@ -61,11 +61,10 @@ public class EnterFileNameController extends Controller implements Initializable
                 window.setScene(fileSimulationScene);
                 window.show();
             } else {
-                //todo handle syntax error in JavaFX
                 fileResponseLabel.setText("Syntax error at line " + n);
                 System.out.println("Syntax error at line " + n);
             }
-        } catch (Exception e) {;
+        } catch (Exception e) {
             if (e.getMessage() == null) {
                 fileResponseLabel.setText("File is empty");
             } else {

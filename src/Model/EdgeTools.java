@@ -96,8 +96,6 @@ public class EdgeTools {
         newCircle.setFill(Color.TRANSPARENT);
         newCircle.setStroke(Color.BLACK);
 
-        // TODO: Remove part of edge that is held within the node?
-
         return newCircle;
     }
 

@@ -48,7 +48,7 @@ public class SettingsController extends Controller implements Initializable {
     public void applyResolutionChange() throws IOException {
 
         String chosenResolution = resolutions.getValue();
-        String resArr[] = chosenResolution.split("x");
+        String[] resArr = chosenResolution.split("x");
         width=Integer.parseInt(resArr[0]);
         height=Integer.parseInt(resArr[1]);
 

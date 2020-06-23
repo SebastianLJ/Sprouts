@@ -17,7 +17,6 @@ public class Node {
         this.numberOfConnectingEdges = numberOfConnectingEdges;
         this.shape = new Circle(x, y, radius);
         this.id=id;
-        // TODO: Make radius fit window size
     }
 
     public double getX() {

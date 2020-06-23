@@ -126,12 +126,7 @@ public class View {
             timeline.play();
         } else {
             gamePane.getChildren().add(shape);
-            legalSmartEdgeAnimation(gamePane, shape);
         }
-    }
-
-    public void legalSmartEdgeAnimation(Pane gamePane, Shape shape) {
-        // TODO: draw edge slowly
     }
 
     public void illegalNode(Circle circle) {
@@ -184,7 +179,7 @@ public class View {
         int i = 0;
         for (ListCell<String> cell : cells) {
             cells.get(i).setTooltip(null);
-            cell.setStyle(i++ % 2 == 0 ? "-fx-background-color: white;" : "-fx-background-color: GHOSTWHITE;");
+            cell.setStyle(i++ % 2 == 0 ? "-fx-background-color: 0xfafafaff;" : "-fx-background-color: 0xffffffff;");
         }
     }
 
@@ -219,7 +214,7 @@ public class View {
     private StackPane addNumberOnNode(Node node){
         final Text text = new Text(""+node.getId());
         text.setFill(Color.WHITE);
-        text.setStyle("-fx-font-weight: 900" + ";-fx-font-size:" + (1.4*node.getNodeRadius()));
+        text.setStyle("-fx-font-weight: 900px" + ";-fx-font-size:" + (1.4*node.getNodeRadius()));
         final StackPane stack = new StackPane();
         stack.getChildren().addAll(node.getShape(), text);
         stack.relocate(node.getX()-node.getNodeRadius(),node.getY()-node.getNodeRadius());

@@ -21,7 +21,7 @@ public enum Operator {
 
     private final char op;
 
-    private Operator(char op) {
+    Operator(char op) {
         this.op = op;
     }
 

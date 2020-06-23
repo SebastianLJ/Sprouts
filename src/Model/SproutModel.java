@@ -1,11 +1,12 @@
 package Model;
 
 import Exceptions.*;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.*;
 
-import javafx.scene.input.MouseEvent;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 
 public class SproutModel {
@@ -54,7 +55,7 @@ public class SproutModel {
         int x;
         int y;
         Circle circle = new Circle();
-        circle.setRadius(Node.radius); // TODO make scalable
+        circle.setRadius(Node.radius);
 
         for (int i = 0; i < amount; i++) {
             do {
