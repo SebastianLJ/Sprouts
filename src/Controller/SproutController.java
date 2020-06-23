@@ -1,6 +1,6 @@
 package Controller;
 
-import Exceptions.*;
+import Utility.Exceptions.*;
 import Model.Node;
 import Model.SproutModel;
 import javafx.scene.input.MouseEvent;

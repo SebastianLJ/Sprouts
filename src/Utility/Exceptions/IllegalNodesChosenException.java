@@ -1,4 +1,4 @@
-package Exceptions;
+package Utility.Exceptions;
 
 public class IllegalNodesChosenException extends Exception {
 

@@ -1,6 +1,6 @@
 package Controller;
 
-import Exceptions.*;
+import Utility.Exceptions.*;
 import View.View;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;

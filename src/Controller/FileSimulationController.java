@@ -1,6 +1,6 @@
 package Controller;
 
-import Exceptions.*;
+import Utility.Exceptions.*;
 import Utility.TooltipCell;
 import View.View;
 import javafx.animation.KeyFrame;

@@ -1,7 +1,7 @@
 package Model;
 
 
-import Exceptions.NoValidEdgeException;
+import Utility.Exceptions.NoValidEdgeException;
 import javafx.scene.shape.*;
 
 import java.util.*;

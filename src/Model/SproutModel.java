@@ -1,6 +1,6 @@
 package Model;
 
-import Exceptions.*;
+import Utility.Exceptions.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.*;
 

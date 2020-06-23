@@ -1,4 +1,4 @@
-package Exceptions;
+package Utility.Exceptions;
 
 import javafx.scene.shape.Path;
 
