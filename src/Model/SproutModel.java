@@ -653,6 +653,8 @@ public class SproutModel {
             InvalidNode invalidNode = new InvalidNode("Node " + pathStartNode.getId() + " already has 3 connecting lines");
             invalidNode.setNode(pathStartNode);
             throw invalidNode;
+        } else {
+            throw new InvalidNode("No node selected");
         }
     }
 
@@ -687,6 +689,7 @@ public class SproutModel {
 
         // If temporary path collides with itself or other edges
         if (selfCollision || edgeCollision) {
+            Path exceptionPath = new Path(List.copyOf(path.getElements()));
             // Reset path storage
             path.getElements().clear();
             pathTmp.getElements().clear();
@@ -694,7 +697,6 @@ public class SproutModel {
             System.out.println("collision at " + mousePosition.getX() + ", " + mousePosition.getY());
 
             // Set and throw exception
-            Path exceptionPath = new Path(List.copyOf(path.getElements()));
             CollisionException collisionException = new CollisionException(selfCollision ? "The line cannot cross itself" : "The new line collided with another line");
             collisionException.setPath(exceptionPath);
             throw collisionException;
