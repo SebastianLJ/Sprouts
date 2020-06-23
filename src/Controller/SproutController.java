@@ -47,8 +47,8 @@ public class SproutController extends Controller {
         }
     }
 
-    /**
-     * @param mousePressed
+    /** This method tells the model to initialize the path/drawing.
+     * @param mousePressed The starting point of the path/drawing
      * @author Noah Bastian Christiansen
      */
     public void setupDrawing(MouseEvent mousePressed) throws InvalidNode {

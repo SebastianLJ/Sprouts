@@ -335,8 +335,8 @@ public class PathFinder {
 
     /**
      * It will use a helper point for the BFS method and then use BFS back to the start point
-     * @param startNode node to make self loop for
-     * @return elf looping path for the start node
+     * @param startNode Node to make self loop for
+     * @return Looping path from the start node
      * @throws NoValidEdgeException
      * @author Noah Bastian Christiansen
      * @author Sebastian Lund Jensen

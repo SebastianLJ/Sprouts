@@ -56,6 +56,7 @@ public class SettingsController extends Controller implements Initializable {
     /**
      * When the user presses the back button this method is called.
      * This method returns the user to the main menu.
+     * @throws IOException Thrown by the FXMLLoader if the fxml document is not present.
      * @author Noah Bastian Christiansen
      */
     public void goToMainMenu() throws IOException {

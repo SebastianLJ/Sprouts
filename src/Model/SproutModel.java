@@ -590,7 +590,8 @@ public class SproutModel {
      * Sets up path object and sets coordinates for starting mousePosition of drawing (the position on the pane where the click occured)
      *
      * @param mouseClick A mouse click
-     * @author Noah Bastian Christiansen & Sebastian Lund Jensen
+     * @author Noah Bastian Christiansen
+     * @author Sebastian Lund Jensen
      */
     public void initializePath(MouseEvent mouseClick) throws InvalidNode {
         hasCollided = false;
@@ -615,7 +616,9 @@ public class SproutModel {
      * The current drawing is removed if it violates the rules.
      *
      * @param mouseDrag A mouse drag
-     * @author Noah Bastian Christiansen & Sebastian Lund Jensen & Thea Birk Berger
+     * @author Noah Bastian Christiansen
+     * @author Sebastian Lund Jensen
+     * @author Thea Birk Berger
      */
     public void drawPath(MouseEvent mouseDrag) throws PathForcedToEnd, InvalidPath, CollisionException {
 
@@ -659,8 +662,10 @@ public class SproutModel {
     }
 
     /**
-     * @throws InvalidPath if mouse has exceeded canvas frame
-     * @author Noah Bastian Christiansen & Sebastian Lund Jensen
+     * This method throws an exception if the mouseevent exceeds the pane (gamePane)
+     * @throws InvalidPath If mouse has exceeded canvas frame
+     * @author Noah Bastian Christiansen
+     * @author Sebastian Lund Jensen
      */
     private void checkIfMouseHasExceededCanvasFrame() throws InvalidPath {
 
@@ -677,7 +682,8 @@ public class SproutModel {
      *
      * @param mouseIsInsideANode : True if mouse is currently on a node
      * @throws PathForcedToEnd if the mouse has hit an end node
-     * @author Noah Bastian Christiansen & Sebastian Lund Jensen
+     * @author Noah Bastian Christiansen
+     * @author Sebastian Lund Jensen
      */
     private void startOrEndPath(boolean mouseIsInsideANode) throws PathForcedToEnd {
 
@@ -701,7 +707,9 @@ public class SproutModel {
     /**
      * If turn was ended successfully then the drawn line is added to list of valid lines
      *
-     * @author Noah Bastian Christiansen & Sebastian Lund Jensen & Thea Birk Berger
+     * @author Noah Bastian Christiansen
+     * @author Sebastian Lund Jensen
+     * @author Thea Birk Berger
      */
     public void finishPath(MouseEvent mouseEvent) throws InvalidPath, InvalidNode {
         if (path.getElements().size() == 0) return;

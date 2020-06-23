@@ -209,7 +209,8 @@ public class View {
      * This method numerates the nodes but creating a stack pane with the node's shape (a circle) and some text (the node's number) on it.
      * @return A stackpane consisting of the node's shape (a circle) and some text indicating the node's number.
      * @param node The node which needs an number added to it.
-     * @author Noah Bastian Christiansen & Sebastian Lund Jensen
+     * @author Noah Bastian Christiansen
+     * @author Sebastian Lund Jensen
      */
     private StackPane addNumberOnNode(Node node){
         final Text text = new Text(""+node.getId());
