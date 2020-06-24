@@ -69,7 +69,7 @@ public class GameController extends SproutController implements Initializable {
                 attemptInitializeGame(numberOfInitialNodes);
             } catch (NumberOfInitialNodesException e) {
                 try {
-                    attemptInitializeGame(2);
+                    attemptInitializeGame(1);
                 } catch (NumberOfInitialNodesException ex) {
                     ex.printStackTrace();
                 }

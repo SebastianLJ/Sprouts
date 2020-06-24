@@ -201,7 +201,7 @@ public class View {
         int i = 0;
         for (ListCell<String> cell : cells) {
             cells.get(i).setTooltip(null);
-            cell.setStyle(i++ % 2 == 0 ? "-fx-background-color: 0xfafafaff;" : "-fx-background-color: 0xffffffff;");
+            cell.setStyle(i++ % 2 == 0 ? "-fx-background-color:#f9f9f9;" : "-fx-background-color:#FFFFFF;");
         }
     }
 

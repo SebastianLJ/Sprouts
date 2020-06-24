@@ -22,7 +22,7 @@
             <Font size="18.0"/>
          </font>
       </Label>
-      <TextField fx:id="numberOfNodesTextField" prefWidth="344.0" promptText="A number from 2 to 99">
+      <TextField fx:id="numberOfNodesTextField" prefWidth="344.0" promptText="A number from 1 to 99">
          <VBox.margin>
             <Insets left="8.0" right="8.0"/>
          </VBox.margin>
