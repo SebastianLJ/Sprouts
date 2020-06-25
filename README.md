@@ -9,4 +9,4 @@ If there is problems when compiling or running SproutLauncher "-p pathToJavaFX\j
 
 You might have to set the folder "resources" as a resource folder.
 
-We have added some JavaDoc in the folder docs where comments and authors for each method can be seen. Open the Index file in "docs" for an overview
+We have added some JavaDoc. Open the Index.html file in "docs" for an overview where comments and authors for each method can be seen. 
