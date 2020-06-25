@@ -203,7 +203,8 @@ public class FileSimulationController extends SproutController implements Initia
                     } catch (NumberOfInitialNodesException e) {
                         color = "-fx-background-color: red";
                         running = false;
-                        view.prepareTooltip(e.getMessage(), cells.get(i + 1));
+                        setGameResponseTextAndToolTip(e.getMessage(), e.getMessage());
+//                        view.prepareTooltip(e.getMessage(), cells.get(i + 1));
                         timeline.stop();
                     } catch (IllegalNodesChosenException e) {
                         color = "-fx-background-color: red";
