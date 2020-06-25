@@ -8,3 +8,5 @@ SproutLauncher is the Main class when running Sprouts.
 If there is problems when compiling or running SproutLauncher "-p pathToJavaFX\javafx-sdk-11.0.2\lib --add-modules=javafx.fxml,javafx.controls" should be added as VM options.
 
 You might have to set the folder "resources" as a resource folder.
+
+We have added some JavaDoc in the folder docs where comments and authors for each method can be seen. 
