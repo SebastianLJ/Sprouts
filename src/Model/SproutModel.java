@@ -11,20 +11,24 @@ import java.util.Random;
 
 public class SproutModel {
 
-    // Canvas related variables
+    // Game board
     private List<Shape> edges;
     private List<Node> nodes;
+
+    // Canvas related variables
     private double height;
     private double width;
     private static final int DISTANCE_BETWEEN_POINTS = 20;
     private static final int DISTANCE_FROM_BORDER = 20;
 
-    // Drag-to-draw related variable
+    // Drag-to-draw related variables
     private Path path;
     private boolean hasCollided;
     private Point mousePosition;
     private Node pathStartNode;
     private boolean leftStartNode = false;
+
+    // Path finder related variables
     private PathFinder pf;
     private List<Node> failedNodes;
 
