@@ -33,7 +33,7 @@ public class SproutModel {
     private List<Node> failedNodes;
 
     // Classes with other model responsibilities
-    public EdgeTools edgeTools;
+    private EdgeTools edgeTools;
     private GameFlow gameFlow;
 
     public SproutModel() {
