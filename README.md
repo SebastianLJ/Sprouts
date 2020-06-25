@@ -1,5 +1,5 @@
 # Sprouts
-02122 Fagprojekt
+02122 Software Technology Project
 
 Project SDK should be set to Java 11.0.5 as the project was developed on this version.
 Libaries lib and javafxlib should be added. For IntelliJ useres, add them in Project Structure settings, and add as modules afterwards
